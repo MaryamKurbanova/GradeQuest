@@ -21,26 +21,11 @@ import GradeCalculatorScreen from "../../screens/GradeCalculatorScreen";
 import PaywallScreen from "../../screens/PaywallScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ThemesScreen from "../../screens/ThemesScreen";
-import { RouteItem, RouteKey } from "./types";
-
-const ROUTES: RouteItem[] = [
-  { key: "dashboard", label: "Dashboard" },
-  { key: "assignments", label: "Assignments" },
-  { key: "assignmentForm", label: "Add Assignment" },
-  { key: "exams", label: "Exams" },
-  { key: "examForm", label: "Add Exam" },
-  { key: "calendar", label: "Calendar" },
-  { key: "gamification", label: "Gamification" },
-  { key: "calculator", label: "Calculator" },
-  { key: "paywall", label: "Premium" },
-  { key: "analytics", label: "Analytics" },
-  { key: "themes", label: "Themes" },
-  { key: "settings", label: "Settings" },
-  { key: "firstLaunch", label: "First Launch" },
-];
+import { APP_ROUTES, DEFAULT_ROUTE } from "../constants/routes";
+import { RouteKey } from "./types";
 
 const RootNavigator: React.FC = () => {
-  const [activeRoute, setActiveRoute] = useState<RouteKey>("dashboard");
+  const [activeRoute, setActiveRoute] = useState<RouteKey>(DEFAULT_ROUTE);
 
   const screenMap: Record<RouteKey, React.ComponentType> = useMemo(
     () => ({
@@ -62,7 +47,7 @@ const RootNavigator: React.FC = () => {
   );
 
   const ActiveScreen = screenMap[activeRoute];
-  const activeRouteItem = ROUTES.find((route) => route.key === activeRoute);
+  const activeRouteItem = APP_ROUTES.find((route) => route.key === activeRoute);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -81,7 +66,7 @@ const RootNavigator: React.FC = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.navRow}
         >
-          {ROUTES.map((route) => {
+          {APP_ROUTES.map((route) => {
             const isActive = route.key === activeRoute;
             return (
               <TouchableOpacity

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { FREE_TIER_LIMITS } from "../app/constants/pricing";
 
 type ResultState = "idle" | "success" | "secured" | "notPossible";
 
@@ -20,7 +21,7 @@ type CalculationEntry = {
   neededScore: number;
 };
 
-const FREE_MONTHLY_LIMIT = 5;
+const FREE_MONTHLY_LIMIT = FREE_TIER_LIMITS.gradeCalculatorMonthlyEntries;
 
 const GradeCalculatorScreen: React.FC = () => {
   const [currentGrade, setCurrentGrade] = useState("");

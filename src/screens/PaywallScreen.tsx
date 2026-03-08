@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { PREMIUM_PRICING } from "../app/constants/pricing";
 
 type PlanKey = "monthly" | "yearly";
 
@@ -25,15 +26,15 @@ const PLANS: {
 }[] = [
   {
     key: "monthly",
-    title: "Monthly",
-    price: "$5.99/mo",
-    subtitle: "Billed every month",
+    title: PREMIUM_PRICING.monthly.label,
+    price: PREMIUM_PRICING.monthly.displayPriceShort,
+    subtitle: PREMIUM_PRICING.monthly.renewalText,
   },
   {
     key: "yearly",
-    title: "Yearly",
-    price: "$39.99/yr",
-    subtitle: "Billed every year",
+    title: PREMIUM_PRICING.yearly.label,
+    price: PREMIUM_PRICING.yearly.displayPriceShort,
+    subtitle: PREMIUM_PRICING.yearly.renewalText,
     badge: "Best value",
   },
 ];
@@ -76,9 +77,9 @@ const PaywallScreen: React.FC = () => {
 
   const ctaText = useMemo(() => {
     if (selectedPlan === "yearly") {
-      return "Start Yearly Premium • $39.99/year";
+      return `Start Yearly Premium • ${PREMIUM_PRICING.yearly.displayPriceLong}`;
     }
-    return "Start Monthly Premium • $5.99/month";
+    return `Start Monthly Premium • ${PREMIUM_PRICING.monthly.displayPriceLong}`;
   }, [selectedPlan]);
 
   return (
