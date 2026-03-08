@@ -1,0 +1,74 @@
+GradeQuest is a productivity and study management app designed for students who want to track assignments, exams, and grades while staying motivated through gamification. Students can earn points, badges, and streak rewards for completing tasks, while a Grade Target Calculator helps them know exactly what score they need to achieve their desired course grade.
+
+Features
+Free Version
+
+Course & Task Management – Add courses, assignments, and exams with due dates and weights.
+
+Grade Target Calculator (Limited) – Calculate what score you need on an upcoming exam to reach your target grade (max 5 entries/month).
+
+Gamification & Motivation – Earn points, basic badges, and celebrate achievements with animations.
+
+Motivational Celebrations – Confetti and messages when assignments/exams are completed.
+
+Dashboard Overview – View today’s tasks, upcoming exams, and current streaks.
+
+Premium Features ($5.99/month | $39.99/year)
+
+Custom Themes & Personalization
+
+Unlock pastel, gradient, or vibrant themes.
+
+Custom course colors, icons, and dashboard backgrounds/animations.
+
+Advanced Notifications & Reminders
+
+Unlimited task reminders.
+
+Persistent notifications & custom snooze times.
+
+Motivational nudge reminders for streaks.
+
+Extra Gamification & Rewards
+
+Special badges for milestones.
+
+Animated premium badges and extra points multipliers.
+
+Unlock avatar stickers and other visual rewards.
+
+Widgets & Quick Access
+
+Home screen widget showing today’s tasks, streaks, and points.
+
+Add assignments/exams from widget without opening the app.
+
+Advanced Progress Tracking
+
+Weekly/monthly stats on productivity.
+
+Charts for points, streaks, and completed tasks.
+
+“Most productive days” tracking.
+
+Unlimited entries in the Grade Target Calculator.
+
+Gamification & Motivation
+
+Points System: Assignments (10 pts), Exams (30 pts), Streak bonuses (+5 pts/day).
+
+Badges: Bronze, Silver, Gold for milestones. Premium badges are animated.
+
+Streak Rewards: Celebratory animations and motivational messages for consistent completion.
+
+Grade Target Calculator
+
+Enter current grade, exam weight, and target grade.
+
+Instantly calculates the score needed to achieve your desired course grade:
+
+RequiredScore = (TargetGrade - CurrentGrade*(1 - ExamWeight)) / ExamWeight
+
+Free users: 5 calculations/month.
+
+Premium users: unlimited calculations and history tracking.
