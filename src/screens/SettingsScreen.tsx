@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Alert,
   SafeAreaView,
@@ -10,10 +10,21 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 const SettingsScreen: React.FC = () => {
+  const {
+    displayName,
+    setDisplayName,
+    hapticsEnabled,
+    setHapticsEnabled,
+    celebrationEffectsEnabled,
+    setCelebrationEffectsEnabled,
+    backupEnabled,
+    setBackupEnabled,
+  } = useAppSettings();
   const { isPremium, plan, startMockPremium, clearPremium } = useSubscription();
   const {
     notificationsEnabled,
@@ -27,10 +38,6 @@ const SettingsScreen: React.FC = () => {
     permissionGranted,
     requestPermission,
   } = useNotifications();
-  const [displayName, setDisplayName] = useState("Guest Student");
-  const [hapticsEnabled, setHapticsEnabled] = useState(true);
-  const [celebrationEffects, setCelebrationEffects] = useState(true);
-  const [backupEnabled, setBackupEnabled] = useState(false);
 
   const handleSave = () => {
     Alert.alert("Settings saved", "Your preferences have been updated.");
@@ -168,7 +175,10 @@ const SettingsScreen: React.FC = () => {
           </View>
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Celebration effects</Text>
-            <Switch value={celebrationEffects} onValueChange={setCelebrationEffects} />
+            <Switch
+              value={celebrationEffectsEnabled}
+              onValueChange={setCelebrationEffectsEnabled}
+            />
           </View>
         </View>
 

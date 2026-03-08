@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppSettings } from "../app/providers/AppSettingsProvider";
 
 type Assignment = {
   id: string;
@@ -35,6 +36,7 @@ const UPCOMING_EXAMS: Exam[] = [
 ];
 
 const DashboardScreen: React.FC = () => {
+  const { displayName } = useAppSettings();
   const points = 240;
   const streakDays = 4;
   const level = 3;
@@ -42,7 +44,7 @@ const DashboardScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <Text style={styles.greeting}>Welcome back</Text>
+        <Text style={styles.greeting}>Welcome back{displayName ? `, ${displayName}` : ""}</Text>
         <Text style={styles.title}>Today at a glance</Text>
 
         <View style={styles.statsRow}>

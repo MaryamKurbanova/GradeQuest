@@ -10,12 +10,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
 
 type ThemeChoice = "light" | "dark";
 
 const FirstLaunchSetupScreen: React.FC = () => {
+  const { setDisplayName: setGlobalDisplayName } = useAppSettings();
   const { setActiveTheme } = useTheme();
   const {
     notificationsEnabled,
@@ -24,7 +26,7 @@ const FirstLaunchSetupScreen: React.FC = () => {
     setReminderStyle,
     requestPermission,
   } = useNotifications();
-  const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayNameInput] = useState("");
   const [themeChoice, setThemeChoice] = useState<ThemeChoice>("light");
 
   const canContinue = useMemo(() => true, []);
@@ -48,6 +50,7 @@ const FirstLaunchSetupScreen: React.FC = () => {
     }
 
     setActiveTheme(themeChoice);
+    setGlobalDisplayName(displayName.trim() || "Guest Student");
 
     Alert.alert(
       "Setup complete",
@@ -72,7 +75,7 @@ const FirstLaunchSetupScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>What should we call you?</Text>
           <TextInput
             value={displayName}
-            onChangeText={setDisplayName}
+            onChangeText={setDisplayNameInput}
             placeholder="Optional display name"
             placeholderTextColor="#94A3B8"
             style={styles.input}
