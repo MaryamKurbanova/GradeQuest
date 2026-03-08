@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -7,9 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSubscription } from "../app/providers/SubscriptionProvider";
+import { useTheme } from "../app/providers/ThemeProvider";
+import type { ThemeId } from "../app/providers/ThemeProvider";
 
 type ThemePack = {
-  id: string;
+  id: ThemeId;
   name: string;
   styleHint: string;
   premium: boolean;
@@ -57,22 +61,39 @@ const THEME_PACKS: ThemePack[] = [
 const COURSE_COLOR_OPTIONS = ["#6366F1", "#22C55E", "#F97316", "#0EA5E9", "#E11D48", "#8B5CF6"];
 
 const ThemesScreen: React.FC = () => {
-  // Placeholder entitlement state until premium service is wired.
-  const [isPremium] = useState(false);
-  const [selectedThemeId, setSelectedThemeId] = useState("light");
+  const { isPremium, startMockPremium } = useSubscription();
+  const { activeTheme, setActiveTheme } = useTheme();
   const [selectedCourseColor, setSelectedCourseColor] = useState(COURSE_COLOR_OPTIONS[0]);
   const [selectedIcon, setSelectedIcon] = useState("book");
 
   const selectedTheme = useMemo(
-    () => THEME_PACKS.find((theme) => theme.id === selectedThemeId),
-    [selectedThemeId],
+    () => THEME_PACKS.find((theme) => theme.id === activeTheme),
+    [activeTheme],
   );
 
   const applyTheme = (theme: ThemePack) => {
     if (theme.premium && !isPremium) {
+      Alert.alert(
+        "Premium theme",
+        "Upgrade to Premium to use this theme pack.",
+        [
+          { text: "Not now", style: "cancel" },
+          { text: "Upgrade (Mock)", onPress: () => startMockPremium("yearly") },
+        ],
+      );
       return;
     }
-    setSelectedThemeId(theme.id);
+    setActiveTheme(theme.id);
+  };
+
+  const onReset = () => {
+    setActiveTheme("light");
+    setSelectedCourseColor(COURSE_COLOR_OPTIONS[0]);
+    setSelectedIcon("book");
+  };
+
+  const onSave = () => {
+    Alert.alert("Saved", "Your personalization settings have been updated.");
   };
 
   return (
@@ -95,7 +116,7 @@ const ThemesScreen: React.FC = () => {
             <Text style={styles.premiumNoticeText}>
               Upgrade to unlock Pastel, Gradient, and Vibrant themes plus extra dashboard effects.
             </Text>
-            <TouchableOpacity style={styles.upgradeButton}>
+            <TouchableOpacity style={styles.upgradeButton} onPress={() => startMockPremium("yearly")}>
               <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
             </TouchableOpacity>
           </View>
@@ -104,7 +125,7 @@ const ThemesScreen: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Theme packs</Text>
           {THEME_PACKS.map((theme) => {
-            const isSelected = selectedThemeId === theme.id;
+            const isSelected = activeTheme === theme.id;
             const isLocked = theme.premium && !isPremium;
             return (
               <TouchableOpacity
@@ -182,10 +203,10 @@ const ThemesScreen: React.FC = () => {
         </View>
 
         <View style={styles.actionsRow}>
-          <TouchableOpacity style={styles.secondaryButton}>
+          <TouchableOpacity style={styles.secondaryButton} onPress={onReset}>
             <Text style={styles.secondaryButtonText}>Reset</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.primaryButton}>
+          <TouchableOpacity style={styles.primaryButton} onPress={onSave}>
             <Text style={styles.primaryButtonText}>Save changes</Text>
           </TouchableOpacity>
         </View>

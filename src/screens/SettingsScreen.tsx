@@ -10,8 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 const SettingsScreen: React.FC = () => {
+  const { isPremium, plan, startMockPremium, clearPremium } = useSubscription();
   const [displayName, setDisplayName] = useState("Guest Student");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [assignmentReminders, setAssignmentReminders] = useState(true);
@@ -20,7 +22,6 @@ const SettingsScreen: React.FC = () => {
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [celebrationEffects, setCelebrationEffects] = useState(true);
   const [backupEnabled, setBackupEnabled] = useState(false);
-  const isPremium = false;
 
   const handleSave = () => {
     Alert.alert("Settings saved", "Your preferences have been updated.");
@@ -30,6 +31,35 @@ const SettingsScreen: React.FC = () => {
     Alert.alert("Reset all data?", "This cannot be undone.", [
       { text: "Cancel", style: "cancel" },
       { text: "Reset", style: "destructive" },
+    ]);
+  };
+
+  const handleRestorePurchases = () => {
+    if (isPremium) {
+      Alert.alert("Already active", "Premium is already active.");
+      return;
+    }
+    startMockPremium("yearly");
+    Alert.alert("Restored", "Your premium subscription has been restored.");
+  };
+
+  const handleViewPlans = () => {
+    if (isPremium) {
+      Alert.alert("Premium active", `You are currently on the ${plan} plan.`);
+      return;
+    }
+    startMockPremium("monthly");
+    Alert.alert("Premium started", "Monthly premium was activated (mock).");
+  };
+
+  const handleManageSubscription = () => {
+    if (!isPremium) {
+      Alert.alert("No subscription", "You are currently on the free plan.");
+      return;
+    }
+    Alert.alert("Manage subscription", "This demo action switches back to free plan.", [
+      { text: "Keep Premium", style: "cancel" },
+      { text: "Switch to Free", style: "destructive", onPress: clearPremium },
     ]);
   };
 
@@ -123,14 +153,14 @@ const SettingsScreen: React.FC = () => {
             Upgrade for unlimited calculator usage, advanced reminders, widgets, and analytics.
           </Text>
           <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.secondaryButton}>
+            <TouchableOpacity style={styles.secondaryButton} onPress={handleRestorePurchases}>
               <Text style={styles.secondaryButtonText}>Restore purchases</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.primaryButton}>
+            <TouchableOpacity style={styles.primaryButton} onPress={handleViewPlans}>
               <Text style={styles.primaryButtonText}>View plans</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.subtleButton}>
+          <TouchableOpacity style={styles.subtleButton} onPress={handleManageSubscription}>
             <Text style={styles.subtleButtonText}>Manage subscription</Text>
           </TouchableOpacity>
         </View>

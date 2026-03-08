@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
-type ThemeId = "light" | "dark" | "pastel" | "gradient" | "vibrant";
+export type ThemeId = "light" | "dark" | "pastel" | "gradient" | "vibrant";
 
 type ThemeContextValue = {
   activeTheme: ThemeId;

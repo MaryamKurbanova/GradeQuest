@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { FREE_TIER_LIMITS } from "../app/constants/pricing";
+import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 type ResultState = "idle" | "success" | "secured" | "notPossible";
 
@@ -24,14 +25,13 @@ type CalculationEntry = {
 const FREE_MONTHLY_LIMIT = FREE_TIER_LIMITS.gradeCalculatorMonthlyEntries;
 
 const GradeCalculatorScreen: React.FC = () => {
+  const { isPremium, startMockPremium } = useSubscription();
   const [currentGrade, setCurrentGrade] = useState("");
   const [examWeight, setExamWeight] = useState("");
   const [targetGrade, setTargetGrade] = useState("");
   const [resultState, setResultState] = useState<ResultState>("idle");
   const [resultText, setResultText] = useState("");
 
-  // Placeholder entitlement + usage for MVP UI until subscription/data layers are wired.
-  const [isPremium] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
   const [history, setHistory] = useState<CalculationEntry[]>([]);
 
@@ -75,7 +75,7 @@ const GradeCalculatorScreen: React.FC = () => {
     if (!isPremium && usageCount >= FREE_MONTHLY_LIMIT) {
       Alert.alert(
         "Free limit reached",
-        "You have used all 5 free calculations this month. Upgrade to Premium for unlimited calculations.",
+        `You have used all ${FREE_MONTHLY_LIMIT} free calculations this month. Upgrade to Premium for unlimited calculations.`,
       );
       return;
     }
@@ -132,7 +132,10 @@ const GradeCalculatorScreen: React.FC = () => {
               : `${remainingFreeUses} of ${FREE_MONTHLY_LIMIT} free calculations remaining this month.`}
           </Text>
           {!isPremium ? (
-            <TouchableOpacity style={styles.upgradeButton}>
+            <TouchableOpacity
+              style={styles.upgradeButton}
+              onPress={() => startMockPremium("monthly")}
+            >
               <Text style={styles.upgradeText}>Upgrade to Premium</Text>
             </TouchableOpacity>
           ) : null}

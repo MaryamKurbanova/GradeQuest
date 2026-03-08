@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 type RangeKey = "weekly" | "monthly";
 
@@ -34,7 +35,7 @@ const MONTHLY_DATA: DayProductivity[] = [
 
 const AnalyticsScreen: React.FC = () => {
   const [range, setRange] = useState<RangeKey>("weekly");
-  const isPremium = true;
+  const { isPremium, startMockPremium } = useSubscription();
 
   const chartData = range === "weekly" ? WEEKLY_DATA : MONTHLY_DATA;
   const maxValue = useMemo(
@@ -62,7 +63,7 @@ const AnalyticsScreen: React.FC = () => {
           <Text style={styles.lockedText}>
             Upgrade to unlock weekly/monthly productivity insights and trend charts.
           </Text>
-          <TouchableOpacity style={styles.upgradeButton}>
+          <TouchableOpacity style={styles.upgradeButton} onPress={() => startMockPremium("monthly")}>
             <Text style={styles.upgradeButtonText}>View Premium Plans</Text>
           </TouchableOpacity>
         </View>

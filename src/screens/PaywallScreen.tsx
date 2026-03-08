@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { PREMIUM_PRICING } from "../app/constants/pricing";
+import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 type PlanKey = "monthly" | "yearly";
 
@@ -73,14 +75,60 @@ const PREMIUM_FEATURES: PremiumFeature[] = [
 ];
 
 const PaywallScreen: React.FC = () => {
+  const { isPremium, plan, expiresAt, startMockPremium, clearPremium } = useSubscription();
   const [selectedPlan, setSelectedPlan] = useState<PlanKey>("yearly");
 
+  useEffect(() => {
+    if (plan === "monthly" || plan === "yearly") {
+      setSelectedPlan(plan);
+    }
+  }, [plan]);
+
   const ctaText = useMemo(() => {
+    if (isPremium) {
+      return "Premium already active";
+    }
     if (selectedPlan === "yearly") {
       return `Start Yearly Premium • ${PREMIUM_PRICING.yearly.displayPriceLong}`;
     }
     return `Start Monthly Premium • ${PREMIUM_PRICING.monthly.displayPriceLong}`;
-  }, [selectedPlan]);
+  }, [isPremium, selectedPlan]);
+
+  const onStartPremium = () => {
+    if (isPremium) {
+      Alert.alert("Premium active", "Your premium access is already active on this device.");
+      return;
+    }
+
+    startMockPremium(selectedPlan);
+    Alert.alert("Premium unlocked", `You started the ${selectedPlan} premium plan.`);
+  };
+
+  const onRestorePurchases = () => {
+    if (isPremium) {
+      Alert.alert("Already restored", "Your premium entitlement is already active.");
+      return;
+    }
+
+    startMockPremium("yearly");
+    Alert.alert("Purchases restored", "Your premium subscription has been restored.");
+  };
+
+  const onManageSubscription = () => {
+    if (!isPremium) {
+      Alert.alert("No active subscription", "You are currently on the free plan.");
+      return;
+    }
+
+    Alert.alert(
+      "Manage subscription",
+      `Plan: ${plan}\nExpires: ${expiresAt ? new Date(expiresAt).toLocaleDateString() : "N/A"}`,
+      [
+        { text: "Close", style: "cancel" },
+        { text: "Switch to Free (Mock)", style: "destructive", onPress: clearPremium },
+      ],
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -90,6 +138,15 @@ const PaywallScreen: React.FC = () => {
         <Text style={styles.subtitle}>
           Get better focus, stronger habits, and unlimited tools to hit your goals.
         </Text>
+
+        {isPremium ? (
+          <View style={styles.activePlanCard}>
+            <Text style={styles.activePlanTitle}>Premium is active</Text>
+            <Text style={styles.activePlanText}>
+              Current plan: {plan} {expiresAt ? `• Expires ${new Date(expiresAt).toLocaleDateString()}` : ""}
+            </Text>
+          </View>
+        ) : null}
 
         <View style={styles.planList}>
           {PLANS.map((plan) => {
@@ -134,15 +191,15 @@ const PaywallScreen: React.FC = () => {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.primaryCta}>
+        <TouchableOpacity style={styles.primaryCta} onPress={onStartPremium}>
           <Text style={styles.primaryCtaText}>{ctaText}</Text>
         </TouchableOpacity>
 
         <View style={styles.secondaryActionsRow}>
-          <TouchableOpacity style={styles.secondaryAction}>
+          <TouchableOpacity style={styles.secondaryAction} onPress={onRestorePurchases}>
             <Text style={styles.secondaryActionText}>Restore Purchases</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryAction}>
+          <TouchableOpacity style={styles.secondaryAction} onPress={onManageSubscription}>
             <Text style={styles.secondaryActionText}>Manage Subscription</Text>
           </TouchableOpacity>
         </View>
@@ -181,6 +238,24 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: "#475569",
     marginBottom: 14,
+  },
+  activePlanCard: {
+    backgroundColor: "#DCFCE7",
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#86EFAC",
+  },
+  activePlanTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#166534",
+  },
+  activePlanText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#166534",
   },
   planList: {
     marginBottom: 16,
