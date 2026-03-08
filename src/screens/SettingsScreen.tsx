@@ -10,15 +10,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useNotifications } from "../app/providers/NotificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 const SettingsScreen: React.FC = () => {
   const { isPremium, plan, startMockPremium, clearPremium } = useSubscription();
+  const {
+    notificationsEnabled,
+    setNotificationsEnabled,
+    assignmentRemindersEnabled,
+    setAssignmentRemindersEnabled,
+    examRemindersEnabled,
+    setExamRemindersEnabled,
+    streakNudgesEnabled,
+    setStreakNudgesEnabled,
+    permissionGranted,
+    requestPermission,
+  } = useNotifications();
   const [displayName, setDisplayName] = useState("Guest Student");
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [assignmentReminders, setAssignmentReminders] = useState(true);
-  const [examReminders, setExamReminders] = useState(true);
-  const [streakNudges, setStreakNudges] = useState(true);
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [celebrationEffects, setCelebrationEffects] = useState(true);
   const [backupEnabled, setBackupEnabled] = useState(false);
@@ -63,6 +72,19 @@ const SettingsScreen: React.FC = () => {
     ]);
   };
 
+  const handleNotificationsToggle = async (enabled: boolean) => {
+    if (enabled) {
+      const granted = await requestPermission();
+      if (!granted) {
+        Alert.alert("Permission needed", "Enable notifications in device settings.");
+        setNotificationsEnabled(false);
+        return;
+      }
+    }
+
+    setNotificationsEnabled(enabled);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -97,35 +119,45 @@ const SettingsScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Notifications</Text>
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Enable notifications</Text>
-            <Switch value={notificationsEnabled} onValueChange={setNotificationsEnabled} />
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={(enabled) => {
+                void handleNotificationsToggle(enabled);
+              }}
+            />
           </View>
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Assignment reminders</Text>
             <Switch
-              value={assignmentReminders}
-              onValueChange={setAssignmentReminders}
+              value={assignmentRemindersEnabled}
+              onValueChange={setAssignmentRemindersEnabled}
               disabled={!notificationsEnabled}
             />
           </View>
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Exam reminders</Text>
             <Switch
-              value={examReminders}
-              onValueChange={setExamReminders}
+              value={examRemindersEnabled}
+              onValueChange={setExamRemindersEnabled}
               disabled={!notificationsEnabled}
             />
           </View>
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Streak motivational nudges</Text>
             <Switch
-              value={streakNudges}
-              onValueChange={setStreakNudges}
+              value={streakNudgesEnabled}
+              onValueChange={setStreakNudgesEnabled}
               disabled={!notificationsEnabled}
             />
           </View>
           <Text style={styles.helperText}>
             Advanced persistent reminders and custom snooze are Premium features.
           </Text>
+          {!permissionGranted ? (
+            <Text style={styles.warningText}>
+              Notification permission is off. Enable it in your device settings.
+            </Text>
+          ) : null}
         </View>
 
         <View style={styles.sectionCard}>
@@ -251,6 +283,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
     color: "#64748B",
+  },
+  warningText: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#B91C1C",
+    fontWeight: "600",
   },
   linkRow: {
     borderWidth: 1,

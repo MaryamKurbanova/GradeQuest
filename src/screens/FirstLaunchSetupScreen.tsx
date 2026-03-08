@@ -10,21 +10,44 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useNotifications } from "../app/providers/NotificationProvider";
+import { useTheme } from "../app/providers/ThemeProvider";
 
 type ThemeChoice = "light" | "dark";
 
 const FirstLaunchSetupScreen: React.FC = () => {
+  const { setActiveTheme } = useTheme();
+  const {
+    notificationsEnabled,
+    setNotificationsEnabled,
+    reminderStyle,
+    setReminderStyle,
+    requestPermission,
+  } = useNotifications();
   const [displayName, setDisplayName] = useState("");
   const [themeChoice, setThemeChoice] = useState<ThemeChoice>("light");
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [reminderStyle, setReminderStyle] = useState<"standard" | "focused">("standard");
 
   const canContinue = useMemo(() => true, []);
+
+  const handleNotificationToggle = async (enabled: boolean) => {
+    if (enabled) {
+      const granted = await requestPermission();
+      if (!granted) {
+        Alert.alert("Permission needed", "Enable notifications in your device settings.");
+        setNotificationsEnabled(false);
+        return;
+      }
+    }
+
+    setNotificationsEnabled(enabled);
+  };
 
   const onContinue = () => {
     if (!canContinue) {
       return;
     }
+
+    setActiveTheme(themeChoice);
 
     Alert.alert(
       "Setup complete",
@@ -87,7 +110,12 @@ const FirstLaunchSetupScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Notifications</Text>
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Enable reminders</Text>
-            <Switch value={notificationsEnabled} onValueChange={setNotificationsEnabled} />
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={(enabled) => {
+                void handleNotificationToggle(enabled);
+              }}
+            />
           </View>
           <Text style={styles.helperText}>
             Turn this off if you want to start quietly and enable reminders later.

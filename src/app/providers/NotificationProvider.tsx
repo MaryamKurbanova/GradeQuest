@@ -1,8 +1,18 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
+type ReminderStyle = "standard" | "focused";
+
 type NotificationContextValue = {
   notificationsEnabled: boolean;
   setNotificationsEnabled: (enabled: boolean) => void;
+  assignmentRemindersEnabled: boolean;
+  setAssignmentRemindersEnabled: (enabled: boolean) => void;
+  examRemindersEnabled: boolean;
+  setExamRemindersEnabled: (enabled: boolean) => void;
+  streakNudgesEnabled: boolean;
+  setStreakNudgesEnabled: (enabled: boolean) => void;
+  reminderStyle: ReminderStyle;
+  setReminderStyle: (style: ReminderStyle) => void;
   permissionGranted: boolean;
   requestPermission: () => Promise<boolean>;
 };
@@ -11,6 +21,10 @@ const NotificationContext = createContext<NotificationContextValue | undefined>(
 
 export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [assignmentRemindersEnabled, setAssignmentRemindersEnabled] = useState(true);
+  const [examRemindersEnabled, setExamRemindersEnabled] = useState(true);
+  const [streakNudgesEnabled, setStreakNudgesEnabled] = useState(true);
+  const [reminderStyle, setReminderStyle] = useState<ReminderStyle>("standard");
   const [permissionGranted, setPermissionGranted] = useState(true);
 
   const requestPermission = async () => {
@@ -23,10 +37,25 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
     () => ({
       notificationsEnabled,
       setNotificationsEnabled,
+      assignmentRemindersEnabled,
+      setAssignmentRemindersEnabled,
+      examRemindersEnabled,
+      setExamRemindersEnabled,
+      streakNudgesEnabled,
+      setStreakNudgesEnabled,
+      reminderStyle,
+      setReminderStyle,
       permissionGranted,
       requestPermission,
     }),
-    [notificationsEnabled, permissionGranted],
+    [
+      notificationsEnabled,
+      assignmentRemindersEnabled,
+      examRemindersEnabled,
+      streakNudgesEnabled,
+      reminderStyle,
+      permissionGranted,
+    ],
   );
 
   return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
