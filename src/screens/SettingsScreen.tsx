@@ -16,6 +16,16 @@ import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 
+type NudgeCadence = "daily" | "twiceDaily" | "hourly";
+
+const NUDGE_CADENCE_OPTIONS: { key: NudgeCadence; label: string }[] = [
+  { key: "daily", label: "Daily" },
+  { key: "twiceDaily", label: "Twice daily" },
+  { key: "hourly", label: "Hourly" },
+];
+
+const SNOOZE_PRESET_OPTIONS = [10, 15, 30, 60, 120, 180];
+
 const SettingsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const {
@@ -38,6 +48,12 @@ const SettingsScreen: React.FC = () => {
     setExamRemindersEnabled,
     streakNudgesEnabled,
     setStreakNudgesEnabled,
+    persistentRemindersEnabled,
+    setPersistentRemindersEnabled,
+    nudgeCadence,
+    setNudgeCadence,
+    snoozePresetsMinutes,
+    setSnoozePresetsMinutes,
     permissionGranted,
     requestPermission,
   } = useNotifications();
@@ -104,6 +120,34 @@ const SettingsScreen: React.FC = () => {
       return;
     }
     navigate("widgets");
+  };
+
+  const handlePersistentReminderToggle = (enabled: boolean) => {
+    if (!isPremium) {
+      navigate("paywall");
+      return;
+    }
+    setPersistentRemindersEnabled(enabled);
+  };
+
+  const handleSelectNudgeCadence = (cadence: NudgeCadence) => {
+    if (!isPremium) {
+      navigate("paywall");
+      return;
+    }
+    setNudgeCadence(cadence);
+  };
+
+  const handleToggleSnoozePreset = (minutes: number) => {
+    if (!isPremium) {
+      navigate("paywall");
+      return;
+    }
+
+    const nextPresets = snoozePresetsMinutes.includes(minutes)
+      ? snoozePresetsMinutes.filter((value) => value !== minutes)
+      : [...snoozePresetsMinutes, minutes];
+    setSnoozePresetsMinutes(nextPresets);
   };
 
   return (
@@ -187,6 +231,88 @@ const SettingsScreen: React.FC = () => {
           <Text style={styles.helperText}>
             Advanced persistent reminders and custom snooze are Premium features.
           </Text>
+          {FEATURE_FLAGS.persistentRemindersEnabled ? (
+            <View style={styles.advancedReminderBox}>
+              <View style={styles.switchRow}>
+                <Text style={styles.switchLabel}>Persistent reminders until complete</Text>
+                <Switch
+                  value={isPremium && persistentRemindersEnabled}
+                  onValueChange={handlePersistentReminderToggle}
+                  disabled={!notificationsEnabled}
+                />
+              </View>
+              <Text style={styles.helperText}>
+                {isPremium
+                  ? "Keep reminding until tasks are marked done."
+                  : "Premium required for persistent reminders and custom snooze cadence."}
+              </Text>
+
+              <Text style={styles.subsectionLabel}>Streak nudge cadence</Text>
+              <View style={styles.optionRow}>
+                {NUDGE_CADENCE_OPTIONS.map((option) => {
+                  const isActive = nudgeCadence === option.key;
+                  return (
+                    <TouchableOpacity
+                      key={option.key}
+                      style={[
+                        styles.optionChip,
+                        isActive && styles.optionChipActive,
+                        (!notificationsEnabled || !isPremium) && styles.optionChipDisabled,
+                      ]}
+                      onPress={() => handleSelectNudgeCadence(option.key)}
+                      disabled={!notificationsEnabled}
+                    >
+                      <Text
+                        style={[
+                          styles.optionChipText,
+                          isActive && styles.optionChipTextActive,
+                        ]}
+                      >
+                        {option.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              <Text style={styles.subsectionLabel}>Custom snooze presets (minutes)</Text>
+              <View style={styles.optionRow}>
+                {SNOOZE_PRESET_OPTIONS.map((minutes) => {
+                  const isSelected = snoozePresetsMinutes.includes(minutes);
+                  return (
+                    <TouchableOpacity
+                      key={`${minutes}`}
+                      style={[
+                        styles.optionChip,
+                        isSelected && styles.optionChipActive,
+                        (!notificationsEnabled || !isPremium) && styles.optionChipDisabled,
+                      ]}
+                      onPress={() => handleToggleSnoozePreset(minutes)}
+                      disabled={!notificationsEnabled}
+                    >
+                      <Text
+                        style={[
+                          styles.optionChipText,
+                          isSelected && styles.optionChipTextActive,
+                        ]}
+                      >
+                        {minutes}m
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {!isPremium ? (
+                <TouchableOpacity
+                  style={styles.reminderUpgradeButton}
+                  onPress={() => navigate("paywall")}
+                >
+                  <Text style={styles.reminderUpgradeButtonText}>Unlock advanced reminders</Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          ) : null}
           {!permissionGranted ? (
             <Text style={styles.warningText}>
               Notification permission is off. Enable it in your device settings.
@@ -326,6 +452,60 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#B91C1C",
     fontWeight: "600",
+  },
+  advancedReminderBox: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    padding: 12,
+  },
+  subsectionLabel: {
+    marginTop: 10,
+    marginBottom: 6,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#334155",
+  },
+  optionRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 4,
+  },
+  optionChip: {
+    backgroundColor: "#E2E8F0",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  optionChipActive: {
+    backgroundColor: "#1D4ED8",
+  },
+  optionChipDisabled: {
+    opacity: 0.55,
+  },
+  optionChipText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#334155",
+  },
+  optionChipTextActive: {
+    color: "#FFFFFF",
+  },
+  reminderUpgradeButton: {
+    marginTop: 4,
+    backgroundColor: "#EDE9FE",
+    borderRadius: 10,
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  reminderUpgradeButtonText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#6D28D9",
   },
   linkRow: {
     borderWidth: 1,

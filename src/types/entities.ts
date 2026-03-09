@@ -64,6 +64,9 @@ export type NotificationPrefs = {
   examRemindersEnabled: boolean;
   streakNudgesEnabled: boolean;
   reminderStyle: "standard" | "focused";
+  persistentRemindersEnabled: boolean;
+  nudgeCadence: "daily" | "twiceDaily" | "hourly";
+  snoozePresetsMinutes: number[];
   permissionGranted: boolean;
   updatedAt: string;
 };

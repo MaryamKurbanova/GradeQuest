@@ -1,7 +1,22 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { STORAGE_KEYS, readJson, writeJson } from "../../utils/storage";
 
 type ReminderStyle = "standard" | "focused";
+type NudgeCadence = "daily" | "twiceDaily" | "hourly";
+
+const DEFAULT_SNOOZE_PRESETS_MINUTES = [30, 120];
+
+const normalizeSnoozePresets = (value: number[]): number[] => {
+  const normalized = [...new Set(value)]
+    .map((item) => Math.round(item))
+    .filter((item) => item >= 5 && item <= 720)
+    .sort((a, b) => a - b);
+
+  if (normalized.length === 0) {
+    return DEFAULT_SNOOZE_PRESETS_MINUTES;
+  }
+  return normalized;
+};
 
 type NotificationContextValue = {
   notificationsEnabled: boolean;
@@ -14,6 +29,12 @@ type NotificationContextValue = {
   setStreakNudgesEnabled: (enabled: boolean) => void;
   reminderStyle: ReminderStyle;
   setReminderStyle: (style: ReminderStyle) => void;
+  persistentRemindersEnabled: boolean;
+  setPersistentRemindersEnabled: (enabled: boolean) => void;
+  nudgeCadence: NudgeCadence;
+  setNudgeCadence: (cadence: NudgeCadence) => void;
+  snoozePresetsMinutes: number[];
+  setSnoozePresetsMinutes: (minutes: number[]) => void;
   permissionGranted: boolean;
   requestPermission: () => Promise<boolean>;
 };
@@ -26,6 +47,9 @@ type PersistedNotifications = {
   examRemindersEnabled: boolean;
   streakNudgesEnabled: boolean;
   reminderStyle: ReminderStyle;
+  persistentRemindersEnabled: boolean;
+  nudgeCadence: NudgeCadence;
+  snoozePresetsMinutes: number[];
   permissionGranted: boolean;
 };
 
@@ -35,6 +59,11 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
   const [examRemindersEnabled, setExamRemindersEnabled] = useState(true);
   const [streakNudgesEnabled, setStreakNudgesEnabled] = useState(true);
   const [reminderStyle, setReminderStyle] = useState<ReminderStyle>("standard");
+  const [persistentRemindersEnabled, setPersistentRemindersEnabled] = useState(false);
+  const [nudgeCadence, setNudgeCadence] = useState<NudgeCadence>("daily");
+  const [snoozePresetsMinutes, setSnoozePresetsMinutesState] = useState<number[]>(
+    DEFAULT_SNOOZE_PRESETS_MINUTES,
+  );
   const [permissionGranted, setPermissionGranted] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -52,6 +81,11 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
         setExamRemindersEnabled(Boolean(persisted.examRemindersEnabled));
         setStreakNudgesEnabled(Boolean(persisted.streakNudgesEnabled));
         setReminderStyle(persisted.reminderStyle ?? "standard");
+        setPersistentRemindersEnabled(Boolean(persisted.persistentRemindersEnabled));
+        setNudgeCadence(persisted.nudgeCadence ?? "daily");
+        setSnoozePresetsMinutesState(
+          normalizeSnoozePresets(persisted.snoozePresetsMinutes ?? DEFAULT_SNOOZE_PRESETS_MINUTES),
+        );
         setPermissionGranted(Boolean(persisted.permissionGranted));
       }
       if (isMounted) {
@@ -77,6 +111,9 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
       examRemindersEnabled,
       streakNudgesEnabled,
       reminderStyle,
+      persistentRemindersEnabled,
+      nudgeCadence,
+      snoozePresetsMinutes,
       permissionGranted,
     });
   }, [
@@ -85,6 +122,9 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
     examRemindersEnabled,
     streakNudgesEnabled,
     reminderStyle,
+    persistentRemindersEnabled,
+    nudgeCadence,
+    snoozePresetsMinutes,
     permissionGranted,
     isHydrated,
   ]);
@@ -94,6 +134,10 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
     setPermissionGranted(true);
     return true;
   };
+
+  const setSnoozePresetsMinutes = useCallback((minutes: number[]) => {
+    setSnoozePresetsMinutesState(normalizeSnoozePresets(minutes));
+  }, []);
 
   const value = useMemo<NotificationContextValue>(
     () => ({
@@ -107,6 +151,12 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
       setStreakNudgesEnabled,
       reminderStyle,
       setReminderStyle,
+      persistentRemindersEnabled,
+      setPersistentRemindersEnabled,
+      nudgeCadence,
+      setNudgeCadence,
+      snoozePresetsMinutes,
+      setSnoozePresetsMinutes,
       permissionGranted,
       requestPermission,
     }),
@@ -116,7 +166,11 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
       examRemindersEnabled,
       streakNudgesEnabled,
       reminderStyle,
+      persistentRemindersEnabled,
+      nudgeCadence,
+      snoozePresetsMinutes,
       permissionGranted,
+      setSnoozePresetsMinutes,
     ],
   );
 
