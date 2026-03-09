@@ -14,7 +14,9 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { FEATURE_FLAGS } from "../app/constants/featureFlags";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
+import { useNotificationSync } from "../app/providers/NotificationSyncProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
+import { formatShortDateLabel, formatShortTimeLabel } from "../utils/date";
 
 type NudgeCadence = "daily" | "twiceDaily" | "hourly";
 
@@ -39,6 +41,7 @@ const SettingsScreen: React.FC = () => {
     setBackupEnabled,
   } = useAppSettings();
   const { isPremium, startMockPremium, clearPremium } = useSubscription();
+  const { schedule, isSyncing } = useNotificationSync();
   const {
     notificationsEnabled,
     setNotificationsEnabled,
@@ -242,6 +245,24 @@ const SettingsScreen: React.FC = () => {
           <Text style={styles.helperText}>
             Advanced persistent reminders and custom snooze are Premium features.
           </Text>
+          <View style={styles.scheduleSummaryCard}>
+            <Text style={styles.scheduleSummaryTitle}>Scheduled reminders</Text>
+            <Text style={styles.scheduleSummaryMeta}>
+              {isSyncing
+                ? "Syncing reminder schedule..."
+                : `${schedule.scheduledCount} reminder${
+                    schedule.scheduledCount === 1 ? "" : "s"
+                  } currently planned`}
+            </Text>
+            {schedule.nextReminderAt ? (
+              <Text style={styles.scheduleSummaryMeta}>
+                Next: {formatShortDateLabel(schedule.nextReminderAt)}{" "}
+                {formatShortTimeLabel(schedule.nextReminderAt)}
+              </Text>
+            ) : (
+              <Text style={styles.scheduleSummaryMeta}>No upcoming reminders.</Text>
+            )}
+          </View>
           {FEATURE_FLAGS.persistentRemindersEnabled ? (
             <View style={styles.advancedReminderBox}>
               <View style={styles.switchRow}>
@@ -470,6 +491,26 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
     borderRadius: 12,
     padding: 12,
+  },
+  scheduleSummaryCard: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: "#F8FAFC",
+  },
+  scheduleSummaryTitle: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#334155",
+    marginBottom: 2,
+  },
+  scheduleSummaryMeta: {
+    fontSize: 12,
+    color: "#64748B",
+    lineHeight: 17,
   },
   subsectionLabel: {
     marginTop: 10,

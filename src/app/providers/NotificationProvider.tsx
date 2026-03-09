@@ -1,4 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  getNotificationPermissionStatus,
+  requestNotificationPermission,
+} from "../services/notifications/NotificationPermissions";
 import { STORAGE_KEYS, readJson, writeJson } from "../../utils/storage";
 
 type ReminderStyle = "standard" | "focused";
@@ -89,6 +93,10 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
         setPermissionGranted(Boolean(persisted.permissionGranted));
       }
       if (isMounted) {
+        const permission = await getNotificationPermissionStatus();
+        setPermissionGranted(permission);
+      }
+      if (isMounted) {
         setIsHydrated(true);
       }
     };
@@ -130,9 +138,9 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
   ]);
 
   const requestPermission = async () => {
-    // Placeholder for native permission request.
-    setPermissionGranted(true);
-    return true;
+    const granted = await requestNotificationPermission();
+    setPermissionGranted(granted);
+    return granted;
   };
 
   const setSnoozePresetsMinutes = useCallback((minutes: number[]) => {
