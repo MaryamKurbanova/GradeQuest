@@ -13,6 +13,7 @@ import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
+import { useTheme } from "../app/providers/ThemeProvider";
 import {
   extractDateKey,
   formatShortDateLabel,
@@ -21,10 +22,30 @@ import {
   parseAppDateTime,
 } from "../utils/date";
 
+const DASHBOARD_BACKGROUND_COLORS = {
+  default: "#F5F7FB",
+  aurora: "#ECFEFF",
+  sunset: "#FFF7ED",
+  midnight: "#E2E8F0",
+} as const;
+
+const COURSE_ICON_LABELS = {
+  book: "BOOK",
+  flask: "LAB",
+  calculator: "MATH",
+  globe: "GLOBAL",
+} as const;
+
 const DashboardScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { displayName } = useAppSettings();
   const { isPremium } = useSubscription();
+  const {
+    courseAccentColor,
+    courseIconStyle,
+    dashboardBackgroundPreset,
+    streakAnimationStyle,
+  } = useTheme();
   const { points, streakDays, level } = useGamification();
   const { assignments, exams, courses } = useStudyData();
 
@@ -47,6 +68,15 @@ const DashboardScreen: React.FC = () => {
     .filter((exam) => exam.status === "upcoming" && extractDateKey(exam.examAt) >= todayKey)
     .sort((a, b) => a.examAt.localeCompare(b.examAt))
     .slice(0, 5);
+  const courseIconTag = COURSE_ICON_LABELS[courseIconStyle];
+  const dashboardBackgroundColor = DASHBOARD_BACKGROUND_COLORS[dashboardBackgroundPreset];
+
+  const streakCardStyle =
+    streakAnimationStyle === "glow"
+      ? styles.streakCardGlow
+      : streakAnimationStyle === "burst"
+        ? styles.streakCardBurst
+        : styles.streakCardSubtle;
 
   const onAddAssignment = () => {
     navigate("assignmentForm");
@@ -68,13 +98,13 @@ const DashboardScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: dashboardBackgroundColor }]}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.greeting}>Welcome back{displayName ? `, ${displayName}` : ""}</Text>
         <Text style={styles.title}>Today at a glance</Text>
 
         <View style={styles.statsRow}>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, streakCardStyle, { borderColor: courseAccentColor }]}>
             <Text style={styles.statNumber}>{streakDays}</Text>
             <Text style={styles.statLabel}>Day streak</Text>
           </View>
@@ -89,7 +119,10 @@ const DashboardScreen: React.FC = () => {
         </View>
 
         <View style={styles.actionsRow}>
-          <TouchableOpacity style={styles.primaryAction} onPress={onAddAssignment}>
+          <TouchableOpacity
+            style={[styles.primaryAction, { backgroundColor: courseAccentColor }]}
+            onPress={onAddAssignment}
+          >
             <Text style={styles.primaryActionText}>+ Add Assignment</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondaryAction} onPress={onAddExam}>
@@ -98,7 +131,10 @@ const DashboardScreen: React.FC = () => {
         </View>
 
         {FEATURE_FLAGS.premiumWidgetsEnabled ? (
-          <TouchableOpacity style={styles.quickAccessButton} onPress={onOpenQuickAccess}>
+          <TouchableOpacity
+            style={[styles.quickAccessButton, { borderColor: courseAccentColor }]}
+            onPress={onOpenQuickAccess}
+          >
             <Text style={styles.quickAccessTitle}>
               {isPremium ? "Widgets & quick access" : "Unlock widgets & quick access"}
             </Text>
@@ -132,7 +168,7 @@ const DashboardScreen: React.FC = () => {
                     ) : null}
                   </View>
                   <Text style={styles.itemMeta}>
-                    {courseNameMap.get(assignment.courseId) ?? "Unknown Course"} - Due{" "}
+                    {courseIconTag} • {courseNameMap.get(assignment.courseId) ?? "Unknown Course"} - Due{" "}
                     {formatShortDateLabel(assignment.dueAt)} {formatShortTimeLabel(assignment.dueAt)}
                   </Text>
                 </View>
@@ -153,7 +189,7 @@ const DashboardScreen: React.FC = () => {
               <View key={exam.id} style={styles.itemCard}>
                 <Text style={styles.itemTitle}>{exam.title}</Text>
                 <Text style={styles.itemMeta}>
-                  {courseNameMap.get(exam.courseId) ?? "Unknown Course"} -{" "}
+                  {courseIconTag} • {courseNameMap.get(exam.courseId) ?? "Unknown Course"} -{" "}
                   {formatShortDateLabel(exam.examAt)} {formatShortTimeLabel(exam.examAt)}
                 </Text>
               </View>
@@ -245,6 +281,7 @@ const styles = StyleSheet.create({
   },
   quickAccessButton: {
     backgroundColor: "#FFFFFF",
+    borderWidth: 1.5,
     borderRadius: 14,
     padding: 14,
     marginBottom: 16,
@@ -253,6 +290,22 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 1,
+  },
+  streakCardSubtle: {
+    borderWidth: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  streakCardGlow: {
+    borderWidth: 1.5,
+    backgroundColor: "#EEF2FF",
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+  },
+  streakCardBurst: {
+    borderWidth: 1.5,
+    backgroundColor: "#FEF3C7",
+    shadowOpacity: 0.08,
+    shadowRadius: 9,
   },
   quickAccessTitle: {
     fontSize: 15,

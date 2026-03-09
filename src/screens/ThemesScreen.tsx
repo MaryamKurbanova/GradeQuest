@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
   Alert,
   SafeAreaView,
@@ -11,7 +11,12 @@ import {
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
-import type { ThemeId } from "../app/providers/ThemeProvider";
+import type {
+  CourseIconStyle,
+  DashboardBackgroundPreset,
+  StreakAnimationStyle,
+  ThemeId,
+} from "../app/providers/ThemeProvider";
 
 type ThemePack = {
   id: ThemeId;
@@ -19,6 +24,32 @@ type ThemePack = {
   styleHint: string;
   premium: boolean;
   colors: [string, string];
+};
+
+type CourseColorOption = {
+  colorHex: string;
+  label: string;
+  premium: boolean;
+};
+
+type CourseIconOption = {
+  style: CourseIconStyle;
+  label: string;
+  premium: boolean;
+};
+
+type DashboardBackgroundOption = {
+  id: DashboardBackgroundPreset;
+  name: string;
+  colors: [string, string];
+  premium: boolean;
+};
+
+type StreakAnimationOption = {
+  style: StreakAnimationStyle;
+  label: string;
+  hint: string;
+  premium: boolean;
 };
 
 const THEME_PACKS: ThemePack[] = [
@@ -59,39 +90,129 @@ const THEME_PACKS: ThemePack[] = [
   },
 ];
 
-const COURSE_COLOR_OPTIONS = ["#6366F1", "#22C55E", "#F97316", "#0EA5E9", "#E11D48", "#8B5CF6"];
+const COURSE_COLOR_OPTIONS: CourseColorOption[] = [
+  { colorHex: "#6366F1", label: "Indigo", premium: false },
+  { colorHex: "#22C55E", label: "Emerald", premium: false },
+  { colorHex: "#0EA5E9", label: "Sky", premium: false },
+  { colorHex: "#F97316", label: "Orange", premium: true },
+  { colorHex: "#E11D48", label: "Rose", premium: true },
+  { colorHex: "#8B5CF6", label: "Violet", premium: true },
+];
+
+const COURSE_ICON_OPTIONS: CourseIconOption[] = [
+  { style: "book", label: "Book", premium: false },
+  { style: "calculator", label: "Calculator", premium: false },
+  { style: "flask", label: "Lab", premium: true },
+  { style: "globe", label: "Global", premium: true },
+];
+
+const DASHBOARD_BACKGROUND_OPTIONS: DashboardBackgroundOption[] = [
+  { id: "default", name: "Default", colors: ["#F5F7FB", "#EEF2FF"], premium: false },
+  { id: "aurora", name: "Aurora", colors: ["#E0F2FE", "#CCFBF1"], premium: true },
+  { id: "sunset", name: "Sunset", colors: ["#FFEDD5", "#FCE7F3"], premium: true },
+  { id: "midnight", name: "Midnight", colors: ["#1E293B", "#334155"], premium: true },
+];
+
+const STREAK_ANIMATION_OPTIONS: StreakAnimationOption[] = [
+  { style: "subtle", label: "Subtle", hint: "Low-motion highlight", premium: false },
+  { style: "glow", label: "Glow", hint: "Soft luminous pulse", premium: true },
+  { style: "burst", label: "Burst", hint: "High-energy accent", premium: true },
+];
 
 const ThemesScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { isPremium } = useSubscription();
-  const { activeTheme, setActiveTheme } = useTheme();
-  const [selectedCourseColor, setSelectedCourseColor] = useState(COURSE_COLOR_OPTIONS[0]);
-  const [selectedIcon, setSelectedIcon] = useState("book");
+  const {
+    activeTheme,
+    setActiveTheme,
+    courseAccentColor,
+    setCourseAccentColor,
+    courseIconStyle,
+    setCourseIconStyle,
+    dashboardBackgroundPreset,
+    setDashboardBackgroundPreset,
+    streakAnimationStyle,
+    setStreakAnimationStyle,
+  } = useTheme();
 
   const selectedTheme = useMemo(
     () => THEME_PACKS.find((theme) => theme.id === activeTheme),
     [activeTheme],
   );
+  const selectedCourseColor = useMemo(
+    () => COURSE_COLOR_OPTIONS.find((option) => option.colorHex === courseAccentColor),
+    [courseAccentColor],
+  );
+  const selectedIconStyle = useMemo(
+    () => COURSE_ICON_OPTIONS.find((option) => option.style === courseIconStyle),
+    [courseIconStyle],
+  );
+  const selectedDashboardBackground = useMemo(
+    () => DASHBOARD_BACKGROUND_OPTIONS.find((option) => option.id === dashboardBackgroundPreset),
+    [dashboardBackgroundPreset],
+  );
+  const selectedStreakAnimation = useMemo(
+    () => STREAK_ANIMATION_OPTIONS.find((option) => option.style === streakAnimationStyle),
+    [streakAnimationStyle],
+  );
+
+  const enforcePremium = (isPremiumOption: boolean): boolean => {
+    if (!isPremiumOption || isPremium) {
+      return true;
+    }
+
+    Alert.alert(
+      "Premium personalization",
+      "Upgrade to Premium to unlock this personalization option.",
+      [
+        { text: "Not now", style: "cancel" },
+        { text: "View plans", onPress: () => navigate("paywall") },
+      ],
+    );
+    return false;
+  };
 
   const applyTheme = (theme: ThemePack) => {
-    if (theme.premium && !isPremium) {
-      Alert.alert(
-        "Premium theme",
-        "Upgrade to Premium to use this theme pack.",
-        [
-          { text: "Not now", style: "cancel" },
-          { text: "View plans", onPress: () => navigate("paywall") },
-        ],
-      );
+    if (!enforcePremium(theme.premium)) {
       return;
     }
     setActiveTheme(theme.id);
   };
 
+  const applyCourseColor = (option: CourseColorOption) => {
+    if (!enforcePremium(option.premium)) {
+      return;
+    }
+    setCourseAccentColor(option.colorHex);
+  };
+
+  const applyCourseIcon = (option: CourseIconOption) => {
+    if (!enforcePremium(option.premium)) {
+      return;
+    }
+    setCourseIconStyle(option.style);
+  };
+
+  const applyDashboardBackground = (option: DashboardBackgroundOption) => {
+    if (!enforcePremium(option.premium)) {
+      return;
+    }
+    setDashboardBackgroundPreset(option.id);
+  };
+
+  const applyStreakAnimationStyle = (option: StreakAnimationOption) => {
+    if (!enforcePremium(option.premium)) {
+      return;
+    }
+    setStreakAnimationStyle(option.style);
+  };
+
   const onReset = () => {
     setActiveTheme("light");
-    setSelectedCourseColor(COURSE_COLOR_OPTIONS[0]);
-    setSelectedIcon("book");
+    setCourseAccentColor("#6366F1");
+    setCourseIconStyle("book");
+    setDashboardBackgroundPreset("default");
+    setStreakAnimationStyle("subtle");
   };
 
   const onSave = () => {
@@ -110,13 +231,21 @@ const ThemesScreen: React.FC = () => {
           <Text style={styles.activeThemeHint}>
             {selectedTheme?.styleHint ?? "Clean and bright"}
           </Text>
+          <Text style={styles.activeThemeMeta}>
+            Course accent: {selectedCourseColor?.label ?? "Indigo"} • Icon style:{" "}
+            {selectedIconStyle?.label ?? "Book"}
+          </Text>
+          <Text style={styles.activeThemeMeta}>
+            Dashboard: {selectedDashboardBackground?.name ?? "Default"} • Streak:{" "}
+            {selectedStreakAnimation?.label ?? "Subtle"}
+          </Text>
         </View>
 
         {!isPremium ? (
           <View style={styles.premiumNotice}>
             <Text style={styles.premiumNoticeTitle}>Premium unlocks more style packs</Text>
             <Text style={styles.premiumNoticeText}>
-              Upgrade to unlock Pastel, Gradient, and Vibrant themes plus extra dashboard effects.
+              Upgrade to unlock advanced course styles, dashboard backgrounds, and streak effects.
             </Text>
             <TouchableOpacity style={styles.upgradeButton} onPress={() => navigate("paywall")}>
               <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
@@ -165,19 +294,21 @@ const ThemesScreen: React.FC = () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Course color</Text>
+          <Text style={styles.sectionTitle}>Course accent color</Text>
           <View style={styles.colorRow}>
-            {COURSE_COLOR_OPTIONS.map((color) => {
-              const isSelected = color === selectedCourseColor;
+            {COURSE_COLOR_OPTIONS.map((option) => {
+              const isSelected = option.colorHex === courseAccentColor;
+              const isLocked = option.premium && !isPremium;
               return (
                 <TouchableOpacity
-                  key={color}
+                  key={option.colorHex}
                   style={[
                     styles.colorCircle,
-                    { backgroundColor: color },
+                    { backgroundColor: option.colorHex },
                     isSelected && styles.colorCircleSelected,
+                    isLocked && styles.lockedOption,
                   ]}
-                  onPress={() => setSelectedCourseColor(color)}
+                  onPress={() => applyCourseColor(option)}
                 />
               );
             })}
@@ -187,17 +318,92 @@ const ThemesScreen: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Course icon style</Text>
           <View style={styles.iconRow}>
-            {["book", "flask", "calculator", "globe"].map((icon) => {
-              const isSelected = selectedIcon === icon;
+            {COURSE_ICON_OPTIONS.map((option) => {
+              const isSelected = courseIconStyle === option.style;
+              const isLocked = option.premium && !isPremium;
               return (
                 <TouchableOpacity
-                  key={icon}
-                  style={[styles.iconChip, isSelected && styles.iconChipSelected]}
-                  onPress={() => setSelectedIcon(icon)}
+                  key={option.style}
+                  style={[
+                    styles.iconChip,
+                    isSelected && styles.iconChipSelected,
+                    isLocked && styles.lockedOption,
+                  ]}
+                  onPress={() => applyCourseIcon(option)}
                 >
                   <Text style={[styles.iconChipText, isSelected && styles.iconChipTextSelected]}>
-                    {icon}
+                    {option.label}
                   </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Dashboard background</Text>
+          {DASHBOARD_BACKGROUND_OPTIONS.map((option) => {
+            const isSelected = dashboardBackgroundPreset === option.id;
+            const isLocked = option.premium && !isPremium;
+            return (
+              <TouchableOpacity
+                key={option.id}
+                style={[
+                  styles.themeCard,
+                  isSelected && styles.themeCardSelected,
+                  isLocked && styles.themeCardLocked,
+                ]}
+                onPress={() => applyDashboardBackground(option)}
+              >
+                <View style={styles.themePreview}>
+                  <View style={[styles.previewColor, { backgroundColor: option.colors[0] }]} />
+                  <View style={[styles.previewColor, { backgroundColor: option.colors[1] }]} />
+                </View>
+                <View style={styles.themeTextWrap}>
+                  <View style={styles.themeHeaderRow}>
+                    <Text style={styles.themeName}>{option.name}</Text>
+                    {option.premium ? (
+                      <View style={styles.pillPremium}>
+                        <Text style={styles.pillPremiumText}>Premium</Text>
+                      </View>
+                    ) : (
+                      <View style={styles.pillFree}>
+                        <Text style={styles.pillFreeText}>Free</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.themeHint}>Applies to dashboard visual background.</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Streak animation style</Text>
+          <View style={styles.iconRow}>
+            {STREAK_ANIMATION_OPTIONS.map((option) => {
+              const isSelected = streakAnimationStyle === option.style;
+              const isLocked = option.premium && !isPremium;
+              return (
+                <TouchableOpacity
+                  key={option.style}
+                  style={[
+                    styles.animationChip,
+                    isSelected && styles.animationChipSelected,
+                    isLocked && styles.lockedOption,
+                  ]}
+                  onPress={() => applyStreakAnimationStyle(option)}
+                >
+                  <Text
+                    style={[
+                      styles.animationChipTitle,
+                      isSelected && styles.animationChipTitleSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  <Text style={styles.animationChipHint}>{option.hint}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -264,6 +470,12 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 13,
     color: "#64748B",
+  },
+  activeThemeMeta: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#475569",
+    lineHeight: 17,
   },
   premiumNotice: {
     backgroundColor: "#EEF2FF",
@@ -389,6 +601,9 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "#0F172A",
   },
+  lockedOption: {
+    opacity: 0.55,
+  },
   iconRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -411,6 +626,34 @@ const styles = StyleSheet.create({
   },
   iconChipTextSelected: {
     color: "#FFFFFF",
+  },
+  animationChip: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+    marginRight: 8,
+    marginBottom: 8,
+    minWidth: 110,
+  },
+  animationChipSelected: {
+    borderColor: "#4F46E5",
+    backgroundColor: "#EEF2FF",
+  },
+  animationChipTitle: {
+    fontSize: 12,
+    color: "#0F172A",
+    fontWeight: "700",
+  },
+  animationChipTitleSelected: {
+    color: "#1D4ED8",
+  },
+  animationChipHint: {
+    marginTop: 3,
+    fontSize: 11,
+    color: "#64748B",
   },
   actionsRow: {
     flexDirection: "row",
