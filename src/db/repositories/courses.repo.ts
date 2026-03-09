@@ -49,6 +49,10 @@ export const listCourses = (): Course[] => {
   return [...courseStore];
 };
 
+export const replaceCourseStore = (nextCourses: Course[]): void => {
+  courseStore = [...nextCourses];
+};
+
 export const findCourseById = (courseId: string): Course | undefined => {
   return courseStore.find((course) => course.id === courseId);
 };

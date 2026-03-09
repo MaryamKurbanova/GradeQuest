@@ -65,6 +65,10 @@ export const listAssignments = (): Assignment[] => {
   return [...assignmentStore].sort((a, b) => a.dueAt.localeCompare(b.dueAt));
 };
 
+export const replaceAssignmentStore = (nextAssignments: Assignment[]): void => {
+  assignmentStore = [...nextAssignments];
+};
+
 export const createAssignment = (input: CreateAssignmentInput): Assignment => {
   const timestamp = nowIso();
   const next: Assignment = {

@@ -65,6 +65,10 @@ export const listExams = (): Exam[] => {
   return [...examStore].sort((a, b) => a.examAt.localeCompare(b.examAt));
 };
 
+export const replaceExamStore = (nextExams: Exam[]): void => {
+  examStore = [...nextExams];
+};
+
 export const createExam = (input: CreateExamInput): Exam => {
   const timestamp = nowIso();
   const next: Exam = {

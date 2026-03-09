@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { STORAGE_KEYS, readJson, writeJson } from "../../utils/storage";
 
 type ReminderStyle = "standard" | "focused";
 
@@ -19,6 +20,15 @@ type NotificationContextValue = {
 
 const NotificationContext = createContext<NotificationContextValue | undefined>(undefined);
 
+type PersistedNotifications = {
+  notificationsEnabled: boolean;
+  assignmentRemindersEnabled: boolean;
+  examRemindersEnabled: boolean;
+  streakNudgesEnabled: boolean;
+  reminderStyle: ReminderStyle;
+  permissionGranted: boolean;
+};
+
 export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [assignmentRemindersEnabled, setAssignmentRemindersEnabled] = useState(true);
@@ -26,6 +36,58 @@ export const NotificationProvider: React.FC<React.PropsWithChildren> = ({ childr
   const [streakNudgesEnabled, setStreakNudgesEnabled] = useState(true);
   const [reminderStyle, setReminderStyle] = useState<ReminderStyle>("standard");
   const [permissionGranted, setPermissionGranted] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const hydrate = async () => {
+      const persisted = await readJson<PersistedNotifications | null>(
+        STORAGE_KEYS.notifications,
+        null,
+      );
+      if (persisted && isMounted) {
+        setNotificationsEnabled(Boolean(persisted.notificationsEnabled));
+        setAssignmentRemindersEnabled(Boolean(persisted.assignmentRemindersEnabled));
+        setExamRemindersEnabled(Boolean(persisted.examRemindersEnabled));
+        setStreakNudgesEnabled(Boolean(persisted.streakNudgesEnabled));
+        setReminderStyle(persisted.reminderStyle ?? "standard");
+        setPermissionGranted(Boolean(persisted.permissionGranted));
+      }
+      if (isMounted) {
+        setIsHydrated(true);
+      }
+    };
+
+    void hydrate();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    void writeJson<PersistedNotifications>(STORAGE_KEYS.notifications, {
+      notificationsEnabled,
+      assignmentRemindersEnabled,
+      examRemindersEnabled,
+      streakNudgesEnabled,
+      reminderStyle,
+      permissionGranted,
+    });
+  }, [
+    notificationsEnabled,
+    assignmentRemindersEnabled,
+    examRemindersEnabled,
+    streakNudgesEnabled,
+    reminderStyle,
+    permissionGranted,
+    isHydrated,
+  ]);
 
   const requestPermission = async () => {
     // Placeholder for native permission request.

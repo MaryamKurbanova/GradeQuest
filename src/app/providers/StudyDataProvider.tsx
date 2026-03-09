@@ -1,17 +1,24 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import {
   createAssignment as createAssignmentRecord,
   listAssignments,
+  replaceAssignmentStore,
   toggleAssignmentCompletion as toggleAssignmentCompletionRecord,
 } from "../../db/repositories/assignments.repo";
-import { findCourseByName, listCourses } from "../../db/repositories/courses.repo";
+import {
+  findCourseByName,
+  listCourses,
+  replaceCourseStore,
+} from "../../db/repositories/courses.repo";
 import {
   createExam as createExamRecord,
   listExams,
+  replaceExamStore,
   toggleExamCompletion as toggleExamCompletionRecord,
 } from "../../db/repositories/exams.repo";
 import type { Assignment, Course, Exam, Priority } from "../../types/entities";
+import { STORAGE_KEYS, readJson, writeJson } from "../../utils/storage";
 
 type CreateAssignmentInput = {
   title: string;
@@ -43,14 +50,74 @@ type StudyDataContextValue = {
 
 const StudyDataContext = createContext<StudyDataContextValue | undefined>(undefined);
 
+type PersistedStudyData = {
+  courses: Course[];
+  assignments: Assignment[];
+  exams: Exam[];
+};
+
 const combineDateTime = (datePart: string, timePart: string): string => {
   return `${datePart.trim()} ${timePart.trim()}`.trim();
 };
 
 export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [courses] = useState<Course[]>(() => listCourses());
+  const [courses, setCourses] = useState<Course[]>(() => listCourses());
   const [assignments, setAssignments] = useState<Assignment[]>(() => listAssignments());
   const [exams, setExams] = useState<Exam[]>(() => listExams());
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const hydrate = async () => {
+      const persisted = await readJson<PersistedStudyData | null>(
+        STORAGE_KEYS.studyData,
+        null,
+      );
+      if (!persisted || !isMounted) {
+        if (isMounted) {
+          setIsHydrated(true);
+        }
+        return;
+      }
+
+      const nextCourses =
+        Array.isArray(persisted.courses) && persisted.courses.length > 0
+          ? persisted.courses
+          : listCourses();
+      const nextAssignments = Array.isArray(persisted.assignments)
+        ? persisted.assignments
+        : [];
+      const nextExams = Array.isArray(persisted.exams) ? persisted.exams : [];
+
+      replaceCourseStore(nextCourses);
+      replaceAssignmentStore(nextAssignments);
+      replaceExamStore(nextExams);
+
+      setCourses(listCourses());
+      setAssignments(listAssignments());
+      setExams(listExams());
+      setIsHydrated(true);
+    };
+
+    void hydrate();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    void writeJson<PersistedStudyData>(STORAGE_KEYS.studyData, {
+      courses,
+      assignments,
+      exams,
+    });
+  }, [courses, assignments, exams, isHydrated]);
 
   const createAssignment = (input: CreateAssignmentInput): Assignment => {
     const course = findCourseByName(input.courseName);

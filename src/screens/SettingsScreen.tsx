@@ -27,7 +27,7 @@ const SettingsScreen: React.FC = () => {
     backupEnabled,
     setBackupEnabled,
   } = useAppSettings();
-  const { isPremium, plan, startMockPremium, clearPremium } = useSubscription();
+  const { isPremium, startMockPremium, clearPremium } = useSubscription();
   const {
     notificationsEnabled,
     setNotificationsEnabled,
