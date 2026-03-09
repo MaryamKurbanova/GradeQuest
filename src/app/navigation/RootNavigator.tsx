@@ -27,6 +27,7 @@ import WidgetsScreen from "../../screens/WidgetsScreen";
 import { FEATURE_FLAGS } from "../constants/featureFlags";
 import { DEFAULT_ROUTE, PRIMARY_NAV_ROUTES, getRouteLabel } from "../constants/routes";
 import { useAppSettings } from "../providers/AppSettingsProvider";
+import { DESIGN } from "../theme/design";
 import { NavigationProvider } from "./NavigationContext";
 import { RouteKey } from "./types";
 
@@ -108,10 +109,9 @@ const RootNavigator: React.FC = () => {
               return (
                 <TouchableOpacity
                   key={route.key}
-                  style={styles.navButton}
+                  style={[styles.navButton, isActive && styles.navButtonActive]}
                   onPress={() => setActiveRoute(route.key)}
                 >
-                  <View style={[styles.navDot, isActive && styles.navDotActive]} />
                   <Text style={[styles.navButtonText, isActive && styles.navButtonTextActive]}>
                     {route.label}
                   </Text>
@@ -128,60 +128,59 @@ const RootNavigator: React.FC = () => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   header: {
-    paddingHorizontal: 16,
-    paddingTop: 6,
-    paddingBottom: 7,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E2E8F0",
-    backgroundColor: "#FFFFFF",
+    paddingHorizontal: DESIGN.spacing.lg,
+    paddingTop: DESIGN.spacing.xs,
+    paddingBottom: DESIGN.spacing.sm,
+    backgroundColor: DESIGN.colors.appBg,
   },
   appTitle: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: DESIGN.colors.textPrimary,
   },
   screenTitle: {
-    marginTop: 2,
+    marginTop: 3,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   content: {
     flex: 1,
   },
   navContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
     alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: "#E2E8F0",
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 6,
+    justifyContent: "space-around",
+    marginHorizontal: DESIGN.spacing.md,
+    marginBottom: DESIGN.spacing.sm,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
+    borderRadius: DESIGN.radius.lg,
+    backgroundColor: DESIGN.colors.surface,
+    paddingVertical: 5,
+    ...DESIGN.shadow.card,
   },
   navButton: {
-    flex: 1,
+    flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 5,
+    justifyContent: "center",
+    borderRadius: DESIGN.radius.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 7,
+    minWidth: 58,
   },
-  navDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 999,
-    backgroundColor: "#CBD5E1",
-    marginBottom: 4,
-  },
-  navDotActive: {
-    backgroundColor: "#1D4ED8",
+  navButtonActive: {
+    backgroundColor: DESIGN.colors.primarySoft,
   },
   navButtonText: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
   },
   navButtonTextActive: {
-    color: "#1D4ED8",
+    color: DESIGN.colors.primary,
   },
 });
 

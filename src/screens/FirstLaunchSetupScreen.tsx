@@ -14,6 +14,7 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
+import { DESIGN } from "../app/theme/design";
 
 type ThemeChoice = "light" | "dark";
 type FocusGoal = "consistency" | "grades" | "balance";
@@ -298,7 +299,7 @@ const FirstLaunchSetupScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -306,19 +307,19 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
   kicker: {
-    fontSize: 16,
-    color: "#52607A",
+    fontSize: 14,
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
-    color: "#475569",
+    color: DESIGN.colors.textSecondary,
     lineHeight: 20,
     marginBottom: 14,
   },
@@ -340,20 +341,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#22C55E",
   },
   sectionCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 14,
     marginBottom: 12,
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    ...DESIGN.shadow.card,
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   input: {
@@ -369,13 +366,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     lineHeight: 17,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   choiceRow: {
     flexDirection: "row",
   },
   choiceChip: {
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.surface,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     borderRadius: 999,
     paddingHorizontal: 14,
     paddingVertical: 8,

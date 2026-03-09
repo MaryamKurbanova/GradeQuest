@@ -13,6 +13,7 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
+import { DESIGN } from "../app/theme/design";
 
 const ProfileScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
@@ -109,7 +110,7 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -117,31 +118,32 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
   kicker: {
-    fontSize: 16,
-    color: "#52607A",
+    fontSize: 14,
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
-    fontSize: 25,
+    fontSize: DESIGN.typography.title,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 12,
   },
   planCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 14,
     marginBottom: 12,
+    ...DESIGN.shadow.card,
   },
   planTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   planText: {
     marginTop: 4,
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   planButton: {
     marginTop: 10,
@@ -162,20 +164,21 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     paddingVertical: 12,
     alignItems: "center",
     marginRight: 8,
+    ...DESIGN.shadow.card,
   },
   statNumber: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   statLabel: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     marginTop: 2,
   },
   section: {
@@ -190,21 +193,22 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   sectionMeta: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     fontWeight: "600",
   },
   badgeRow: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 12,
     marginBottom: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    ...DESIGN.shadow.card,
   },
   badgeTextWrap: {
     flex: 1,
@@ -213,12 +217,12 @@ const styles = StyleSheet.create({
   badgeName: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   badgeDescription: {
     marginTop: 2,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   badgeStatus: {
     fontSize: 11,
@@ -228,19 +232,20 @@ const styles = StyleSheet.create({
     color: "#15803D",
   },
   locked: {
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   linkRow: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 12,
     marginBottom: 8,
+    ...DESIGN.shadow.card,
   },
   linkText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
 });
 

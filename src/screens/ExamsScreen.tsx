@@ -11,6 +11,7 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useCelebration } from "../app/providers/CelebrationProvider";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
+import { DESIGN } from "../app/theme/design";
 import type { Course } from "../types/entities";
 
 type ExamFilter = "all" | "upcoming" | "thisWeek" | "completed";
@@ -220,7 +221,7 @@ const ExamsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -228,14 +229,14 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
   kicker: {
-    fontSize: 16,
-    color: "#52607A",
+    fontSize: 14,
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 25,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 14,
   },
   summaryRow: {
@@ -244,25 +245,21 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     paddingVertical: 12,
     alignItems: "center",
     marginRight: 8,
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    ...DESIGN.shadow.card,
   },
   summaryNumber: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   summaryLabel: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     marginTop: 2,
   },
   addButton: {
@@ -282,8 +279,10 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: "#E2E8F0",
+    borderRadius: DESIGN.radius.pill,
+    backgroundColor: DESIGN.colors.surface,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     marginRight: 8,
   },
   filterChipActive: {
@@ -291,7 +290,7 @@ const styles = StyleSheet.create({
   },
   filterChipText: {
     fontSize: 13,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "600",
   },
   filterChipTextActive: {
@@ -301,8 +300,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   emptyCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 16,
     alignItems: "center",
   },
@@ -318,15 +317,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   itemCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 12,
     marginBottom: 9,
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    ...DESIGN.shadow.card,
   },
   itemTopRow: {
     flexDirection: "row",
@@ -338,9 +333,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   itemTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   itemTitleCompleted: {
     textDecorationLine: "line-through",
@@ -348,7 +343,7 @@ const styles = StyleSheet.create({
   },
   itemMeta: {
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     marginTop: 4,
   },
   courseMetaRow: {

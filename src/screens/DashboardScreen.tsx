@@ -14,6 +14,7 @@ import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
+import { DESIGN } from "../app/theme/design";
 import {
   extractDateKey,
   formatShortDateLabel,
@@ -23,7 +24,7 @@ import {
 } from "../utils/date";
 
 const DASHBOARD_BACKGROUND_COLORS = {
-  default: "#F5F7FB",
+  default: DESIGN.colors.appBg,
   aurora: "#ECFEFF",
   sunset: "#FFF7ED",
   midnight: "#E2E8F0",
@@ -204,51 +205,47 @@ const DashboardScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 28,
   },
   greeting: {
-    fontSize: 16,
-    color: "#52607A",
+    fontSize: 14,
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
-    fontSize: 25,
+    fontSize: DESIGN.typography.title,
     fontWeight: "700",
-    color: "#101828",
-    marginBottom: 14,
+    color: DESIGN.colors.textPrimary,
+    marginBottom: 12,
   },
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 14,
+    marginBottom: 12,
   },
   statCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    paddingVertical: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
+    paddingVertical: 13,
     paddingHorizontal: 10,
     marginHorizontal: 4,
     alignItems: "center",
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
+    ...DESIGN.shadow.card,
   },
   statNumber: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   statLabel: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     marginTop: 3,
   },
   actionsRow: {
@@ -269,31 +266,29 @@ const styles = StyleSheet.create({
   },
   secondaryAction: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     paddingVertical: 12,
     alignItems: "center",
     marginLeft: 6,
   },
   secondaryActionText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
   quickAccessButton: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderWidth: 1.5,
-    borderRadius: 14,
+    borderRadius: DESIGN.radius.md,
     padding: 14,
-    marginBottom: 16,
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    marginBottom: 14,
+    ...DESIGN.shadow.card,
   },
   streakCardSubtle: {
     borderWidth: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
   },
   streakCardGlow: {
     borderWidth: 1.5,
@@ -308,35 +303,31 @@ const styles = StyleSheet.create({
     shadowRadius: 9,
   },
   quickAccessTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   quickAccessSubtitle: {
     marginTop: 4,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     lineHeight: 18,
   },
   section: {
     marginBottom: 14,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: DESIGN.typography.section,
     fontWeight: "700",
-    color: "#0F172A",
-    marginBottom: 10,
+    color: DESIGN.colors.textPrimary,
+    marginBottom: 9,
   },
   itemCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
+    padding: 12,
+    marginBottom: 9,
+    ...DESIGN.shadow.card,
   },
   itemTopRow: {
     flexDirection: "row",
@@ -345,13 +336,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   itemMeta: {
-    fontSize: 13,
-    color: "#64748B",
+    fontSize: DESIGN.typography.body,
+    color: DESIGN.colors.textMuted,
   },
   overduePill: {
     backgroundColor: "#FEE2E2",

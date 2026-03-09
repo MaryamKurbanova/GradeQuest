@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
+import { DESIGN } from "../app/theme/design";
 import type { Course } from "../types/entities";
 import {
   addDays,
@@ -212,7 +213,7 @@ const CalendarScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -220,14 +221,14 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
   kicker: {
-    fontSize: 16,
-    color: "#52607A",
+    fontSize: 14,
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 25,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 14,
   },
   dayRow: {
@@ -235,8 +236,10 @@ const styles = StyleSheet.create({
   },
   dayCard: {
     width: 64,
-    borderRadius: 14,
-    backgroundColor: "#E2E8F0",
+    borderRadius: DESIGN.radius.md,
+    backgroundColor: DESIGN.colors.surface,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     paddingVertical: 10,
     alignItems: "center",
     marginRight: 8,
@@ -263,24 +266,20 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     marginTop: 10,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 14,
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    ...DESIGN.shadow.card,
   },
   summaryTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   summaryText: {
     marginTop: 4,
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   section: {
     marginTop: 14,
@@ -288,12 +287,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   emptyCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 16,
     alignItems: "center",
   },
@@ -308,15 +307,11 @@ const styles = StyleSheet.create({
     color: "#64748B",
   },
   itemCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     padding: 12,
     marginBottom: 9,
-    shadowColor: "#0B1324",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    ...DESIGN.shadow.card,
   },
   itemHeaderRow: {
     flexDirection: "row",
@@ -325,9 +320,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginRight: 10,
     flex: 1,
   },
@@ -338,7 +333,7 @@ const styles = StyleSheet.create({
   },
   itemMetaText: {
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   courseBadge: {
     borderRadius: 999,
