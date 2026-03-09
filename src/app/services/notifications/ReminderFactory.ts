@@ -57,22 +57,23 @@ const buildAssignmentReminders = (
     return [];
   }
 
-  return assignments
+  const reminders: ScheduledReminder[] = [];
+  assignments
     .filter((assignment) => assignment.status === "pending")
-    .map((assignment) => {
+    .forEach((assignment) => {
       const dueAt = parseAppDateTime(assignment.dueAt);
       if (!dueAt) {
-        return null;
+        return;
       }
       if (dueAt.getTime() <= now.getTime()) {
-        return null;
+        return;
       }
 
       const leadMinutes = preferences.reminderStyle === "focused" ? -180 : -120;
       const fireAt = toFutureOrMinimumDelay(withOffsetMinutes(dueAt, leadMinutes), now);
-      return {
+      reminders.push({
         id: `assignment:${assignment.id}`,
-        kind: "assignmentDue" as const,
+        kind: "assignmentDue",
         sourceId: assignment.id,
         title: assignment.title,
         body: preferences.persistentRemindersEnabled
@@ -81,9 +82,10 @@ const buildAssignmentReminders = (
         fireAt: fireAt.toISOString(),
         persistent: preferences.persistentRemindersEnabled,
         snoozePresetsMinutes: preferences.snoozePresetsMinutes,
-      };
-    })
-    .filter((item): item is ScheduledReminder => item !== null);
+      });
+    });
+
+  return reminders;
 };
 
 const buildExamReminders = (
@@ -95,22 +97,23 @@ const buildExamReminders = (
     return [];
   }
 
-  return exams
+  const reminders: ScheduledReminder[] = [];
+  exams
     .filter((exam) => exam.status === "upcoming")
-    .map((exam) => {
+    .forEach((exam) => {
       const examAt = parseAppDateTime(exam.examAt);
       if (!examAt) {
-        return null;
+        return;
       }
       if (examAt.getTime() <= now.getTime()) {
-        return null;
+        return;
       }
 
       const leadHours = preferences.reminderStyle === "focused" ? -36 : -24;
       const fireAt = toFutureOrMinimumDelay(withOffsetMinutes(examAt, leadHours * 60), now);
-      return {
+      reminders.push({
         id: `exam:${exam.id}`,
-        kind: "examDue" as const,
+        kind: "examDue",
         sourceId: exam.id,
         title: exam.title,
         body: preferences.persistentRemindersEnabled
@@ -119,9 +122,10 @@ const buildExamReminders = (
         fireAt: fireAt.toISOString(),
         persistent: preferences.persistentRemindersEnabled,
         snoozePresetsMinutes: preferences.snoozePresetsMinutes,
-      };
-    })
-    .filter((item): item is ScheduledReminder => item !== null);
+      });
+    });
+
+  return reminders;
 };
 
 const buildStreakNudgeReminders = (

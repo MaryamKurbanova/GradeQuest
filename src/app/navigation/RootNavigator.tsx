@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -21,14 +20,18 @@ import FirstLaunchSetupScreen from "../../screens/FirstLaunchSetupScreen";
 import GamificationScreen from "../../screens/GamificationScreen";
 import GradeCalculatorScreen from "../../screens/GradeCalculatorScreen";
 import PaywallScreen from "../../screens/PaywallScreen";
+import ProfileScreen from "../../screens/ProfileScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ThemesScreen from "../../screens/ThemesScreen";
 import WidgetsScreen from "../../screens/WidgetsScreen";
+import { FEATURE_FLAGS } from "../constants/featureFlags";
 import { DEFAULT_ROUTE, PRIMARY_NAV_ROUTES, getRouteLabel } from "../constants/routes";
+import { useAppSettings } from "../providers/AppSettingsProvider";
 import { NavigationProvider } from "./NavigationContext";
 import { RouteKey } from "./types";
 
 const RootNavigator: React.FC = () => {
+  const { isHydrated, hasCompletedOnboarding } = useAppSettings();
   const [activeRoute, setActiveRoute] = useState<RouteKey>(DEFAULT_ROUTE);
 
   const screenMap: Record<RouteKey, React.ComponentType> = useMemo(
@@ -41,6 +44,7 @@ const RootNavigator: React.FC = () => {
       courses: CoursesScreen,
       courseForm: CourseFormScreen,
       calendar: CalendarScreen,
+      profile: ProfileScreen,
       gamification: GamificationScreen,
       calculator: GradeCalculatorScreen,
       paywall: PaywallScreen,
@@ -55,41 +59,67 @@ const RootNavigator: React.FC = () => {
 
   const ActiveScreen = screenMap[activeRoute];
   const activeRouteLabel = getRouteLabel(activeRoute);
+  const showOnboarding = activeRoute === "firstLaunch";
+  const showBottomTabs = !showOnboarding;
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    if (FEATURE_FLAGS.firstLaunchSetupEnabled && !hasCompletedOnboarding) {
+      if (activeRoute !== "firstLaunch") {
+        setActiveRoute("firstLaunch");
+      }
+      return;
+    }
+
+    if (activeRoute === "firstLaunch") {
+      setActiveRoute(DEFAULT_ROUTE);
+    }
+  }, [activeRoute, hasCompletedOnboarding, isHydrated]);
+
+  if (!isHydrated) {
+    return (
+      <SafeAreaView style={styles.root}>
+        <View style={styles.content} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <NavigationProvider activeRoute={activeRoute} navigate={setActiveRoute}>
       <SafeAreaView style={styles.root}>
-        <View style={styles.header}>
-          <Text style={styles.appTitle}>GradeQuest</Text>
-          <Text style={styles.screenTitle}>{activeRouteLabel}</Text>
-        </View>
+        {!showOnboarding ? (
+          <View style={styles.header}>
+            <Text style={styles.appTitle}>GradeQuest</Text>
+            <Text style={styles.screenTitle}>{activeRouteLabel}</Text>
+          </View>
+        ) : null}
 
         <View style={styles.content}>
           <ActiveScreen />
         </View>
 
-        <View style={styles.navContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.navRow}
-          >
+        {showBottomTabs ? (
+          <View style={styles.navContainer}>
             {PRIMARY_NAV_ROUTES.map((route) => {
               const isActive = route.key === activeRoute;
               return (
                 <TouchableOpacity
                   key={route.key}
-                  style={[styles.navChip, isActive && styles.navChipActive]}
+                  style={styles.navButton}
                   onPress={() => setActiveRoute(route.key)}
                 >
-                  <Text style={[styles.navChipText, isActive && styles.navChipTextActive]}>
+                  <View style={[styles.navDot, isActive && styles.navDotActive]} />
+                  <Text style={[styles.navButtonText, isActive && styles.navButtonTextActive]}>
                     {route.label}
                   </Text>
                 </TouchableOpacity>
               );
             })}
-          </ScrollView>
-        </View>
+          </View>
+        ) : null}
       </SafeAreaView>
     </NavigationProvider>
   );
@@ -122,32 +152,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   navContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
     borderTopWidth: 1,
     borderTopColor: "#E2E8F0",
     backgroundColor: "#FFFFFF",
-    paddingVertical: 8,
+    paddingVertical: 6,
   },
-  navRow: {
-    paddingHorizontal: 12,
+  navButton: {
+    flex: 1,
     alignItems: "center",
+    paddingVertical: 5,
   },
-  navChip: {
-    paddingHorizontal: 11,
-    paddingVertical: 7,
+  navDot: {
+    width: 6,
+    height: 6,
     borderRadius: 999,
-    backgroundColor: "#E2E8F0",
-    marginRight: 8,
+    backgroundColor: "#CBD5E1",
+    marginBottom: 4,
   },
-  navChipActive: {
+  navDotActive: {
     backgroundColor: "#1D4ED8",
   },
-  navChipText: {
+  navButtonText: {
     fontSize: 11,
     fontWeight: "700",
     color: "#334155",
   },
-  navChipTextActive: {
-    color: "#FFFFFF",
+  navButtonTextActive: {
+    color: "#1D4ED8",
   },
 });
 

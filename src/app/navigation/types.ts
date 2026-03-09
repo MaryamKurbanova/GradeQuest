@@ -7,6 +7,7 @@ export type RouteKey =
   | "courses"
   | "courseForm"
   | "calendar"
+  | "profile"
   | "gamification"
   | "calculator"
   | "paywall"

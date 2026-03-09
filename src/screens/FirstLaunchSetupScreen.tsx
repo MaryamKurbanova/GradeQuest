@@ -16,10 +16,15 @@ import { useNotifications } from "../app/providers/NotificationProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
 
 type ThemeChoice = "light" | "dark";
+type FocusGoal = "consistency" | "grades" | "balance";
+type OnboardingStep = 0 | 1 | 2;
 
 const FirstLaunchSetupScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
-  const { setDisplayName: setGlobalDisplayName } = useAppSettings();
+  const {
+    setDisplayName: setGlobalDisplayName,
+    setHasCompletedOnboarding,
+  } = useAppSettings();
   const { setActiveTheme } = useTheme();
   const {
     notificationsEnabled,
@@ -30,8 +35,17 @@ const FirstLaunchSetupScreen: React.FC = () => {
   } = useNotifications();
   const [displayName, setDisplayNameInput] = useState("");
   const [themeChoice, setThemeChoice] = useState<ThemeChoice>("light");
+  const [focusGoal, setFocusGoal] = useState<FocusGoal>("consistency");
+  const [step, setStep] = useState<OnboardingStep>(0);
 
-  const canContinue = useMemo(() => true, []);
+  const steps = useMemo(
+    () => [
+      { key: 0, title: "Welcome", subtitle: "Set your student profile basics." },
+      { key: 1, title: "Study style", subtitle: "Personalize how you want to study." },
+      { key: 2, title: "Reminders", subtitle: "Enable nudges so you stay on track." },
+    ],
+    [],
+  );
 
   const handleNotificationToggle = async (enabled: boolean) => {
     if (enabled) {
@@ -46,23 +60,29 @@ const FirstLaunchSetupScreen: React.FC = () => {
     setNotificationsEnabled(enabled);
   };
 
-  const onContinue = () => {
-    if (!canContinue) {
-      return;
-    }
-
+  const completeOnboarding = () => {
     setActiveTheme(themeChoice);
     setGlobalDisplayName(displayName.trim() || "Guest Student");
+    setHasCompletedOnboarding(true);
 
     Alert.alert(
-      "Setup complete",
+      "All set",
       `Welcome${displayName.trim() ? `, ${displayName.trim()}` : ""}! Your app is ready.`,
     );
     navigate("dashboard");
   };
 
+  const onContinue = () => {
+    if (step < 2) {
+      setStep((prev) => (prev + 1) as OnboardingStep);
+      return;
+    }
+    completeOnboarding();
+  };
+
   const onSkip = () => {
-    Alert.alert("Skipped", "You can change these settings anytime in Settings.");
+    setHasCompletedOnboarding(true);
+    Alert.alert("Skipped", "You can customize these settings anytime in Profile and Settings.");
     navigate("dashboard");
   };
 
@@ -70,116 +90,204 @@ const FirstLaunchSetupScreen: React.FC = () => {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.kicker}>Welcome to GradeQuest</Text>
-        <Text style={styles.title}>Quick setup</Text>
-        <Text style={styles.subtitle}>
-          No signup needed. Set your preferences and start planning in seconds.
-        </Text>
+        <Text style={styles.title}>Onboarding</Text>
+        <Text style={styles.subtitle}>{steps[step].subtitle}</Text>
 
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>What should we call you?</Text>
-          <TextInput
-            value={displayName}
-            onChangeText={setDisplayNameInput}
-            placeholder="Optional display name"
-            placeholderTextColor="#94A3B8"
-            style={styles.input}
-          />
-          <Text style={styles.helperText}>Leave blank to continue as Guest Student.</Text>
-        </View>
-
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Default theme</Text>
-          <View style={styles.choiceRow}>
-            <TouchableOpacity
-              style={[styles.choiceChip, themeChoice === "light" && styles.choiceChipActive]}
-              onPress={() => setThemeChoice("light")}
-            >
-              <Text
-                style={[styles.choiceChipText, themeChoice === "light" && styles.choiceChipTextActive]}
-              >
-                Light
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.choiceChip, themeChoice === "dark" && styles.choiceChipActive]}
-              onPress={() => setThemeChoice("dark")}
-            >
-              <Text
-                style={[styles.choiceChipText, themeChoice === "dark" && styles.choiceChipTextActive]}
-              >
-                Dark
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Notifications</Text>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Enable reminders</Text>
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={(enabled) => {
-                void handleNotificationToggle(enabled);
-              }}
-            />
-          </View>
-          <Text style={styles.helperText}>
-            Turn this off if you want to start quietly and enable reminders later.
-          </Text>
-        </View>
-
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Reminder style</Text>
-          <View style={styles.choiceRow}>
-            <TouchableOpacity
-              style={[
-                styles.choiceChip,
-                reminderStyle === "standard" && styles.choiceChipActive,
-                !notificationsEnabled && styles.choiceChipDisabled,
-              ]}
-              onPress={() => setReminderStyle("standard")}
-              disabled={!notificationsEnabled}
-            >
-              <Text
+        <View style={styles.progressRow}>
+          {steps.map((item) => {
+            const isActive = item.key === step;
+            const isDone = item.key < step;
+            return (
+              <View
+                key={item.key}
                 style={[
-                  styles.choiceChipText,
-                  reminderStyle === "standard" && styles.choiceChipTextActive,
+                  styles.progressDot,
+                  isActive && styles.progressDotActive,
+                  isDone && styles.progressDotDone,
                 ]}
-              >
-                Standard
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.choiceChip,
-                reminderStyle === "focused" && styles.choiceChipActive,
-                !notificationsEnabled && styles.choiceChipDisabled,
-              ]}
-              onPress={() => setReminderStyle("focused")}
-              disabled={!notificationsEnabled}
-            >
-              <Text
-                style={[
-                  styles.choiceChipText,
-                  reminderStyle === "focused" && styles.choiceChipTextActive,
-                ]}
-              >
-                Focused
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.helperText}>
-            Focused adds stronger nudges to protect streaks.
-          </Text>
+              />
+            );
+          })}
         </View>
+
+        {step === 0 ? (
+          <>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>What should we call you?</Text>
+              <TextInput
+                value={displayName}
+                onChangeText={setDisplayNameInput}
+                placeholder="Optional display name"
+                placeholderTextColor="#94A3B8"
+                style={styles.input}
+              />
+              <Text style={styles.helperText}>Leave blank to continue as Guest Student.</Text>
+            </View>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>Default theme</Text>
+              <View style={styles.choiceRow}>
+                <TouchableOpacity
+                  style={[styles.choiceChip, themeChoice === "light" && styles.choiceChipActive]}
+                  onPress={() => setThemeChoice("light")}
+                >
+                  <Text
+                    style={[styles.choiceChipText, themeChoice === "light" && styles.choiceChipTextActive]}
+                  >
+                    Light
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.choiceChip, themeChoice === "dark" && styles.choiceChipActive]}
+                  onPress={() => setThemeChoice("dark")}
+                >
+                  <Text
+                    style={[styles.choiceChipText, themeChoice === "dark" && styles.choiceChipTextActive]}
+                  >
+                    Dark
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
+        ) : null}
+
+        {step === 1 ? (
+          <>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>What is your main focus?</Text>
+              <View style={styles.choiceRow}>
+                <TouchableOpacity
+                  style={[styles.choiceChip, focusGoal === "consistency" && styles.choiceChipActive]}
+                  onPress={() => setFocusGoal("consistency")}
+                >
+                  <Text
+                    style={[
+                      styles.choiceChipText,
+                      focusGoal === "consistency" && styles.choiceChipTextActive,
+                    ]}
+                  >
+                    Consistency
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.choiceChip, focusGoal === "grades" && styles.choiceChipActive]}
+                  onPress={() => setFocusGoal("grades")}
+                >
+                  <Text
+                    style={[
+                      styles.choiceChipText,
+                      focusGoal === "grades" && styles.choiceChipTextActive,
+                    ]}
+                  >
+                    Better grades
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.choiceChip, focusGoal === "balance" && styles.choiceChipActive]}
+                  onPress={() => setFocusGoal("balance")}
+                >
+                  <Text
+                    style={[
+                      styles.choiceChipText,
+                      focusGoal === "balance" && styles.choiceChipTextActive,
+                    ]}
+                  >
+                    Study balance
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.helperText}>
+                Great choice. Gamification, streaks, and reminders will help you stay accountable.
+              </Text>
+            </View>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>What you will get</Text>
+              <Text style={styles.helperText}>• Assignment and exam planner</Text>
+              <Text style={styles.helperText}>• Grade Target Calculator</Text>
+              <Text style={styles.helperText}>• Points, badges, and celebration popups</Text>
+            </View>
+          </>
+        ) : null}
+
+        {step === 2 ? (
+          <>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>Notifications</Text>
+              <View style={styles.switchRow}>
+                <Text style={styles.switchLabel}>Enable reminders</Text>
+                <Switch
+                  value={notificationsEnabled}
+                  onValueChange={(enabled) => {
+                    void handleNotificationToggle(enabled);
+                  }}
+                />
+              </View>
+              <Text style={styles.helperText}>
+                Turn this off if you want to start quietly and enable reminders later.
+              </Text>
+            </View>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>Reminder style</Text>
+              <View style={styles.choiceRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.choiceChip,
+                    reminderStyle === "standard" && styles.choiceChipActive,
+                    !notificationsEnabled && styles.choiceChipDisabled,
+                  ]}
+                  onPress={() => setReminderStyle("standard")}
+                  disabled={!notificationsEnabled}
+                >
+                  <Text
+                    style={[
+                      styles.choiceChipText,
+                      reminderStyle === "standard" && styles.choiceChipTextActive,
+                    ]}
+                  >
+                    Standard
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.choiceChip,
+                    reminderStyle === "focused" && styles.choiceChipActive,
+                    !notificationsEnabled && styles.choiceChipDisabled,
+                  ]}
+                  onPress={() => setReminderStyle("focused")}
+                  disabled={!notificationsEnabled}
+                >
+                  <Text
+                    style={[
+                      styles.choiceChipText,
+                      reminderStyle === "focused" && styles.choiceChipTextActive,
+                    ]}
+                  >
+                    Focused
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.helperText}>
+                Focused adds stronger nudges to protect streaks and study momentum.
+              </Text>
+            </View>
+          </>
+        ) : null}
 
         <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.skipButton} onPress={onSkip}>
-            <Text style={styles.skipButtonText}>Skip for now</Text>
+          <TouchableOpacity
+            style={styles.skipButton}
+            onPress={() => {
+              if (step === 0) {
+                onSkip();
+              } else {
+                setStep((prev) => (prev - 1) as OnboardingStep);
+              }
+            }}
+          >
+            <Text style={styles.skipButtonText}>{step === 0 ? "Skip" : "Back"}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.continueButton} onPress={onContinue}>
-            <Text style={styles.continueButtonText}>Continue</Text>
+            <Text style={styles.continueButtonText}>{step === 2 ? "Finish" : "Continue"}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -213,6 +321,23 @@ const styles = StyleSheet.create({
     color: "#475569",
     lineHeight: 20,
     marginBottom: 14,
+  },
+  progressRow: {
+    flexDirection: "row",
+    marginBottom: 14,
+  },
+  progressDot: {
+    width: 26,
+    height: 6,
+    borderRadius: 999,
+    backgroundColor: "#CBD5E1",
+    marginRight: 6,
+  },
+  progressDotActive: {
+    backgroundColor: "#4F46E5",
+  },
+  progressDotDone: {
+    backgroundColor: "#22C55E",
   },
   sectionCard: {
     backgroundColor: "#FFFFFF",

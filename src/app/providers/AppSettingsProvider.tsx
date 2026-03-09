@@ -2,6 +2,9 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { STORAGE_KEYS, readJson, writeJson } from "../../utils/storage";
 
 type AppSettingsContextValue = {
+  isHydrated: boolean;
+  hasCompletedOnboarding: boolean;
+  setHasCompletedOnboarding: (completed: boolean) => void;
   displayName: string;
   setDisplayName: (name: string) => void;
   hapticsEnabled: boolean;
@@ -19,6 +22,7 @@ type PersistedAppSettings = {
   hapticsEnabled: boolean;
   celebrationEffectsEnabled: boolean;
   backupEnabled: boolean;
+  hasCompletedOnboarding: boolean;
 };
 
 export const AppSettingsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -26,6 +30,7 @@ export const AppSettingsProvider: React.FC<React.PropsWithChildren> = ({ childre
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [celebrationEffectsEnabled, setCelebrationEffectsEnabled] = useState(true);
   const [backupEnabled, setBackupEnabled] = useState(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -47,6 +52,11 @@ export const AppSettingsProvider: React.FC<React.PropsWithChildren> = ({ childre
       setHapticsEnabled(Boolean(persisted.hapticsEnabled));
       setCelebrationEffectsEnabled(Boolean(persisted.celebrationEffectsEnabled));
       setBackupEnabled(Boolean(persisted.backupEnabled));
+      setHasCompletedOnboarding(
+        typeof persisted.hasCompletedOnboarding === "boolean"
+          ? persisted.hasCompletedOnboarding
+          : true,
+      );
       setIsHydrated(true);
     };
 
@@ -67,11 +77,22 @@ export const AppSettingsProvider: React.FC<React.PropsWithChildren> = ({ childre
       hapticsEnabled,
       celebrationEffectsEnabled,
       backupEnabled,
+      hasCompletedOnboarding,
     });
-  }, [displayName, hapticsEnabled, celebrationEffectsEnabled, backupEnabled, isHydrated]);
+  }, [
+    displayName,
+    hapticsEnabled,
+    celebrationEffectsEnabled,
+    backupEnabled,
+    hasCompletedOnboarding,
+    isHydrated,
+  ]);
 
   const value = useMemo<AppSettingsContextValue>(
     () => ({
+      isHydrated,
+      hasCompletedOnboarding,
+      setHasCompletedOnboarding,
       displayName,
       setDisplayName,
       hapticsEnabled,
@@ -82,6 +103,8 @@ export const AppSettingsProvider: React.FC<React.PropsWithChildren> = ({ childre
       setBackupEnabled,
     }),
     [
+      isHydrated,
+      hasCompletedOnboarding,
       displayName,
       hapticsEnabled,
       celebrationEffectsEnabled,

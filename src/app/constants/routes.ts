@@ -9,6 +9,7 @@ export const APP_ROUTES: RouteItem[] = [
   { key: "courses", label: "Courses" },
   { key: "courseForm", label: "Add Course" },
   { key: "calendar", label: "Calendar" },
+  { key: "profile", label: "Profile" },
   { key: "gamification", label: "Gamification" },
   { key: "calculator", label: "Calculator" },
   { key: "paywall", label: "Premium" },
@@ -21,11 +22,10 @@ export const APP_ROUTES: RouteItem[] = [
 
 export const PRIMARY_NAV_ROUTES: RouteItem[] = [
   { key: "dashboard", label: "Dashboard" },
-  { key: "assignments", label: "Assignments" },
-  { key: "exams", label: "Exams" },
   { key: "calendar", label: "Calendar" },
-  { key: "calculator", label: "Calculator" },
-  { key: "settings", label: "Settings" },
+  { key: "assignments", label: "Tasks" },
+  { key: "exams", label: "Exams" },
+  { key: "profile", label: "Profile" },
 ];
 
 const ROUTE_LABELS: Record<RouteKey, string> = APP_ROUTES.reduce(
