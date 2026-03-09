@@ -11,6 +11,7 @@ export const APP_ROUTES: RouteItem[] = [
   { key: "calculator", label: "Calculator" },
   { key: "paywall", label: "Premium" },
   { key: "analytics", label: "Analytics" },
+  { key: "widgets", label: "Widgets" },
   { key: "themes", label: "Themes" },
   { key: "settings", label: "Settings" },
   { key: "firstLaunch", label: "First Launch" },

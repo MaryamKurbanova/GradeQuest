@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
+import { FEATURE_FLAGS } from "../app/constants/featureFlags";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
@@ -93,6 +94,18 @@ const SettingsScreen: React.FC = () => {
     navigate("themes");
   };
 
+  const handleOpenWidgets = () => {
+    if (!FEATURE_FLAGS.premiumWidgetsEnabled) {
+      Alert.alert("Unavailable", "Widgets are currently disabled in this build.");
+      return;
+    }
+    if (!isPremium) {
+      navigate("paywall");
+      return;
+    }
+    navigate("widgets");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -121,6 +134,19 @@ const SettingsScreen: React.FC = () => {
             </View>
             <Text style={styles.linkAction}>Open</Text>
           </TouchableOpacity>
+          {FEATURE_FLAGS.premiumWidgetsEnabled ? (
+            <TouchableOpacity style={styles.linkRow} onPress={handleOpenWidgets}>
+              <View>
+                <Text style={styles.linkTitle}>Widgets & quick access</Text>
+                <Text style={styles.linkSubtitle}>
+                  {isPremium
+                    ? "Configure widget modules and quick add shortcuts"
+                    : "Premium feature for home-screen style quick tools"}
+                </Text>
+              </View>
+              <Text style={styles.linkAction}>{isPremium ? "Open" : "Premium"}</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         <View style={styles.sectionCard}>
@@ -306,6 +332,7 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
     borderRadius: 12,
     padding: 12,
+    marginBottom: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

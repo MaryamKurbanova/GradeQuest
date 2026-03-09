@@ -21,6 +21,7 @@ import GradeCalculatorScreen from "../../screens/GradeCalculatorScreen";
 import PaywallScreen from "../../screens/PaywallScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ThemesScreen from "../../screens/ThemesScreen";
+import WidgetsScreen from "../../screens/WidgetsScreen";
 import { APP_ROUTES, DEFAULT_ROUTE } from "../constants/routes";
 import { NavigationProvider } from "./NavigationContext";
 import { RouteKey } from "./types";
@@ -40,6 +41,7 @@ const RootNavigator: React.FC = () => {
       calculator: GradeCalculatorScreen,
       paywall: PaywallScreen,
       analytics: AnalyticsScreen,
+      widgets: WidgetsScreen,
       themes: ThemesScreen,
       settings: SettingsScreen,
       firstLaunch: FirstLaunchSetupScreen,

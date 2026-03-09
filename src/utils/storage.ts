@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   studyData: "gradequest.study_data.v1",
   calculator: "gradequest.calculator.v1",
   gamification: "gradequest.gamification.v1",
+  widgets: "gradequest.widgets.v1",
 } as const;
 
 type StorageEngine = {

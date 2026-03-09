@@ -8,9 +8,11 @@ import {
   View,
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
+import { FEATURE_FLAGS } from "../app/constants/featureFlags";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
+import { useSubscription } from "../app/providers/SubscriptionProvider";
 import {
   extractDateKey,
   formatShortDateLabel,
@@ -22,6 +24,7 @@ import {
 const DashboardScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { displayName } = useAppSettings();
+  const { isPremium } = useSubscription();
   const { points, streakDays, level } = useGamification();
   const { assignments, exams, courses } = useStudyData();
 
@@ -53,6 +56,17 @@ const DashboardScreen: React.FC = () => {
     navigate("examForm");
   };
 
+  const onOpenQuickAccess = () => {
+    if (!FEATURE_FLAGS.premiumWidgetsEnabled) {
+      return;
+    }
+    if (!isPremium) {
+      navigate("paywall");
+      return;
+    }
+    navigate("widgets");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -82,6 +96,19 @@ const DashboardScreen: React.FC = () => {
             <Text style={styles.secondaryActionText}>+ Add Exam</Text>
           </TouchableOpacity>
         </View>
+
+        {FEATURE_FLAGS.premiumWidgetsEnabled ? (
+          <TouchableOpacity style={styles.quickAccessButton} onPress={onOpenQuickAccess}>
+            <Text style={styles.quickAccessTitle}>
+              {isPremium ? "Widgets & quick access" : "Unlock widgets & quick access"}
+            </Text>
+            <Text style={styles.quickAccessSubtitle}>
+              {isPremium
+                ? "Use home-style preview cards and quick-add shortcuts."
+                : "Premium feature: widget previews and one-tap quick add."}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Today's assignments</Text>
@@ -215,6 +242,28 @@ const styles = StyleSheet.create({
   secondaryActionText: {
     color: "#0F172A",
     fontWeight: "600",
+  },
+  quickAccessButton: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 16,
+    shadowColor: "#0B1324",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  quickAccessTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#0F172A",
+  },
+  quickAccessSubtitle: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#64748B",
+    lineHeight: 18,
   },
   section: {
     marginBottom: 18,

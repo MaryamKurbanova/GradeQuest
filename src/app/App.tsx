@@ -10,6 +10,7 @@ import { NotificationProvider } from "./providers/NotificationProvider";
 import { StudyDataProvider } from "./providers/StudyDataProvider";
 import { SubscriptionProvider } from "./providers/SubscriptionProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
+import { WidgetProvider } from "./providers/WidgetProvider";
 
 const App: React.FC = () => {
   return (
@@ -21,9 +22,11 @@ const App: React.FC = () => {
               <CalculatorProvider>
                 <StudyDataProvider>
                   <GamificationProvider>
-                    <CelebrationProvider>
-                      <RootNavigator />
-                    </CelebrationProvider>
+                    <WidgetProvider>
+                      <CelebrationProvider>
+                        <RootNavigator />
+                      </CelebrationProvider>
+                    </WidgetProvider>
                   </GamificationProvider>
                 </StudyDataProvider>
               </CalculatorProvider>

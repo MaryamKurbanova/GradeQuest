@@ -9,6 +9,7 @@ export type RouteKey =
   | "calculator"
   | "paywall"
   | "analytics"
+  | "widgets"
   | "themes"
   | "settings"
   | "firstLaunch";
