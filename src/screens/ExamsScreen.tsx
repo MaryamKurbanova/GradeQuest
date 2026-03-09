@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useCelebration } from "../app/providers/CelebrationProvider";
+import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 
 type ExamFilter = "all" | "upcoming" | "thisWeek" | "completed";
@@ -41,6 +42,7 @@ const getTodayKey = (): string => {
 const ExamsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { triggerCelebration } = useCelebration();
+  const { grantCompletionReward } = useGamification();
   const { exams, courses, toggleExamCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<ExamFilter>("all");
   const todayKey = useMemo(() => getTodayKey(), []);
@@ -79,6 +81,11 @@ const ExamsScreen: React.FC = () => {
   const onToggleExam = (examId: string, isCompleted: boolean, title: string) => {
     toggleExamCompletion(examId);
     if (!isCompleted) {
+      grantCompletionReward({
+        kind: "exam",
+        sourceId: examId,
+        title,
+      });
       triggerCelebration({
         kind: "exam",
         title,

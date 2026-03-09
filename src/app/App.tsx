@@ -5,6 +5,7 @@ import { AppSettingsProvider } from "./providers/AppSettingsProvider";
 import { CalculatorProvider } from "./providers/CalculatorProvider";
 import { CelebrationProvider } from "./providers/CelebrationProvider";
 import { DatabaseProvider } from "./providers/DatabaseProvider";
+import { GamificationProvider } from "./providers/GamificationProvider";
 import { NotificationProvider } from "./providers/NotificationProvider";
 import { StudyDataProvider } from "./providers/StudyDataProvider";
 import { SubscriptionProvider } from "./providers/SubscriptionProvider";
@@ -19,9 +20,11 @@ const App: React.FC = () => {
             <NotificationProvider>
               <CalculatorProvider>
                 <StudyDataProvider>
-                  <CelebrationProvider>
-                    <RootNavigator />
-                  </CelebrationProvider>
+                  <GamificationProvider>
+                    <CelebrationProvider>
+                      <RootNavigator />
+                    </CelebrationProvider>
+                  </GamificationProvider>
                 </StudyDataProvider>
               </CalculatorProvider>
             </NotificationProvider>

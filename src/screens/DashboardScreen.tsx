@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
+import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import {
   extractDateKey,
@@ -16,40 +17,12 @@ import {
   formatShortTimeLabel,
   getTodayDateKey,
   parseAppDateTime,
-  toDateKey,
 } from "../utils/date";
-
-const DAILY_STREAK_BONUS = 5;
-
-const calculateStreakDays = (completionDateValues: string[]): number => {
-  const uniqueDays = new Set(
-    completionDateValues
-      .map((value) => extractDateKey(value))
-      .filter((dayKey) => dayKey.length > 0),
-  );
-
-  if (uniqueDays.size === 0) {
-    return 0;
-  }
-
-  let cursor = new Date();
-  const todayKey = getTodayDateKey();
-  if (!uniqueDays.has(todayKey)) {
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
-  let streak = 0;
-  while (uniqueDays.has(toDateKey(cursor))) {
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
-  return streak;
-};
 
 const DashboardScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { displayName } = useAppSettings();
+  const { points, streakDays, level } = useGamification();
   const { assignments, exams, courses } = useStudyData();
 
   const todayKey = useMemo(() => getTodayDateKey(), []);
@@ -71,22 +44,6 @@ const DashboardScreen: React.FC = () => {
     .filter((exam) => exam.status === "upcoming" && extractDateKey(exam.examAt) >= todayKey)
     .sort((a, b) => a.examAt.localeCompare(b.examAt))
     .slice(0, 5);
-
-  const completedAssignmentsCount = assignments.filter(
-    (assignment) => assignment.status === "completed",
-  ).length;
-  const completedExamsCount = exams.filter((exam) => exam.status === "completed").length;
-  const completionDateValues = [
-    ...assignments
-      .filter((assignment) => assignment.status === "completed" && assignment.completedAt)
-      .map((assignment) => assignment.completedAt as string),
-    ...exams
-      .filter((exam) => exam.status === "completed" && exam.completedAt)
-      .map((exam) => exam.completedAt as string),
-  ];
-  const streakDays = calculateStreakDays(completionDateValues);
-  const points = completedAssignmentsCount * 10 + completedExamsCount * 30 + streakDays * DAILY_STREAK_BONUS;
-  const level = Math.floor(points / 100) + 1;
 
   const onAddAssignment = () => {
     navigate("assignmentForm");

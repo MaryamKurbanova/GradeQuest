@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useCelebration } from "../app/providers/CelebrationProvider";
+import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import type { Priority } from "../types/entities";
 
@@ -45,6 +46,7 @@ const formatPriorityLabel = (priority: Priority): "Low" | "Medium" | "High" => {
 const AssignmentsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { triggerCelebration } = useCelebration();
+  const { grantCompletionReward } = useGamification();
   const { assignments, courses, toggleAssignmentCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<AssignmentFilter>("all");
 
@@ -80,6 +82,11 @@ const AssignmentsScreen: React.FC = () => {
   const onToggleAssignment = (assignmentId: string, isCompleted: boolean, title: string) => {
     toggleAssignmentCompletion(assignmentId);
     if (!isCompleted) {
+      grantCompletionReward({
+        kind: "assignment",
+        sourceId: assignmentId,
+        title,
+      });
       triggerCelebration({
         kind: "assignment",
         title,

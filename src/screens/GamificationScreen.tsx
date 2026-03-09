@@ -7,146 +7,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useStudyData } from "../app/providers/StudyDataProvider";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
+import { useGamification } from "../app/providers/GamificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
-import {
-  extractDateKey,
-  formatShortTimeLabel,
-  getRelativeDayLabel,
-  getTodayDateKey,
-  toDateKey,
-} from "../utils/date";
-
-type Badge = {
-  id: string;
-  name: string;
-  description: string;
-  unlocked: boolean;
-  premium?: boolean;
-};
-
-type RewardActivity = {
-  id: string;
-  label: string;
-  points: number;
-  timeLabel: string;
-};
-
-const POINTS_PER_ASSIGNMENT = 10;
-const POINTS_PER_EXAM = 30;
-const DAILY_STREAK_BONUS = 5;
-const LEVEL_STEP = 100;
-
-const calculateStreakDays = (completionDateValues: string[]): number => {
-  const uniqueDays = new Set(
-    completionDateValues
-      .map((value) => extractDateKey(value))
-      .filter((dayKey) => dayKey.length > 0),
-  );
-
-  if (uniqueDays.size === 0) {
-    return 0;
-  }
-
-  let cursor = new Date();
-  if (!uniqueDays.has(getTodayDateKey())) {
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
-  let streak = 0;
-  while (uniqueDays.has(toDateKey(cursor))) {
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return streak;
-};
+import { formatShortTimeLabel, getRelativeDayLabel } from "../utils/date";
 
 const GamificationScreen: React.FC = () => {
-  const { assignments, exams } = useStudyData();
+  const { navigate } = useAppNavigation();
   const { isPremium } = useSubscription();
-
-  const completedAssignments = assignments.filter(
-    (assignment) => assignment.status === "completed",
-  );
-  const completedExams = exams.filter((exam) => exam.status === "completed");
-  const completedTotal = completedAssignments.length + completedExams.length;
-
-  const completionDateValues = [
-    ...completedAssignments
-      .map((assignment) => assignment.completedAt)
-      .filter((value): value is string => !!value),
-    ...completedExams
-      .map((exam) => exam.completedAt)
-      .filter((value): value is string => !!value),
-  ];
-
-  const streakDays = calculateStreakDays(completionDateValues);
-  const points =
-    completedAssignments.length * POINTS_PER_ASSIGNMENT +
-    completedExams.length * POINTS_PER_EXAM +
-    streakDays * DAILY_STREAK_BONUS;
-  const level = Math.floor(points / LEVEL_STEP) + 1;
-  const currentLevelBase = (level - 1) * LEVEL_STEP;
-  const nextLevelTarget = level * LEVEL_STEP;
-  const progressPercent = Math.min(
-    ((points - currentLevelBase) / (nextLevelTarget - currentLevelBase)) * 100,
-    100,
-  );
-
-  const badges: Badge[] = [
-    {
-      id: "b1",
-      name: "First Win",
-      description: "Complete your first assignment or exam",
-      unlocked: completedTotal >= 1,
-    },
-    {
-      id: "b2",
-      name: "7-Day Streak",
-      description: "Stay consistent for 7 days",
-      unlocked: streakDays >= 7,
-    },
-    {
-      id: "b3",
-      name: "Exam Crusher",
-      description: "Finish 5 exams",
-      unlocked: completedExams.length >= 5,
-    },
-    {
-      id: "b4",
-      name: "Legendary Focus",
-      description: "Complete 30 tasks in a month",
-      unlocked: isPremium && completedTotal >= 30,
-      premium: true,
-    },
-  ];
-
-  const recentRewards: RewardActivity[] = [
-    ...completedAssignments
-      .filter((assignment) => !!assignment.completedAt)
-      .map((assignment) => ({
-        id: `assignment-${assignment.id}`,
-        label: `Completed ${assignment.title}`,
-        points: POINTS_PER_ASSIGNMENT,
-        completedAt: assignment.completedAt as string,
-      })),
-    ...completedExams
-      .filter((exam) => !!exam.completedAt)
-      .map((exam) => ({
-        id: `exam-${exam.id}`,
-        label: `Completed ${exam.title}`,
-        points: POINTS_PER_EXAM,
-        completedAt: exam.completedAt as string,
-      })),
-  ]
-    .sort((a, b) => b.completedAt.localeCompare(a.completedAt))
-    .slice(0, 5)
-    .map((item) => ({
-      id: item.id,
-      label: item.label,
-      points: item.points,
-      timeLabel: `${getRelativeDayLabel(item.completedAt)} • ${formatShortTimeLabel(item.completedAt)}`,
-    }));
+  const {
+    points,
+    streakDays,
+    level,
+    nextLevelTarget,
+    progressPercent,
+    rewardMultiplier,
+    badges,
+    recentRewards,
+  } = useGamification();
 
   const unlockedBadges = badges.filter((badge) => badge.unlocked).length;
   const pointsToNextLevel = Math.max(nextLevelTarget - points, 0);
@@ -184,6 +62,11 @@ const GamificationScreen: React.FC = () => {
           </View>
           <Text style={styles.progressHint}>
             {pointsToNextLevel} points to next level
+          </Text>
+          <Text style={styles.progressHint}>
+            {isPremium
+              ? `Premium reward multiplier active: x${rewardMultiplier.toFixed(1)}`
+              : "Upgrade to Premium to unlock boosted reward multipliers."}
           </Text>
         </View>
 
@@ -243,8 +126,10 @@ const GamificationScreen: React.FC = () => {
             recentRewards.map((reward) => (
               <View key={reward.id} style={styles.rewardCard}>
                 <View style={styles.rewardTextWrap}>
-                  <Text style={styles.rewardLabel}>{reward.label}</Text>
-                  <Text style={styles.rewardTime}>{reward.timeLabel}</Text>
+                  <Text style={styles.rewardLabel}>Completed {reward.title}</Text>
+                  <Text style={styles.rewardTime}>
+                    {getRelativeDayLabel(reward.awardedAt)} • {formatShortTimeLabel(reward.awardedAt)}
+                  </Text>
                 </View>
                 <Text style={styles.rewardPoints}>+{reward.points}</Text>
               </View>
@@ -252,8 +137,10 @@ const GamificationScreen: React.FC = () => {
           )}
         </View>
 
-        <TouchableOpacity style={styles.ctaButton}>
-          <Text style={styles.ctaText}>View premium rewards</Text>
+        <TouchableOpacity style={styles.ctaButton} onPress={() => navigate("paywall")}>
+          <Text style={styles.ctaText}>
+            {isPremium ? "Manage premium rewards" : "Unlock premium rewards"}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

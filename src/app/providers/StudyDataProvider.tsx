@@ -39,6 +39,7 @@ type CreateExamInput = {
 };
 
 type StudyDataContextValue = {
+  isHydrated: boolean;
   courses: Course[];
   assignments: Assignment[];
   exams: Exam[];
@@ -167,6 +168,7 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
 
   const value = useMemo<StudyDataContextValue>(
     () => ({
+      isHydrated,
       courses,
       assignments,
       exams,
@@ -175,7 +177,7 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
       createExam,
       toggleExamCompletion,
     }),
-    [courses, assignments, exams],
+    [isHydrated, courses, assignments, exams],
   );
 
   return <StudyDataContext.Provider value={value}>{children}</StudyDataContext.Provider>;
