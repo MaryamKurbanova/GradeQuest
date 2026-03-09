@@ -6,6 +6,8 @@ export const APP_ROUTES: RouteItem[] = [
   { key: "assignmentForm", label: "Add Assignment" },
   { key: "exams", label: "Exams" },
   { key: "examForm", label: "Add Exam" },
+  { key: "courses", label: "Courses" },
+  { key: "courseForm", label: "Add Course" },
   { key: "calendar", label: "Calendar" },
   { key: "gamification", label: "Gamification" },
   { key: "calculator", label: "Calculator" },

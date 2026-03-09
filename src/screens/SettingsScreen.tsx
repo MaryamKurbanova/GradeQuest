@@ -110,6 +110,10 @@ const SettingsScreen: React.FC = () => {
     navigate("themes");
   };
 
+  const handleOpenCourses = () => {
+    navigate("courses");
+  };
+
   const handleOpenWidgets = () => {
     if (!FEATURE_FLAGS.premiumWidgetsEnabled) {
       Alert.alert("Unavailable", "Widgets are currently disabled in this build.");
@@ -175,6 +179,13 @@ const SettingsScreen: React.FC = () => {
             <View>
               <Text style={styles.linkTitle}>Theme & personalization</Text>
               <Text style={styles.linkSubtitle}>Choose theme, colors, and icon style</Text>
+            </View>
+            <Text style={styles.linkAction}>Open</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.linkRow} onPress={handleOpenCourses}>
+            <View>
+              <Text style={styles.linkTitle}>Courses</Text>
+              <Text style={styles.linkSubtitle}>Add and edit your course list</Text>
             </View>
             <Text style={styles.linkAction}>Open</Text>
           </TouchableOpacity>

@@ -12,6 +12,8 @@ import AnalyticsScreen from "../../screens/AnalyticsScreen";
 import AssignmentFormScreen from "../../screens/AssignmentFormScreen";
 import AssignmentsScreen from "../../screens/AssignmentsScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
+import CourseFormScreen from "../../screens/CourseFormScreen";
+import CoursesScreen from "../../screens/CoursesScreen";
 import DashboardScreen from "../../screens/DashboardScreen";
 import ExamFormScreen from "../../screens/ExamFormScreen";
 import ExamsScreen from "../../screens/ExamsScreen";
@@ -36,6 +38,8 @@ const RootNavigator: React.FC = () => {
       assignmentForm: AssignmentFormScreen,
       exams: ExamsScreen,
       examForm: ExamFormScreen,
+      courses: CoursesScreen,
+      courseForm: CourseFormScreen,
       calendar: CalendarScreen,
       gamification: GamificationScreen,
       calculator: GradeCalculatorScreen,

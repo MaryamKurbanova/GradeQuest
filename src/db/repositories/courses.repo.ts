@@ -76,6 +76,42 @@ export const createCourse = (input: Pick<Course, "name" | "colorHex" | "icon">):
   return newCourse;
 };
 
+export const updateCourse = (
+  courseId: string,
+  input: Partial<Pick<Course, "name" | "colorHex" | "icon">>,
+): Course | null => {
+  const index = courseStore.findIndex((course) => course.id === courseId);
+  if (index < 0) {
+    return null;
+  }
+
+  const current = courseStore[index];
+  const nextCourse: Course = {
+    ...current,
+    name: input.name ?? current.name,
+    colorHex: input.colorHex ?? current.colorHex,
+    icon: input.icon ?? current.icon,
+    updatedAt: nowIso(),
+  };
+
+  courseStore = [
+    ...courseStore.slice(0, index),
+    nextCourse,
+    ...courseStore.slice(index + 1),
+  ];
+
+  return nextCourse;
+};
+
+export const deleteCourse = (courseId: string): boolean => {
+  const nextCourses = courseStore.filter((course) => course.id !== courseId);
+  if (nextCourses.length === courseStore.length) {
+    return false;
+  }
+  courseStore = nextCourses;
+  return true;
+};
+
 export const applyCourseStyleDefaults = (input: Pick<Course, "colorHex" | "icon">): Course[] => {
   const timestamp = nowIso();
   courseStore = courseStore.map((course) => ({

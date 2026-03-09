@@ -10,9 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 
 const ExamFormScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const { courses, createExam } = useStudyData();
   const courseOptions = useMemo(
     () => courses.map((course) => course.name),
@@ -101,22 +103,32 @@ const ExamFormScreen: React.FC = () => {
 
         <View style={styles.fieldBlock}>
           <Text style={styles.label}>Course</Text>
-          <View style={styles.chipsWrap}>
-            {courseOptions.map((course) => {
-              const isSelected = course === selectedCourse;
-              return (
-                <TouchableOpacity
-                  key={course}
-                  onPress={() => setSelectedCourse(course)}
-                  style={[styles.chip, isSelected && styles.chipSelected]}
-                >
-                  <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-                    {course}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          {courseOptions.length === 0 ? (
+            <View style={styles.noCourseCard}>
+              <Text style={styles.noCourseTitle}>No courses found</Text>
+              <Text style={styles.noCourseText}>Create a course before adding exams.</Text>
+              <TouchableOpacity style={styles.noCourseButton} onPress={() => navigate("courseForm")}>
+                <Text style={styles.noCourseButtonText}>Create Course</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.chipsWrap}>
+              {courseOptions.map((course) => {
+                const isSelected = course === selectedCourse;
+                return (
+                  <TouchableOpacity
+                    key={course}
+                    onPress={() => setSelectedCourse(course)}
+                    style={[styles.chip, isSelected && styles.chipSelected]}
+                  >
+                    <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                      {course}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         <View style={styles.row}>
@@ -286,6 +298,36 @@ const styles = StyleSheet.create({
   },
   chipTextSelected: {
     color: "#FFFFFF",
+  },
+  noCourseCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    padding: 12,
+  },
+  noCourseTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#0F172A",
+  },
+  noCourseText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#64748B",
+  },
+  noCourseButton: {
+    marginTop: 10,
+    alignSelf: "flex-start",
+    backgroundColor: "#4F46E5",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  noCourseButtonText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "700",
   },
   row: {
     flexDirection: "row",

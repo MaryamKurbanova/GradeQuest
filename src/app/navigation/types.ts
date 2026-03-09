@@ -4,6 +4,8 @@ export type RouteKey =
   | "assignmentForm"
   | "exams"
   | "examForm"
+  | "courses"
+  | "courseForm"
   | "calendar"
   | "gamification"
   | "calculator"

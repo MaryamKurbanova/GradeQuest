@@ -8,9 +8,12 @@ import {
 } from "../../db/repositories/assignments.repo";
 import {
   applyCourseStyleDefaults as applyCourseStyleDefaultsRecord,
+  createCourse as createCourseRecord,
+  deleteCourse as deleteCourseRecord,
   findCourseByName,
   listCourses,
   replaceCourseStore,
+  updateCourse as updateCourseRecord,
 } from "../../db/repositories/courses.repo";
 import {
   createExam as createExamRecord,
@@ -39,12 +42,23 @@ type CreateExamInput = {
   notes: string | null;
 };
 
+type CreateCourseInput = {
+  name: string;
+  colorHex: string;
+  icon: string;
+};
+
+type UpdateCourseInput = Partial<CreateCourseInput>;
+
 type StudyDataContextValue = {
   isHydrated: boolean;
   courses: Course[];
   assignments: Assignment[];
   exams: Exam[];
   applyCourseStyleDefaults: (input: { colorHex: string; icon: string }) => void;
+  createCourse: (input: CreateCourseInput) => Course;
+  updateCourse: (courseId: string, input: UpdateCourseInput) => Course;
+  deleteCourse: (courseId: string) => void;
   createAssignment: (input: CreateAssignmentInput) => Assignment;
   toggleAssignmentCompletion: (assignmentId: string) => void;
   createExam: (input: CreateExamInput) => Exam;
@@ -140,6 +154,79 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
     return created;
   };
 
+  const createCourse = useCallback((input: CreateCourseInput): Course => {
+    const normalizedName = input.name.trim();
+    if (!normalizedName) {
+      throw new Error("Course name is required.");
+    }
+
+    const duplicate = listCourses().find(
+      (course) => course.name.toLowerCase() === normalizedName.toLowerCase(),
+    );
+    if (duplicate) {
+      throw new Error("A course with this name already exists.");
+    }
+
+    const created = createCourseRecord({
+      name: normalizedName,
+      colorHex: input.colorHex.trim() || "#6366F1",
+      icon: input.icon.trim() || "book",
+    });
+    setCourses(listCourses());
+    return created;
+  }, []);
+
+  const updateCourse = useCallback((courseId: string, input: UpdateCourseInput): Course => {
+    const current = listCourses().find((course) => course.id === courseId);
+    if (!current) {
+      throw new Error("Course not found.");
+    }
+
+    const normalizedName = input.name?.trim();
+    if (normalizedName !== undefined && normalizedName.length === 0) {
+      throw new Error("Course name is required.");
+    }
+
+    const nextName = normalizedName ?? current.name;
+    const duplicate = listCourses().find(
+      (course) =>
+        course.id !== courseId && course.name.toLowerCase() === nextName.toLowerCase(),
+    );
+    if (duplicate) {
+      throw new Error("Another course with this name already exists.");
+    }
+
+    const updated = updateCourseRecord(courseId, {
+      name: nextName,
+      colorHex: input.colorHex?.trim() || current.colorHex,
+      icon: input.icon?.trim() || current.icon,
+    });
+
+    if (!updated) {
+      throw new Error("Course not found.");
+    }
+
+    setCourses(listCourses());
+    return updated;
+  }, []);
+
+  const deleteCourse = useCallback(
+    (courseId: string) => {
+      const assignmentLinked = assignments.some((assignment) => assignment.courseId === courseId);
+      const examLinked = exams.some((exam) => exam.courseId === courseId);
+      if (assignmentLinked || examLinked) {
+        throw new Error("This course has assignments or exams. Remove those first.");
+      }
+
+      const deleted = deleteCourseRecord(courseId);
+      if (!deleted) {
+        throw new Error("Course not found.");
+      }
+      setCourses(listCourses());
+    },
+    [assignments, exams],
+  );
+
   const applyCourseStyleDefaults = useCallback((input: { colorHex: string; icon: string }) => {
     applyCourseStyleDefaultsRecord({
       colorHex: input.colorHex,
@@ -183,12 +270,24 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
       assignments,
       exams,
       applyCourseStyleDefaults,
+      createCourse,
+      updateCourse,
+      deleteCourse,
       createAssignment,
       toggleAssignmentCompletion,
       createExam,
       toggleExamCompletion,
     }),
-    [isHydrated, courses, assignments, exams, applyCourseStyleDefaults],
+    [
+      isHydrated,
+      courses,
+      assignments,
+      exams,
+      applyCourseStyleDefaults,
+      createCourse,
+      updateCourse,
+      deleteCourse,
+    ],
   );
 
   return <StudyDataContext.Provider value={value}>{children}</StudyDataContext.Provider>;
