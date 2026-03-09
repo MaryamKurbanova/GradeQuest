@@ -7,7 +7,7 @@ import { STORAGE_KEYS, readJson, writeJson } from "../../utils/storage";
 
 type RewardKind = "assignment" | "exam";
 
-type RewardEntry = {
+export type RewardEntry = {
   id: string;
   kind: RewardKind;
   sourceId: string;
@@ -38,6 +38,7 @@ type GamificationContextValue = {
   nextLevelTarget: number;
   progressPercent: number;
   rewardMultiplier: number;
+  rewardHistory: RewardEntry[];
   recentRewards: RewardEntry[];
   badges: BadgeState[];
   grantCompletionReward: (input: GrantCompletionRewardInput) => boolean;
@@ -225,6 +226,7 @@ export const GamificationProvider: React.FC<React.PropsWithChildren> = ({ childr
   );
 
   const value = useMemo<GamificationContextValue>(() => {
+    const rewardHistory = [...rewards].sort((a, b) => b.awardedAt.localeCompare(a.awardedAt));
     const points = rewards.reduce((sum, reward) => sum + reward.points, 0);
     const level = Math.floor(points / LEVEL_STEP) + 1;
     const nextLevelTarget = level * LEVEL_STEP;
@@ -303,9 +305,8 @@ export const GamificationProvider: React.FC<React.PropsWithChildren> = ({ childr
       nextLevelTarget,
       progressPercent,
       rewardMultiplier: isPremium ? PREMIUM_MULTIPLIER : 1,
-      recentRewards: [...rewards]
-        .sort((a, b) => b.awardedAt.localeCompare(a.awardedAt))
-        .slice(0, MAX_RECENT_REWARDS),
+      rewardHistory,
+      recentRewards: rewardHistory.slice(0, MAX_RECENT_REWARDS),
       badges,
       grantCompletionReward,
     };
