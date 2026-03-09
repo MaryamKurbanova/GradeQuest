@@ -1,0 +1,408 @@
+import React, { useMemo, useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
+import { useCelebration } from "../app/providers/CelebrationProvider";
+import { useGamification } from "../app/providers/GamificationProvider";
+import { useStudyData } from "../app/providers/StudyDataProvider";
+import type { Course } from "../types/entities";
+
+type ExamFilter = "all" | "upcoming" | "thisWeek" | "completed";
+
+const FILTERS: { key: ExamFilter; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "upcoming", label: "Upcoming" },
+  { key: "thisWeek", label: "This week" },
+  { key: "completed", label: "Completed" },
+];
+
+const getDateKeyFromDateTime = (dateTime: string): string => {
+  return dateTime.split(" ")[0] ?? "";
+};
+
+const daysBetween = (fromDateKey: string, toDateKey: string): number => {
+  const from = new Date(`${fromDateKey}T00:00:00`);
+  const to = new Date(`${toDateKey}T00:00:00`);
+  const diffMs = to.getTime() - from.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+};
+
+const pad = (value: number) => `${value}`.padStart(2, "0");
+
+const getTodayKey = (): string => {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+};
+
+const formatCourseIconLabel = (icon: Course["icon"]): string => {
+  if (icon === "book") {
+    return "BOOK";
+  }
+  if (icon === "calculator") {
+    return "MATH";
+  }
+  if (icon === "flask") {
+    return "LAB";
+  }
+  if (icon === "globe") {
+    return "WORLD";
+  }
+  return `${icon}`.slice(0, 5).toUpperCase();
+};
+
+const ExamsScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
+  const { triggerCelebration } = useCelebration();
+  const { grantCompletionReward } = useGamification();
+  const { exams, courses, toggleExamCompletion } = useStudyData();
+  const [activeFilter, setActiveFilter] = useState<ExamFilter>("all");
+  const todayKey = useMemo(() => getTodayKey(), []);
+  const courseMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course])),
+    [courses],
+  );
+
+  const filteredExams = useMemo(() => {
+    if (activeFilter === "all") {
+      return exams;
+    }
+    if (activeFilter === "upcoming") {
+      return exams.filter((item) => item.status === "upcoming");
+    }
+    if (activeFilter === "completed") {
+      return exams.filter((item) => item.status === "completed");
+    }
+    return exams.filter((item) => {
+      if (item.status !== "upcoming") {
+        return false;
+      }
+      const examDateKey = getDateKeyFromDateTime(item.examAt);
+      const diff = daysBetween(todayKey, examDateKey);
+      return diff >= 0 && diff <= 6;
+    });
+  }, [activeFilter, exams, todayKey]);
+
+  const upcomingCount = exams.filter((item) => item.status === "upcoming").length;
+  const completedCount = exams.length - upcomingCount;
+
+  const onAddPressed = () => {
+    navigate("examForm");
+  };
+
+  const onToggleExam = (examId: string, isCompleted: boolean, title: string) => {
+    toggleExamCompletion(examId);
+    if (!isCompleted) {
+      grantCompletionReward({
+        kind: "exam",
+        sourceId: examId,
+        title,
+      });
+      triggerCelebration({
+        kind: "exam",
+        title,
+      });
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <Text style={styles.kicker}>Exams</Text>
+        <Text style={styles.title}>Track upcoming tests</Text>
+
+        <View style={styles.summaryRow}>
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryNumber}>{upcomingCount}</Text>
+            <Text style={styles.summaryLabel}>Upcoming</Text>
+          </View>
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryNumber}>{completedCount}</Text>
+            <Text style={styles.summaryLabel}>Completed</Text>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.addButton} onPress={onAddPressed}>
+          <Text style={styles.addButtonText}>+ Add Exam</Text>
+        </TouchableOpacity>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterRow}
+        >
+          {FILTERS.map((filter) => {
+            const isActive = filter.key === activeFilter;
+            return (
+              <TouchableOpacity
+                key={filter.key}
+                style={[styles.filterChip, isActive && styles.filterChipActive]}
+                onPress={() => setActiveFilter(filter.key)}
+              >
+                <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
+                  {filter.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
+        <View style={styles.listContainer}>
+          {filteredExams.length === 0 ? (
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyTitle}>No exams in this view</Text>
+              <Text style={styles.emptyText}>Add an exam or switch to another filter.</Text>
+            </View>
+          ) : (
+            filteredExams.map((exam) => {
+              const isCompleted = exam.status === "completed";
+              const course = courseMap.get(exam.courseId);
+              const courseName = course?.name ?? "Unknown Course";
+              const courseColor = course?.colorHex ?? "#64748B";
+              const courseIconLabel = formatCourseIconLabel(course?.icon ?? "book");
+              return (
+                <View key={exam.id} style={styles.itemCard}>
+                  <View style={styles.itemTopRow}>
+                    <View style={styles.titleWrap}>
+                      <Text style={[styles.itemTitle, isCompleted && styles.itemTitleCompleted]}>
+                        {exam.title}
+                      </Text>
+                      <View style={styles.courseMetaRow}>
+                        <View style={[styles.courseBadge, { backgroundColor: courseColor }]}>
+                          <Text style={styles.courseBadgeText}>{courseIconLabel}</Text>
+                        </View>
+                        <Text style={styles.itemMeta}>
+                          {courseName} • {exam.examAt}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <TouchableOpacity
+                      onPress={() => onToggleExam(exam.id, isCompleted, exam.title)}
+                      style={[
+                        styles.statusButton,
+                        isCompleted ? styles.statusButtonDone : styles.statusButtonOpen,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.statusButtonText,
+                          isCompleted
+                            ? styles.statusButtonTextDone
+                            : styles.statusButtonTextOpen,
+                        ]}
+                      >
+                        {isCompleted ? "Done" : "Mark done"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.bottomRow}>
+                    <View style={styles.weightPill}>
+                      <Text style={styles.weightText}>Weight {exam.weightPercent}%</Text>
+                    </View>
+                  </View>
+                </View>
+              );
+            })
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#F5F7FB",
+  },
+  container: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 28,
+  },
+  kicker: {
+    fontSize: 16,
+    color: "#52607A",
+    marginBottom: 4,
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: "700",
+    color: "#101828",
+    marginBottom: 14,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    marginBottom: 12,
+  },
+  summaryCard: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginRight: 8,
+    shadowColor: "#0B1324",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  summaryNumber: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#0F172A",
+  },
+  summaryLabel: {
+    fontSize: 12,
+    color: "#64748B",
+    marginTop: 2,
+  },
+  addButton: {
+    backgroundColor: "#4F46E5",
+    borderRadius: 12,
+    alignItems: "center",
+    paddingVertical: 12,
+    marginBottom: 12,
+  },
+  addButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+  filterRow: {
+    paddingBottom: 6,
+  },
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: "#E2E8F0",
+    marginRight: 8,
+  },
+  filterChipActive: {
+    backgroundColor: "#1D4ED8",
+  },
+  filterChipText: {
+    fontSize: 13,
+    color: "#334155",
+    fontWeight: "600",
+  },
+  filterChipTextActive: {
+    color: "#FFFFFF",
+  },
+  listContainer: {
+    marginTop: 8,
+  },
+  emptyCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 16,
+    alignItems: "center",
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#0F172A",
+  },
+  emptyText: {
+    marginTop: 4,
+    fontSize: 13,
+    color: "#64748B",
+    textAlign: "center",
+  },
+  itemCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 9,
+    shadowColor: "#0B1324",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  itemTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  titleWrap: {
+    flex: 1,
+    marginRight: 10,
+  },
+  itemTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#0F172A",
+  },
+  itemTitleCompleted: {
+    textDecorationLine: "line-through",
+    color: "#64748B",
+  },
+  itemMeta: {
+    fontSize: 13,
+    color: "#64748B",
+    marginTop: 4,
+  },
+  courseMetaRow: {
+    marginTop: 4,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  courseBadge: {
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 6,
+  },
+  courseBadgeText: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#FFFFFF",
+  },
+  statusButton: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  statusButtonOpen: {
+    backgroundColor: "#EEF2FF",
+  },
+  statusButtonDone: {
+    backgroundColor: "#DCFCE7",
+  },
+  statusButtonText: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  statusButtonTextOpen: {
+    color: "#3730A3",
+  },
+  statusButtonTextDone: {
+    color: "#166534",
+  },
+  bottomRow: {
+    marginTop: 10,
+    flexDirection: "row",
+  },
+  weightPill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor: "#E0E7FF",
+  },
+  weightText: {
+    fontSize: 11,
+    color: "#3730A3",
+    fontWeight: "700",
+  },
+});
+
+export default ExamsScreen;
