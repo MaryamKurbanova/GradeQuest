@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "GradeQuest",
+    "slug": "gradequest",
+    "version": "1.0.0",
+    "scheme": "gradequest",
+    "platforms": ["ios", "android", "web"],
+    "assetBundlePatterns": ["**/*"]
+  }
+}
