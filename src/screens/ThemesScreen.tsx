@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
 import type { ThemeId } from "../app/providers/ThemeProvider";
@@ -61,7 +62,8 @@ const THEME_PACKS: ThemePack[] = [
 const COURSE_COLOR_OPTIONS = ["#6366F1", "#22C55E", "#F97316", "#0EA5E9", "#E11D48", "#8B5CF6"];
 
 const ThemesScreen: React.FC = () => {
-  const { isPremium, startMockPremium } = useSubscription();
+  const { navigate } = useAppNavigation();
+  const { isPremium } = useSubscription();
   const { activeTheme, setActiveTheme } = useTheme();
   const [selectedCourseColor, setSelectedCourseColor] = useState(COURSE_COLOR_OPTIONS[0]);
   const [selectedIcon, setSelectedIcon] = useState("book");
@@ -78,7 +80,7 @@ const ThemesScreen: React.FC = () => {
         "Upgrade to Premium to use this theme pack.",
         [
           { text: "Not now", style: "cancel" },
-          { text: "Upgrade (Mock)", onPress: () => startMockPremium("yearly") },
+          { text: "View plans", onPress: () => navigate("paywall") },
         ],
       );
       return;
@@ -116,7 +118,7 @@ const ThemesScreen: React.FC = () => {
             <Text style={styles.premiumNoticeText}>
               Upgrade to unlock Pastel, Gradient, and Vibrant themes plus extra dashboard effects.
             </Text>
-            <TouchableOpacity style={styles.upgradeButton} onPress={() => startMockPremium("yearly")}>
+            <TouchableOpacity style={styles.upgradeButton} onPress={() => navigate("paywall")}>
               <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
             </TouchableOpacity>
           </View>

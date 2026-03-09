@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import {
@@ -48,6 +48,7 @@ const calculateStreakDays = (completionDateValues: string[]): number => {
 };
 
 const DashboardScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const { displayName } = useAppSettings();
   const { assignments, exams, courses } = useStudyData();
 
@@ -88,11 +89,11 @@ const DashboardScreen: React.FC = () => {
   const level = Math.floor(points / 100) + 1;
 
   const onAddAssignment = () => {
-    Alert.alert("Add assignment", "Open the Add Assignment tab below.");
+    navigate("assignmentForm");
   };
 
   const onAddExam = () => {
-    Alert.alert("Add exam", "Open the Add Exam tab below.");
+    navigate("examForm");
   };
 
   return (

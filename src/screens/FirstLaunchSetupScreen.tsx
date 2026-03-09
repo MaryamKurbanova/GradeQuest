@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
@@ -17,6 +18,7 @@ import { useTheme } from "../app/providers/ThemeProvider";
 type ThemeChoice = "light" | "dark";
 
 const FirstLaunchSetupScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const { setDisplayName: setGlobalDisplayName } = useAppSettings();
   const { setActiveTheme } = useTheme();
   const {
@@ -56,10 +58,12 @@ const FirstLaunchSetupScreen: React.FC = () => {
       "Setup complete",
       `Welcome${displayName.trim() ? `, ${displayName.trim()}` : ""}! Your app is ready.`,
     );
+    navigate("dashboard");
   };
 
   const onSkip = () => {
     Alert.alert("Skipped", "You can change these settings anytime in Settings.");
+    navigate("dashboard");
   };
 
   return (

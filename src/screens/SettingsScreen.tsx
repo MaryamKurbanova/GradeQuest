@@ -10,11 +10,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
 import { useNotifications } from "../app/providers/NotificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 const SettingsScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const {
     displayName,
     setDisplayName,
@@ -60,12 +62,7 @@ const SettingsScreen: React.FC = () => {
   };
 
   const handleViewPlans = () => {
-    if (isPremium) {
-      Alert.alert("Premium active", `You are currently on the ${plan} plan.`);
-      return;
-    }
-    startMockPremium("monthly");
-    Alert.alert("Premium started", "Monthly premium was activated (mock).");
+    navigate("paywall");
   };
 
   const handleManageSubscription = () => {
@@ -92,6 +89,10 @@ const SettingsScreen: React.FC = () => {
     setNotificationsEnabled(enabled);
   };
 
+  const handleOpenThemes = () => {
+    navigate("themes");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -113,7 +114,7 @@ const SettingsScreen: React.FC = () => {
 
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Appearance</Text>
-          <TouchableOpacity style={styles.linkRow}>
+          <TouchableOpacity style={styles.linkRow} onPress={handleOpenThemes}>
             <View>
               <Text style={styles.linkTitle}>Theme & personalization</Text>
               <Text style={styles.linkSubtitle}>Choose theme, colors, and icon style</Text>

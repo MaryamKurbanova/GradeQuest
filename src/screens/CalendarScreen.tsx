@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import {
   addDays,
@@ -31,6 +31,7 @@ type CalendarEvent = {
 };
 
 const CalendarScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const { assignments, exams, courses } = useStudyData();
   const todayKey = getTodayDateKey();
 
@@ -90,11 +91,11 @@ const CalendarScreen: React.FC = () => {
   const examCount = selectedDayEvents.filter((event) => event.type === "exam").length;
 
   const onAddAssignment = () => {
-    Alert.alert("Add assignment", "Open the Add Assignment tab below.");
+    navigate("assignmentForm");
   };
 
   const onAddExam = () => {
-    Alert.alert("Add exam", "Open the Add Exam tab below.");
+    navigate("examForm");
   };
 
   return (

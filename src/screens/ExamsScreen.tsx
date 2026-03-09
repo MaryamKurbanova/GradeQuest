@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 
 type ExamFilter = "all" | "upcoming" | "thisWeek" | "completed";
@@ -38,6 +38,7 @@ const getTodayKey = (): string => {
 };
 
 const ExamsScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const { exams, courses, toggleExamCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<ExamFilter>("all");
   const todayKey = useMemo(() => getTodayKey(), []);
@@ -70,7 +71,7 @@ const ExamsScreen: React.FC = () => {
   const completedCount = exams.length - upcomingCount;
 
   const onAddPressed = () => {
-    Alert.alert("Add exam", "Open the Add Exam tab below to create a new exam.");
+    navigate("examForm");
   };
 
   return (

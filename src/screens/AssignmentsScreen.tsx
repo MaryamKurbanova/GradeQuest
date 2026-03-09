@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import type { Priority } from "../types/entities";
 
@@ -42,6 +42,7 @@ const formatPriorityLabel = (priority: Priority): "Low" | "Medium" | "High" => {
 };
 
 const AssignmentsScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const { assignments, courses, toggleAssignmentCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<AssignmentFilter>("all");
 
@@ -71,7 +72,7 @@ const AssignmentsScreen: React.FC = () => {
   const completedCount = assignments.length - pendingCount;
 
   const onAddPressed = () => {
-    Alert.alert("Add assignment", "Open the Add Assignment tab below to create a new item.");
+    navigate("assignmentForm");
   };
 
   return (

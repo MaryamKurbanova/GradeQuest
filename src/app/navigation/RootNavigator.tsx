@@ -22,6 +22,7 @@ import PaywallScreen from "../../screens/PaywallScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ThemesScreen from "../../screens/ThemesScreen";
 import { APP_ROUTES, DEFAULT_ROUTE } from "../constants/routes";
+import { NavigationProvider } from "./NavigationContext";
 import { RouteKey } from "./types";
 
 const RootNavigator: React.FC = () => {
@@ -50,39 +51,41 @@ const RootNavigator: React.FC = () => {
   const activeRouteItem = APP_ROUTES.find((route) => route.key === activeRoute);
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.appTitle}>GradeQuest</Text>
-        <Text style={styles.screenTitle}>{activeRouteItem?.label ?? "Dashboard"}</Text>
-      </View>
+    <NavigationProvider activeRoute={activeRoute} navigate={setActiveRoute}>
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
+          <Text style={styles.appTitle}>GradeQuest</Text>
+          <Text style={styles.screenTitle}>{activeRouteItem?.label ?? "Dashboard"}</Text>
+        </View>
 
-      <View style={styles.content}>
-        <ActiveScreen />
-      </View>
+        <View style={styles.content}>
+          <ActiveScreen />
+        </View>
 
-      <View style={styles.navContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.navRow}
-        >
-          {APP_ROUTES.map((route) => {
-            const isActive = route.key === activeRoute;
-            return (
-              <TouchableOpacity
-                key={route.key}
-                style={[styles.navChip, isActive && styles.navChipActive]}
-                onPress={() => setActiveRoute(route.key)}
-              >
-                <Text style={[styles.navChipText, isActive && styles.navChipTextActive]}>
-                  {route.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+        <View style={styles.navContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.navRow}
+          >
+            {APP_ROUTES.map((route) => {
+              const isActive = route.key === activeRoute;
+              return (
+                <TouchableOpacity
+                  key={route.key}
+                  style={[styles.navChip, isActive && styles.navChipActive]}
+                  onPress={() => setActiveRoute(route.key)}
+                >
+                  <Text style={[styles.navChipText, isActive && styles.navChipTextActive]}>
+                    {route.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+    </NavigationProvider>
   );
 };
 
