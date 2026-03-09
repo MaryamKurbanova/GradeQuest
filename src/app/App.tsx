@@ -2,6 +2,7 @@ import React from "react";
 
 import RootNavigator from "./navigation/RootNavigator";
 import { AppSettingsProvider } from "./providers/AppSettingsProvider";
+import { CalculatorProvider } from "./providers/CalculatorProvider";
 import { DatabaseProvider } from "./providers/DatabaseProvider";
 import { NotificationProvider } from "./providers/NotificationProvider";
 import { StudyDataProvider } from "./providers/StudyDataProvider";
@@ -15,9 +16,11 @@ const App: React.FC = () => {
         <AppSettingsProvider>
           <ThemeProvider>
             <NotificationProvider>
-              <StudyDataProvider>
-                <RootNavigator />
-              </StudyDataProvider>
+              <CalculatorProvider>
+                <StudyDataProvider>
+                  <RootNavigator />
+                </StudyDataProvider>
+              </CalculatorProvider>
             </NotificationProvider>
           </ThemeProvider>
         </AppSettingsProvider>

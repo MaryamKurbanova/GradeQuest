@@ -10,32 +10,21 @@ import {
   View,
 } from "react-native";
 import { FREE_TIER_LIMITS } from "../app/constants/pricing";
+import { useCalculator } from "../app/providers/CalculatorProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 
 type ResultState = "idle" | "success" | "secured" | "notPossible";
-
-type CalculationEntry = {
-  id: string;
-  currentGrade: number;
-  examWeight: number;
-  targetGrade: number;
-  neededScore: number;
-};
 
 const FREE_MONTHLY_LIMIT = FREE_TIER_LIMITS.gradeCalculatorMonthlyEntries;
 
 const GradeCalculatorScreen: React.FC = () => {
   const { isPremium, startMockPremium } = useSubscription();
+  const { remainingFreeUses, history, canUseCalculator, recordCalculation } = useCalculator();
   const [currentGrade, setCurrentGrade] = useState("");
   const [examWeight, setExamWeight] = useState("");
   const [targetGrade, setTargetGrade] = useState("");
   const [resultState, setResultState] = useState<ResultState>("idle");
   const [resultText, setResultText] = useState("");
-
-  const [usageCount, setUsageCount] = useState(0);
-  const [history, setHistory] = useState<CalculationEntry[]>([]);
-
-  const remainingFreeUses = Math.max(FREE_MONTHLY_LIMIT - usageCount, 0);
 
   const resetForm = () => {
     setCurrentGrade("");
@@ -72,7 +61,7 @@ const GradeCalculatorScreen: React.FC = () => {
   };
 
   const handleCalculate = () => {
-    if (!isPremium && usageCount >= FREE_MONTHLY_LIMIT) {
+    if (!canUseCalculator(isPremium)) {
       Alert.alert(
         "Free limit reached",
         `You have used all ${FREE_MONTHLY_LIMIT} free calculations this month. Upgrade to Premium for unlimited calculations.`,
@@ -89,33 +78,31 @@ const GradeCalculatorScreen: React.FC = () => {
     const neededScore =
       (parsed.target - parsed.current * (1 - weightDecimal)) / weightDecimal;
     const rounded = Number(neededScore.toFixed(1));
+    let nextResultState: Exclude<ResultState, "idle">;
+    let nextResultText: string;
 
     if (rounded > 100) {
-      setResultState("notPossible");
-      setResultText(
-        `You would need ${rounded}% on this exam. This target is not achievable with this exam alone.`,
-      );
+      nextResultState = "notPossible";
+      nextResultText = `You would need ${rounded}% on this exam. This target is not achievable with this exam alone.`;
     } else if (rounded <= 0) {
-      setResultState("secured");
-      setResultText("Your target is already secured. Keep up the momentum!");
+      nextResultState = "secured";
+      nextResultText = "Your target is already secured. Keep up the momentum!";
     } else {
-      setResultState("success");
-      setResultText(`You need ${rounded}% on the upcoming exam to hit your target.`);
+      nextResultState = "success";
+      nextResultText = `You need ${rounded}% on the upcoming exam to hit your target.`;
     }
 
-    if (!isPremium) {
-      setUsageCount((prev) => prev + 1);
-    }
+    setResultState(nextResultState);
+    setResultText(nextResultText);
 
-    const nextEntry: CalculationEntry = {
-      id: `${Date.now()}`,
+    recordCalculation({
       currentGrade: parsed.current,
       examWeight: parsed.weight,
       targetGrade: parsed.target,
       neededScore: rounded,
-    };
-
-    setHistory((prev) => [nextEntry, ...prev].slice(0, 5));
+      resultState: nextResultState,
+      isPremium,
+    });
   };
 
   return (

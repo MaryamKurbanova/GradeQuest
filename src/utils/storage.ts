@@ -4,6 +4,7 @@ export const STORAGE_KEYS = {
   subscription: "gradequest.subscription.v1",
   notifications: "gradequest.notifications.v1",
   studyData: "gradequest.study_data.v1",
+  calculator: "gradequest.calculator.v1",
 } as const;
 
 type StorageEngine = {
