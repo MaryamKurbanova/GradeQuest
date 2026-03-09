@@ -24,7 +24,7 @@ import PaywallScreen from "../../screens/PaywallScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ThemesScreen from "../../screens/ThemesScreen";
 import WidgetsScreen from "../../screens/WidgetsScreen";
-import { APP_ROUTES, DEFAULT_ROUTE } from "../constants/routes";
+import { DEFAULT_ROUTE, PRIMARY_NAV_ROUTES, getRouteLabel } from "../constants/routes";
 import { NavigationProvider } from "./NavigationContext";
 import { RouteKey } from "./types";
 
@@ -54,14 +54,14 @@ const RootNavigator: React.FC = () => {
   );
 
   const ActiveScreen = screenMap[activeRoute];
-  const activeRouteItem = APP_ROUTES.find((route) => route.key === activeRoute);
+  const activeRouteLabel = getRouteLabel(activeRoute);
 
   return (
     <NavigationProvider activeRoute={activeRoute} navigate={setActiveRoute}>
       <SafeAreaView style={styles.root}>
         <View style={styles.header}>
           <Text style={styles.appTitle}>GradeQuest</Text>
-          <Text style={styles.screenTitle}>{activeRouteItem?.label ?? "Dashboard"}</Text>
+          <Text style={styles.screenTitle}>{activeRouteLabel}</Text>
         </View>
 
         <View style={styles.content}>
@@ -74,7 +74,7 @@ const RootNavigator: React.FC = () => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.navRow}
           >
-            {APP_ROUTES.map((route) => {
+            {PRIMARY_NAV_ROUTES.map((route) => {
               const isActive = route.key === activeRoute;
               return (
                 <TouchableOpacity
@@ -102,20 +102,20 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 8,
+    paddingTop: 6,
+    paddingBottom: 7,
     borderBottomWidth: 1,
     borderBottomColor: "#E2E8F0",
     backgroundColor: "#FFFFFF",
   },
   appTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "700",
     color: "#111827",
   },
   screenTitle: {
     marginTop: 2,
-    fontSize: 13,
+    fontSize: 12,
     color: "#64748B",
   },
   content: {
@@ -132,8 +132,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   navChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
     borderRadius: 999,
     backgroundColor: "#E2E8F0",
     marginRight: 8,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1D4ED8",
   },
   navChipText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "700",
     color: "#334155",
   },

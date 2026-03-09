@@ -168,7 +168,7 @@ const DashboardScreen: React.FC = () => {
                     ) : null}
                   </View>
                   <Text style={styles.itemMeta}>
-                    {courseIconTag} • {courseNameMap.get(assignment.courseId) ?? "Unknown Course"} - Due{" "}
+                    {courseIconTag} • {courseNameMap.get(assignment.courseId) ?? "Unknown Course"} • Due{" "}
                     {formatShortDateLabel(assignment.dueAt)} {formatShortTimeLabel(assignment.dueAt)}
                   </Text>
                 </View>
@@ -189,7 +189,7 @@ const DashboardScreen: React.FC = () => {
               <View key={exam.id} style={styles.itemCard}>
                 <Text style={styles.itemTitle}>{exam.title}</Text>
                 <Text style={styles.itemMeta}>
-                  {courseIconTag} • {courseNameMap.get(exam.courseId) ?? "Unknown Course"} -{" "}
+                  {courseIconTag} • {courseNameMap.get(exam.courseId) ?? "Unknown Course"} •{" "}
                   {formatShortDateLabel(exam.examAt)} {formatShortTimeLabel(exam.examAt)}
                 </Text>
               </View>
@@ -217,10 +217,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: "700",
     color: "#101828",
-    marginBottom: 16,
+    marginBottom: 14,
   },
   statsRow: {
     flexDirection: "row",
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   actionsRow: {
     flexDirection: "row",
-    marginBottom: 20,
+    marginBottom: 16,
   },
   primaryAction: {
     flex: 1,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   section: {
-    marginBottom: 18,
+    marginBottom: 14,
   },
   sectionTitle: {
     fontSize: 18,

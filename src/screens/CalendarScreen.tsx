@@ -225,10 +225,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: "700",
     color: "#101828",
-    marginBottom: 16,
+    marginBottom: 14,
   },
   dayRow: {
     paddingBottom: 6,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     color: "#64748B",
   },
   section: {
-    marginTop: 16,
+    marginTop: 14,
   },
   sectionTitle: {
     fontSize: 18,
@@ -310,8 +310,8 @@ const styles = StyleSheet.create({
   itemCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
+    padding: 12,
+    marginBottom: 9,
     shadowColor: "#0B1324",
     shadowOpacity: 0.05,
     shadowRadius: 6,

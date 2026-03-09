@@ -19,4 +19,25 @@ export const APP_ROUTES: RouteItem[] = [
   { key: "firstLaunch", label: "First Launch" },
 ];
 
+export const PRIMARY_NAV_ROUTES: RouteItem[] = [
+  { key: "dashboard", label: "Dashboard" },
+  { key: "assignments", label: "Assignments" },
+  { key: "exams", label: "Exams" },
+  { key: "calendar", label: "Calendar" },
+  { key: "calculator", label: "Calculator" },
+  { key: "settings", label: "Settings" },
+];
+
+const ROUTE_LABELS: Record<RouteKey, string> = APP_ROUTES.reduce(
+  (acc, route) => ({
+    ...acc,
+    [route.key]: route.label,
+  }),
+  {} as Record<RouteKey, string>,
+);
+
+export const getRouteLabel = (routeKey: RouteKey): string => {
+  return ROUTE_LABELS[routeKey] ?? "Dashboard";
+};
+
 export const DEFAULT_ROUTE: RouteKey = "dashboard";

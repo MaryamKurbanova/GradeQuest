@@ -180,7 +180,7 @@ const AssignmentsScreen: React.FC = () => {
                           <Text style={styles.courseBadgeText}>{courseIconLabel}</Text>
                         </View>
                         <Text style={styles.itemMeta}>
-                          {courseName} - Due {assignment.dueAt}
+                          {courseName} • Due {assignment.dueAt}
                         </Text>
                       </View>
                     </View>
@@ -244,10 +244,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: "700",
     color: "#101828",
-    marginBottom: 16,
+    marginBottom: 14,
   },
   summaryRow: {
     flexDirection: "row",
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   listContainer: {
-    marginTop: 10,
+    marginTop: 8,
   },
   emptyCard: {
     backgroundColor: "#FFFFFF",
@@ -331,8 +331,8 @@ const styles = StyleSheet.create({
   itemCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
+    padding: 12,
+    marginBottom: 9,
     shadowColor: "#0B1324",
     shadowOpacity: 0.05,
     shadowRadius: 6,
