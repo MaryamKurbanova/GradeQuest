@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { PREMIUM_PRICING } from "../app/constants/pricing";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
+import { DESIGN } from "../app/theme/design";
 
 type PlanKey = "monthly" | "yearly";
 
@@ -303,11 +304,11 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   planCardSelected: {
-    borderColor: "#4F46E5",
-    backgroundColor: "#EEF2FF",
+    borderColor: DESIGN.colors.primary,
+    backgroundColor: DESIGN.colors.primarySoft,
   },
   planHeaderRow: {
     flexDirection: "row",
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
   planTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   planTitleSelected: {
     color: "#312E81",
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
   planPrice: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   planPriceSelected: {
     color: "#312E81",
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   featureCard: {
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 999,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     marginTop: 6,
     marginRight: 10,
   },
@@ -385,7 +386,7 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 3,
   },
   featureDescription: {
@@ -394,7 +395,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   primaryCta: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     paddingVertical: 13,
     alignItems: "center",
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
   },
   secondaryAction: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 10,
     alignItems: "center",
     paddingVertical: 10,
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   secondaryActionText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontSize: 12,
     fontWeight: "600",
   },

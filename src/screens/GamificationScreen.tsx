@@ -11,6 +11,7 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 import { formatShortTimeLabel, getRelativeDayLabel } from "../utils/date";
+import { DESIGN } from "../app/theme/design";
 
 const GamificationScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   statLabel: {
     fontSize: 12,
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   levelTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   levelMeta: {
     fontSize: 13,
@@ -227,13 +228,13 @@ const styles = StyleSheet.create({
   progressTrack: {
     height: 10,
     width: "100%",
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 999,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 999,
   },
   progressHint: {
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   sectionMeta: {
     fontSize: 13,
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
   badgeName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginRight: 8,
   },
   badgeDescription: {
@@ -347,7 +348,7 @@ const styles = StyleSheet.create({
   rewardLabel: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   rewardTime: {
     marginTop: 4,
@@ -360,7 +361,7 @@ const styles = StyleSheet.create({
     color: "#15803D",
   },
   ctaButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: "center",

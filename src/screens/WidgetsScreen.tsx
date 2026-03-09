@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 
+import { DESIGN } from "../app/theme/design";
 import { FEATURE_FLAGS } from "../app/constants/featureFlags";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
   lockedTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 8,
     textAlign: "center",
   },
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   upgradeButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   previewRow: {
@@ -239,12 +240,12 @@ const styles = StyleSheet.create({
   },
   previewLabel: {
     fontSize: 14,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "600",
   },
   previewValue: {
     fontSize: 16,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "700",
   },
   previewHint: {
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     fontSize: 14,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
   helperText: {
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
   quickActionButton: {
     marginTop: 10,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
     borderRadius: 12,
     padding: 12,
     backgroundColor: "#F8FAFC",
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
   quickActionTitle: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   quickActionTitleDisabled: {
     color: "#64748B",

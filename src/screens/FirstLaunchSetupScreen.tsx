@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 26,
+    fontSize: DESIGN.typography.headline,
     fontWeight: "700",
     color: DESIGN.colors.textPrimary,
     marginBottom: 6,
@@ -331,18 +331,20 @@ const styles = StyleSheet.create({
     width: 26,
     height: 6,
     borderRadius: 999,
-    backgroundColor: "#CBD5E1",
+    backgroundColor: DESIGN.colors.border,
     marginRight: 6,
   },
   progressDotActive: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.textPrimary,
   },
   progressDotDone: {
-    backgroundColor: "#22C55E",
+    backgroundColor: DESIGN.colors.success,
   },
   sectionCard: {
     backgroundColor: DESIGN.colors.surface,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 14,
     marginBottom: 12,
     ...DESIGN.shadow.card,
@@ -354,13 +356,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   helperText: {
     marginTop: 8,
@@ -381,7 +383,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   choiceChipActive: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.textPrimary,
   },
   choiceChipDisabled: {
     opacity: 0.55,
@@ -389,7 +391,7 @@ const styles = StyleSheet.create({
   choiceChipText: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
   },
   choiceChipTextActive: {
     color: "#FFFFFF",
@@ -402,7 +404,7 @@ const styles = StyleSheet.create({
   switchLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   actionRow: {
     flexDirection: "row",
@@ -410,20 +412,22 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.surface,
+    borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     alignItems: "center",
     paddingVertical: 12,
     marginRight: 6,
   },
   skipButtonText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "700",
   },
   continueButton: {
     flex: 1.3,
-    backgroundColor: "#4F46E5",
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.textPrimary,
+    borderRadius: DESIGN.radius.md,
     alignItems: "center",
     paddingVertical: 12,
     marginLeft: 6,

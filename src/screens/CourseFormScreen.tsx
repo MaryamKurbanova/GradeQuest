@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 
+import { DESIGN } from "../app/theme/design";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 8,
   },
   input: {
@@ -163,9 +164,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   colorRow: {
     flexDirection: "row",
@@ -180,14 +181,14 @@ const styles = StyleSheet.create({
   },
   colorCircleSelected: {
     borderWidth: 3,
-    borderColor: "#0F172A",
+    borderColor: DESIGN.colors.textPrimary,
   },
   iconRow: {
     flexDirection: "row",
     flexWrap: "wrap",
   },
   iconChip: {
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -195,11 +196,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   iconChipSelected: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   iconChipText: {
     fontSize: 12,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "700",
   },
   iconChipTextSelected: {
@@ -211,19 +212,19 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,
     marginRight: 6,
   },
   cancelText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
   saveButton: {
     flex: 1.5,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,

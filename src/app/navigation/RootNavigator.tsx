@@ -31,6 +31,26 @@ import { DESIGN } from "../theme/design";
 import { NavigationProvider } from "./NavigationContext";
 import { RouteKey } from "./types";
 
+const NAV_ICON_LETTERS: Record<RouteKey, string> = {
+  dashboard: "D",
+  assignments: "T",
+  assignmentForm: "A",
+  exams: "E",
+  examForm: "X",
+  courses: "C",
+  courseForm: "N",
+  calendar: "C",
+  profile: "P",
+  gamification: "G",
+  calculator: "M",
+  paywall: "U",
+  analytics: "S",
+  widgets: "W",
+  themes: "H",
+  settings: "S",
+  firstLaunch: "F",
+};
+
 const RootNavigator: React.FC = () => {
   const { isHydrated, hasCompletedOnboarding } = useAppSettings();
   const [activeRoute, setActiveRoute] = useState<RouteKey>(DEFAULT_ROUTE);
@@ -112,6 +132,11 @@ const RootNavigator: React.FC = () => {
                   style={[styles.navButton, isActive && styles.navButtonActive]}
                   onPress={() => setActiveRoute(route.key)}
                 >
+                  <View style={[styles.navIconWrap, isActive && styles.navIconWrapActive]}>
+                    <Text style={[styles.navIconText, isActive && styles.navIconTextActive]}>
+                      {NAV_ICON_LETTERS[route.key]}
+                    </Text>
+                  </View>
                   <Text style={[styles.navButtonText, isActive && styles.navButtonTextActive]}>
                     {route.label}
                   </Text>
@@ -133,17 +158,17 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: DESIGN.spacing.lg,
     paddingTop: DESIGN.spacing.xs,
-    paddingBottom: DESIGN.spacing.sm,
+    paddingBottom: DESIGN.spacing.md,
     backgroundColor: DESIGN.colors.appBg,
   },
   appTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "700",
     color: DESIGN.colors.textPrimary,
   },
   screenTitle: {
     marginTop: 3,
-    fontSize: 12,
+    fontSize: 13,
     color: DESIGN.colors.textMuted,
   },
   content: {
@@ -152,35 +177,58 @@ const styles = StyleSheet.create({
   navContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
-    marginHorizontal: DESIGN.spacing.md,
-    marginBottom: DESIGN.spacing.sm,
+    justifyContent: "space-between",
+    marginHorizontal: DESIGN.spacing.lg,
+    marginBottom: DESIGN.spacing.md,
     borderWidth: 1,
     borderColor: DESIGN.colors.border,
     borderRadius: DESIGN.radius.lg,
     backgroundColor: DESIGN.colors.surface,
-    paddingVertical: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
     ...DESIGN.shadow.card,
   },
   navButton: {
-    flexDirection: "row",
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: DESIGN.radius.pill,
-    paddingHorizontal: 8,
-    paddingVertical: 7,
-    minWidth: 58,
+    borderRadius: DESIGN.radius.md,
+    paddingVertical: 6,
   },
   navButtonActive: {
-    backgroundColor: DESIGN.colors.primarySoft,
+    backgroundColor: DESIGN.colors.surfaceSoft,
+  },
+  navIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: DESIGN.radius.pill,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
+    backgroundColor: DESIGN.colors.surface,
+    marginBottom: 3,
+  },
+  navIconWrapActive: {
+    borderColor: DESIGN.colors.success,
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+  },
+  navIconText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: DESIGN.colors.textMuted,
+  },
+  navIconTextActive: {
+    color: DESIGN.colors.textPrimary,
   },
   navButtonText: {
-    fontSize: 11,
-    fontWeight: "700",
+    fontSize: 10,
+    fontWeight: "600",
     color: DESIGN.colors.textSecondary,
   },
   navButtonTextActive: {
     color: DESIGN.colors.primary,
+    fontWeight: "700",
   },
 });
 

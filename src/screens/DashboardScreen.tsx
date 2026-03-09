@@ -25,9 +25,9 @@ import {
 
 const DASHBOARD_BACKGROUND_COLORS = {
   default: DESIGN.colors.appBg,
-  aurora: "#ECFEFF",
-  sunset: "#FFF7ED",
-  midnight: "#E2E8F0",
+  aurora: DESIGN.colors.surfaceSoft,
+  sunset: "#FFF9F1",
+  midnight: "#EBEEF2",
 } as const;
 
 const COURSE_ICON_LABELS = {
@@ -218,10 +218,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: DESIGN.typography.title,
+    fontSize: DESIGN.typography.headline,
     fontWeight: "700",
     color: DESIGN.colors.textPrimary,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   statsRow: {
     flexDirection: "row",
@@ -232,6 +232,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: DESIGN.colors.surface,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     paddingVertical: 13,
     paddingHorizontal: 10,
     marginHorizontal: 4,
@@ -254,15 +256,15 @@ const styles = StyleSheet.create({
   },
   primaryAction: {
     flex: 1,
-    backgroundColor: "#4F46E5",
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.primary,
+    borderRadius: DESIGN.radius.md,
     paddingVertical: 12,
     alignItems: "center",
     marginRight: 6,
   },
   primaryActionText: {
     color: "#FFFFFF",
-    fontWeight: "600",
+    fontWeight: "700",
   },
   secondaryAction: {
     flex: 1,
@@ -279,7 +281,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   quickAccessButton: {
-    backgroundColor: DESIGN.colors.surface,
+    backgroundColor: DESIGN.colors.surfaceSoft,
     borderWidth: 1.5,
     borderRadius: DESIGN.radius.md,
     padding: 14,
@@ -288,17 +290,17 @@ const styles = StyleSheet.create({
   },
   streakCardSubtle: {
     borderWidth: 1,
-    backgroundColor: DESIGN.colors.surface,
+    backgroundColor: DESIGN.colors.surfaceSoft,
   },
   streakCardGlow: {
     borderWidth: 1.5,
-    backgroundColor: "#EEF2FF",
-    shadowOpacity: 0.12,
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+    shadowOpacity: 0.08,
     shadowRadius: 10,
   },
   streakCardBurst: {
     borderWidth: 1.5,
-    backgroundColor: "#FEF3C7",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
     shadowOpacity: 0.08,
     shadowRadius: 9,
   },
@@ -325,6 +327,8 @@ const styles = StyleSheet.create({
   itemCard: {
     backgroundColor: DESIGN.colors.surface,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 12,
     marginBottom: 9,
     ...DESIGN.shadow.card,

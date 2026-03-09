@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   addButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   filterChipActive: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   filterChipText: {
     fontSize: 13,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   emptyText: {
     marginTop: 4,
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   statusButtonOpen: {
-    backgroundColor: "#EEF2FF",
+    backgroundColor: DESIGN.colors.primarySoft,
   },
   statusButtonDone: {
     backgroundColor: "#DCFCE7",
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
   },
   priorityText: {
     fontSize: 11,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "700",
   },
 });

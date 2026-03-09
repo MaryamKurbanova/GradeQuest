@@ -12,6 +12,7 @@ import {
 import { FREE_TIER_LIMITS } from "../app/constants/pricing";
 import { useCalculator } from "../app/providers/CalculatorProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
+import { DESIGN } from "../app/theme/design";
 
 type ResultState = "idle" | "success" | "secured" | "notPossible";
 
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
   limitTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   limitText: {
     marginTop: 4,
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 8,
   },
   input: {
@@ -289,9 +290,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   actionsRow: {
     marginTop: 6,
@@ -299,19 +300,19 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,
     marginRight: 6,
   },
   secondaryButtonText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
   primaryButton: {
     flex: 1.4,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,
@@ -338,12 +339,12 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 4,
   },
   resultText: {
     fontSize: 13,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     lineHeight: 18,
   },
   section: {
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   emptyCard: {
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   emptyText: {
     marginTop: 4,
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
   historyTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   historyMeta: {
     marginTop: 4,

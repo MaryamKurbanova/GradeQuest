@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
+import { DESIGN } from "../app/theme/design";
 
 const ExamFormScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 8,
   },
   hint: {
@@ -260,9 +261,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   inputError: {
     borderColor: "#EF4444",
@@ -284,17 +285,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 999,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     marginRight: 8,
     marginBottom: 8,
   },
   chipSelected: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   chipText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
   },
   chipTextSelected: {
     color: "#FFFFFF",
@@ -303,13 +304,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
     padding: 12,
   },
   noCourseTitle: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   noCourseText: {
     marginTop: 4,
@@ -319,7 +320,7 @@ const styles = StyleSheet.create({
   noCourseButton: {
     marginTop: 10,
     alignSelf: "flex-start",
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 7,
@@ -340,7 +341,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
     paddingHorizontal: 12,
     paddingVertical: 12,
     flexDirection: "row",
@@ -353,19 +354,19 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,
     marginRight: 6,
   },
   cancelText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
   saveButton: {
     flex: 1.5,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,

@@ -12,6 +12,7 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
+import { DESIGN } from "../app/theme/design";
 import type {
   CourseIconStyle,
   DashboardBackgroundPreset,
@@ -59,14 +60,14 @@ const THEME_PACKS: ThemePack[] = [
     name: "Light",
     styleHint: "Clean and bright",
     premium: false,
-    colors: ["#EEF2FF", "#FFFFFF"],
+    colors: [DESIGN.colors.primarySoft, "#FFFFFF"],
   },
   {
     id: "dark",
     name: "Dark",
     styleHint: "Easy on the eyes",
     premium: false,
-    colors: ["#1E293B", "#0F172A"],
+    colors: ["#1E293B", DESIGN.colors.textPrimary],
   },
   {
     id: "pastel",
@@ -108,10 +109,10 @@ const COURSE_ICON_OPTIONS: CourseIconOption[] = [
 ];
 
 const DASHBOARD_BACKGROUND_OPTIONS: DashboardBackgroundOption[] = [
-  { id: "default", name: "Default", colors: ["#F5F7FB", "#EEF2FF"], premium: false },
+  { id: "default", name: "Default", colors: ["#F5F7FB", DESIGN.colors.primarySoft], premium: false },
   { id: "aurora", name: "Aurora", colors: ["#E0F2FE", "#CCFBF1"], premium: true },
   { id: "sunset", name: "Sunset", colors: ["#FFEDD5", "#FCE7F3"], premium: true },
-  { id: "midnight", name: "Midnight", colors: ["#1E293B", "#334155"], premium: true },
+  { id: "midnight", name: "Midnight", colors: ["#1E293B", DESIGN.colors.textSecondary], premium: true },
 ];
 
 const STREAK_ANIMATION_OPTIONS: StreakAnimationOption[] = [
@@ -473,7 +474,7 @@ const styles = StyleSheet.create({
   activeThemeName: {
     marginTop: 4,
     fontSize: 18,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "700",
   },
   activeThemeHint: {
@@ -488,7 +489,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   premiumNotice: {
-    backgroundColor: "#EEF2FF",
+    backgroundColor: DESIGN.colors.primarySoft,
     borderRadius: 14,
     padding: 14,
     marginBottom: 14,
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
   upgradeButton: {
     marginTop: 10,
     alignSelf: "flex-start",
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 7,
@@ -525,7 +526,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   themeCard: {
@@ -536,10 +537,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   themeCardSelected: {
-    borderColor: "#4F46E5",
+    borderColor: DESIGN.colors.primary,
   },
   themeCardLocked: {
     opacity: 0.65,
@@ -551,7 +552,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: 10,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   previewColor: {
     flex: 1,
@@ -566,7 +567,7 @@ const styles = StyleSheet.create({
   },
   themeName: {
     fontSize: 15,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "700",
     marginRight: 8,
   },
@@ -609,7 +610,7 @@ const styles = StyleSheet.create({
   },
   colorCircleSelected: {
     borderWidth: 3,
-    borderColor: "#0F172A",
+    borderColor: DESIGN.colors.textPrimary,
   },
   lockedOption: {
     opacity: 0.55,
@@ -619,7 +620,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   iconChip: {
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -627,11 +628,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   iconChipSelected: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   iconChipText: {
     fontSize: 12,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "700",
   },
   iconChipTextSelected: {
@@ -641,7 +642,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
     paddingHorizontal: 10,
     paddingVertical: 9,
     marginRight: 8,
@@ -649,16 +650,16 @@ const styles = StyleSheet.create({
     minWidth: 110,
   },
   animationChipSelected: {
-    borderColor: "#4F46E5",
-    backgroundColor: "#EEF2FF",
+    borderColor: DESIGN.colors.primary,
+    backgroundColor: DESIGN.colors.primarySoft,
   },
   animationChipTitle: {
     fontSize: 12,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "700",
   },
   animationChipTitleSelected: {
-    color: "#1D4ED8",
+    color: DESIGN.colors.primary,
   },
   animationChipHint: {
     marginTop: 3,
@@ -671,19 +672,19 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,
     marginRight: 6,
   },
   secondaryButtonText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
   primaryButton: {
     flex: 1.4,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,

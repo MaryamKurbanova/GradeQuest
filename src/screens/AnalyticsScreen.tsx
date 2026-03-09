@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 
+import { DESIGN } from "../app/theme/design";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { FEATURE_FLAGS } from "../app/constants/featureFlags";
 import { useGamification } from "../app/providers/GamificationProvider";
@@ -467,7 +468,7 @@ const styles = StyleSheet.create({
   lockedTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 8,
     textAlign: "center",
   },
@@ -479,7 +480,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   upgradeButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -493,19 +494,19 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   toggleChip: {
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 999,
     paddingHorizontal: 14,
     paddingVertical: 8,
     marginRight: 8,
   },
   toggleChipActive: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   toggleText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
   },
   toggleTextActive: {
     color: "#FFFFFF",
@@ -530,7 +531,7 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   statLabel: {
     marginTop: 3,
@@ -543,7 +544,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   chartCard: {
@@ -574,14 +575,14 @@ const styles = StyleSheet.create({
   barTrack: {
     width: 20,
     height: 120,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 999,
     overflow: "hidden",
     justifyContent: "flex-end",
   },
   barFill: {
     width: "100%",
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 999,
   },
   pointsBarFill: {
@@ -609,7 +610,7 @@ const styles = StyleSheet.create({
   insightTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 4,
   },
   insightText: {

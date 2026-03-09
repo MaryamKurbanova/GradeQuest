@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 
+import { DESIGN } from "../app/theme/design";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import type { Course } from "../types/entities";
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   addButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 12,
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   emptyText: {
     marginTop: 4,
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
   courseName: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   courseMeta: {
     marginTop: 2,
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 7,
     marginTop: 8,
   },
@@ -332,9 +333,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   colorRow: {
     flexDirection: "row",
@@ -349,14 +350,14 @@ const styles = StyleSheet.create({
   },
   colorCircleSelected: {
     borderWidth: 3,
-    borderColor: "#0F172A",
+    borderColor: DESIGN.colors.textPrimary,
   },
   iconRow: {
     flexDirection: "row",
     flexWrap: "wrap",
   },
   iconChip: {
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -364,11 +365,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   iconChipSelected: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   iconChipText: {
     fontSize: 12,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "700",
   },
   iconChipTextSelected: {
@@ -380,14 +381,14 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
     marginRight: 6,
   },
   secondaryButtonText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontSize: 12,
     fontWeight: "700",
   },
@@ -402,7 +403,7 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     flex: 1,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",

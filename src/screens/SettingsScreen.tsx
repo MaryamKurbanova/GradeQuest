@@ -17,6 +17,7 @@ import { useNotifications } from "../app/providers/NotificationProvider";
 import { useNotificationSync } from "../app/providers/NotificationSyncProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 import { formatShortDateLabel, formatShortTimeLabel } from "../utils/date";
+import { DESIGN } from "../app/theme/design";
 
 type NudgeCadence = "daily" | "twiceDaily" | "hourly";
 
@@ -469,7 +470,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 10,
   },
   sectionHeaderRow: {
@@ -481,7 +482,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 8,
   },
   input: {
@@ -489,9 +490,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
   },
   helperText: {
     marginTop: 8,
@@ -508,14 +509,14 @@ const styles = StyleSheet.create({
   advancedReminderBox: {
     marginTop: 12,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
     borderRadius: 12,
     padding: 12,
   },
   scheduleSummaryCard: {
     marginTop: 10,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -524,7 +525,7 @@ const styles = StyleSheet.create({
   scheduleSummaryTitle: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     marginBottom: 2,
   },
   scheduleSummaryMeta: {
@@ -537,7 +538,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     fontSize: 12,
     fontWeight: "700",
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
   },
   optionRow: {
     flexDirection: "row",
@@ -545,7 +546,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   optionChip: {
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 7,
@@ -553,7 +554,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   optionChipActive: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   optionChipDisabled: {
     opacity: 0.55,
@@ -561,7 +562,7 @@ const styles = StyleSheet.create({
   optionChipText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
   },
   optionChipTextActive: {
     color: "#FFFFFF",
@@ -581,7 +582,7 @@ const styles = StyleSheet.create({
   },
   linkRow: {
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: DESIGN.colors.border,
     borderRadius: 12,
     padding: 12,
     marginBottom: 8,
@@ -592,7 +593,7 @@ const styles = StyleSheet.create({
   linkTitle: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   linkSubtitle: {
     marginTop: 2,
@@ -602,7 +603,7 @@ const styles = StyleSheet.create({
   linkAction: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#4F46E5",
+    color: DESIGN.colors.primary,
   },
   switchRow: {
     flexDirection: "row",
@@ -614,7 +615,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     fontSize: 14,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
   planPill: {
@@ -623,7 +624,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   planPillFree: {
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
   },
   planPillPremium: {
     backgroundColor: "#EDE9FE",
@@ -633,7 +634,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   planPillTextFree: {
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
   },
   planPillTextPremium: {
     color: "#6D28D9",
@@ -644,20 +645,20 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
     marginRight: 6,
   },
   secondaryButtonText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontSize: 12,
     fontWeight: "700",
   },
   primaryButton: {
     flex: 1,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
@@ -679,7 +680,7 @@ const styles = StyleSheet.create({
   subtleButtonText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#4F46E5",
+    color: DESIGN.colors.primary,
   },
   resetButton: {
     marginTop: 10,
@@ -695,7 +696,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   saveButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     alignItems: "center",
     paddingVertical: 13,

@@ -245,11 +245,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   dayCardSelected: {
-    backgroundColor: "#1D4ED8",
+    backgroundColor: DESIGN.colors.primary,
   },
   dayShort: {
     fontSize: 12,
-    color: "#334155",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "600",
   },
   dayShortSelected: {
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   dayDate: {
     marginTop: 4,
     fontSize: 18,
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "700",
   },
   dayDateSelected: {
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
   },
   emptyText: {
     marginTop: 4,
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   },
   primaryAction: {
     flex: 1,
-    backgroundColor: "#4F46E5",
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: "center",
@@ -385,14 +385,14 @@ const styles = StyleSheet.create({
   },
   secondaryAction: {
     flex: 1,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: DESIGN.colors.border,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: "center",
     marginLeft: 6,
   },
   secondaryActionText: {
-    color: "#0F172A",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "600",
   },
 });
