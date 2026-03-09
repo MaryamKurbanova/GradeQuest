@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   SafeAreaView,
@@ -10,15 +10,31 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useStudyData } from "../app/providers/StudyDataProvider";
+import type { Priority as PriorityValue } from "../types/entities";
 
 type Priority = "Low" | "Medium" | "High";
 
-const COURSE_OPTIONS = ["Algebra II", "Biology", "English", "World History"];
 const PRIORITY_OPTIONS: Priority[] = ["Low", "Medium", "High"];
 
+const priorityToValue = (priority: Priority): PriorityValue => {
+  if (priority === "High") {
+    return "high";
+  }
+  if (priority === "Medium") {
+    return "medium";
+  }
+  return "low";
+};
+
 const AssignmentFormScreen: React.FC = () => {
+  const { courses, createAssignment } = useStudyData();
+  const courseOptions = useMemo(
+    () => courses.map((course) => course.name),
+    [courses],
+  );
   const [title, setTitle] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState(COURSE_OPTIONS[0]);
+  const [selectedCourse, setSelectedCourse] = useState(courseOptions[0] ?? "");
   const [dueDate, setDueDate] = useState("");
   const [dueTime, setDueTime] = useState("");
   const [priority, setPriority] = useState<Priority>("Medium");
@@ -26,12 +42,23 @@ const AssignmentFormScreen: React.FC = () => {
   const [hasReminder, setHasReminder] = useState(true);
 
   const canSave = useMemo(() => {
-    return title.trim().length > 0 && dueDate.trim().length > 0 && dueTime.trim().length > 0;
-  }, [dueDate, dueTime, title]);
+    return (
+      title.trim().length > 0 &&
+      selectedCourse.trim().length > 0 &&
+      dueDate.trim().length > 0 &&
+      dueTime.trim().length > 0
+    );
+  }, [dueDate, dueTime, selectedCourse, title]);
+
+  useEffect(() => {
+    if (!selectedCourse && courseOptions.length > 0) {
+      setSelectedCourse(courseOptions[0]);
+    }
+  }, [courseOptions, selectedCourse]);
 
   const resetForm = () => {
     setTitle("");
-    setSelectedCourse(COURSE_OPTIONS[0]);
+    setSelectedCourse(courseOptions[0] ?? "");
     setDueDate("");
     setDueTime("");
     setPriority("Medium");
@@ -45,7 +72,17 @@ const AssignmentFormScreen: React.FC = () => {
       return;
     }
 
+    createAssignment({
+      title,
+      courseName: selectedCourse,
+      dueDate,
+      dueTime,
+      priority: priorityToValue(priority),
+      notes: notes.trim() || null,
+    });
+
     Alert.alert("Assignment saved", "Your assignment has been added.");
+    resetForm();
   };
 
   return (
@@ -68,7 +105,7 @@ const AssignmentFormScreen: React.FC = () => {
         <View style={styles.fieldBlock}>
           <Text style={styles.label}>Course</Text>
           <View style={styles.chipsWrap}>
-            {COURSE_OPTIONS.map((course) => {
+            {courseOptions.map((course) => {
               const isSelected = course === selectedCourse;
               return (
                 <TouchableOpacity

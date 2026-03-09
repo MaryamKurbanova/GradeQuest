@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   SafeAreaView,
@@ -10,12 +10,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-const COURSE_OPTIONS = ["Algebra II", "Biology", "Chemistry", "World History"];
+import { useStudyData } from "../app/providers/StudyDataProvider";
 
 const ExamFormScreen: React.FC = () => {
+  const { courses, createExam } = useStudyData();
+  const courseOptions = useMemo(
+    () => courses.map((course) => course.name),
+    [courses],
+  );
   const [title, setTitle] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState(COURSE_OPTIONS[0]);
+  const [selectedCourse, setSelectedCourse] = useState(courseOptions[0] ?? "");
   const [examDate, setExamDate] = useState("");
   const [examTime, setExamTime] = useState("");
   const [weightPercent, setWeightPercent] = useState("");
@@ -31,16 +35,23 @@ const ExamFormScreen: React.FC = () => {
   const canSave = useMemo(() => {
     return (
       title.trim().length > 0 &&
+      selectedCourse.trim().length > 0 &&
       examDate.trim().length > 0 &&
       examTime.trim().length > 0 &&
       weightPercent.trim().length > 0 &&
       weightIsValid
     );
-  }, [examDate, examTime, title, weightIsValid, weightPercent]);
+  }, [examDate, examTime, selectedCourse, title, weightIsValid, weightPercent]);
+
+  useEffect(() => {
+    if (!selectedCourse && courseOptions.length > 0) {
+      setSelectedCourse(courseOptions[0]);
+    }
+  }, [courseOptions, selectedCourse]);
 
   const resetForm = () => {
     setTitle("");
-    setSelectedCourse(COURSE_OPTIONS[0]);
+    setSelectedCourse(courseOptions[0] ?? "");
     setExamDate("");
     setExamTime("");
     setWeightPercent("");
@@ -58,7 +69,17 @@ const ExamFormScreen: React.FC = () => {
       return;
     }
 
+    createExam({
+      title,
+      courseName: selectedCourse,
+      examDate,
+      examTime,
+      weightPercent: Number(weightPercent),
+      notes: notes.trim() || null,
+    });
+
     Alert.alert("Exam saved", "Your exam has been added.");
+    resetForm();
   };
 
   return (
@@ -81,7 +102,7 @@ const ExamFormScreen: React.FC = () => {
         <View style={styles.fieldBlock}>
           <Text style={styles.label}>Course</Text>
           <View style={styles.chipsWrap}>
-            {COURSE_OPTIONS.map((course) => {
+            {courseOptions.map((course) => {
               const isSelected = course === selectedCourse;
               return (
                 <TouchableOpacity

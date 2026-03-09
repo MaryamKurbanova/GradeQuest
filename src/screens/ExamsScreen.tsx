@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -7,58 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useStudyData } from "../app/providers/StudyDataProvider";
 
-type ExamStatus = "upcoming" | "completed";
 type ExamFilter = "all" | "upcoming" | "thisWeek" | "completed";
-
-type Exam = {
-  id: string;
-  title: string;
-  course: string;
-  examDateLabel: string;
-  dueGroup: "thisWeek" | "later";
-  weightPercent: number;
-  status: ExamStatus;
-};
-
-const INITIAL_EXAMS: Exam[] = [
-  {
-    id: "e-1",
-    title: "Calculus Quiz 3",
-    course: "Calculus",
-    examDateLabel: "Tue, Mar 10 - 10:00 AM",
-    dueGroup: "thisWeek",
-    weightPercent: 15,
-    status: "upcoming",
-  },
-  {
-    id: "e-2",
-    title: "Chemistry Unit Test",
-    course: "Chemistry",
-    examDateLabel: "Thu, Mar 12 - 1:30 PM",
-    dueGroup: "thisWeek",
-    weightPercent: 25,
-    status: "upcoming",
-  },
-  {
-    id: "e-3",
-    title: "History Midterm",
-    course: "World History",
-    examDateLabel: "Mon, Mar 16 - 9:00 AM",
-    dueGroup: "later",
-    weightPercent: 30,
-    status: "upcoming",
-  },
-  {
-    id: "e-4",
-    title: "Biology Pop Quiz",
-    course: "Biology",
-    examDateLabel: "Sat, Mar 7 - 2:00 PM",
-    dueGroup: "thisWeek",
-    weightPercent: 10,
-    status: "completed",
-  },
-];
 
 const FILTERS: { key: ExamFilter; label: string }[] = [
   { key: "all", label: "All" },
@@ -67,9 +19,32 @@ const FILTERS: { key: ExamFilter; label: string }[] = [
   { key: "completed", label: "Completed" },
 ];
 
+const getDateKeyFromDateTime = (dateTime: string): string => {
+  return dateTime.split(" ")[0] ?? "";
+};
+
+const daysBetween = (fromDateKey: string, toDateKey: string): number => {
+  const from = new Date(`${fromDateKey}T00:00:00`);
+  const to = new Date(`${toDateKey}T00:00:00`);
+  const diffMs = to.getTime() - from.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+};
+
+const pad = (value: number) => `${value}`.padStart(2, "0");
+
+const getTodayKey = (): string => {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+};
+
 const ExamsScreen: React.FC = () => {
+  const { exams, courses, toggleExamCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<ExamFilter>("all");
-  const [exams, setExams] = useState<Exam[]>(INITIAL_EXAMS);
+  const todayKey = useMemo(() => getTodayKey(), []);
+  const courseNameMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course.name])),
+    [courses],
+  );
 
   const filteredExams = useMemo(() => {
     if (activeFilter === "all") {
@@ -81,20 +56,21 @@ const ExamsScreen: React.FC = () => {
     if (activeFilter === "completed") {
       return exams.filter((item) => item.status === "completed");
     }
-    return exams.filter((item) => item.status === "upcoming" && item.dueGroup === "thisWeek");
-  }, [activeFilter, exams]);
+    return exams.filter((item) => {
+      if (item.status !== "upcoming") {
+        return false;
+      }
+      const examDateKey = getDateKeyFromDateTime(item.examAt);
+      const diff = daysBetween(todayKey, examDateKey);
+      return diff >= 0 && diff <= 6;
+    });
+  }, [activeFilter, exams, todayKey]);
 
   const upcomingCount = exams.filter((item) => item.status === "upcoming").length;
   const completedCount = exams.length - upcomingCount;
 
-  const toggleCompleted = (id: string) => {
-    setExams((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, status: item.status === "completed" ? "upcoming" : "completed" }
-          : item,
-      ),
-    );
+  const onAddPressed = () => {
+    Alert.alert("Add exam", "Open the Add Exam tab below to create a new exam.");
   };
 
   return (
@@ -114,7 +90,7 @@ const ExamsScreen: React.FC = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity style={styles.addButton} onPress={onAddPressed}>
           <Text style={styles.addButtonText}>+ Add Exam</Text>
         </TouchableOpacity>
 
@@ -156,12 +132,12 @@ const ExamsScreen: React.FC = () => {
                         {exam.title}
                       </Text>
                       <Text style={styles.itemMeta}>
-                        {exam.course} - {exam.examDateLabel}
+                        {courseNameMap.get(exam.courseId) ?? "Unknown Course"} - {exam.examAt}
                       </Text>
                     </View>
 
                     <TouchableOpacity
-                      onPress={() => toggleCompleted(exam.id)}
+                      onPress={() => toggleExamCompletion(exam.id)}
                       style={[
                         styles.statusButton,
                         isCompleted ? styles.statusButtonDone : styles.statusButtonOpen,

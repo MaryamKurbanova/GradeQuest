@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -7,58 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useStudyData } from "../app/providers/StudyDataProvider";
+import type { Priority } from "../types/entities";
 
-type AssignmentStatus = "pending" | "completed";
 type AssignmentFilter = "all" | "today" | "upcoming" | "completed";
-
-type Assignment = {
-  id: string;
-  title: string;
-  course: string;
-  dueLabel: string;
-  dueGroup: "today" | "upcoming";
-  priority: "Low" | "Medium" | "High";
-  status: AssignmentStatus;
-};
-
-const INITIAL_ASSIGNMENTS: Assignment[] = [
-  {
-    id: "a-1",
-    title: "Solve quadratic practice set",
-    course: "Algebra II",
-    dueLabel: "Today, 5:00 PM",
-    dueGroup: "today",
-    priority: "High",
-    status: "pending",
-  },
-  {
-    id: "a-2",
-    title: "Read chapter 6 and notes",
-    course: "Biology",
-    dueLabel: "Today, 8:00 PM",
-    dueGroup: "today",
-    priority: "Medium",
-    status: "pending",
-  },
-  {
-    id: "a-3",
-    title: "Outline essay introduction",
-    course: "English",
-    dueLabel: "Mon, Mar 9",
-    dueGroup: "upcoming",
-    priority: "Medium",
-    status: "pending",
-  },
-  {
-    id: "a-4",
-    title: "Flashcards review",
-    course: "World History",
-    dueLabel: "Sun, Mar 8",
-    dueGroup: "today",
-    priority: "Low",
-    status: "completed",
-  },
-];
 
 const FILTERS: { key: AssignmentFilter; label: string }[] = [
   { key: "all", label: "All" },
@@ -67,9 +20,36 @@ const FILTERS: { key: AssignmentFilter; label: string }[] = [
   { key: "completed", label: "Completed" },
 ];
 
+const pad = (value: number) => `${value}`.padStart(2, "0");
+
+const getTodayKey = (): string => {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+};
+
+const getDateKeyFromDateTime = (dateTime: string): string => {
+  return dateTime.split(" ")[0] ?? "";
+};
+
+const formatPriorityLabel = (priority: Priority): "Low" | "Medium" | "High" => {
+  if (priority === "high") {
+    return "High";
+  }
+  if (priority === "medium") {
+    return "Medium";
+  }
+  return "Low";
+};
+
 const AssignmentsScreen: React.FC = () => {
+  const { assignments, courses, toggleAssignmentCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<AssignmentFilter>("all");
-  const [assignments, setAssignments] = useState<Assignment[]>(INITIAL_ASSIGNMENTS);
+
+  const todayKey = useMemo(() => getTodayKey(), []);
+  const courseNameMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course.name])),
+    [courses],
+  );
 
   const filteredAssignments = useMemo(() => {
     if (activeFilter === "all") {
@@ -79,21 +59,19 @@ const AssignmentsScreen: React.FC = () => {
       return assignments.filter((item) => item.status === "completed");
     }
     return assignments.filter(
-      (item) => item.status !== "completed" && item.dueGroup === activeFilter,
+      (item) =>
+        item.status !== "completed" &&
+        (activeFilter === "today"
+          ? getDateKeyFromDateTime(item.dueAt) === todayKey
+          : getDateKeyFromDateTime(item.dueAt) > todayKey),
     );
-  }, [activeFilter, assignments]);
+  }, [activeFilter, assignments, todayKey]);
 
   const pendingCount = assignments.filter((item) => item.status === "pending").length;
   const completedCount = assignments.length - pendingCount;
 
-  const toggleCompleted = (id: string) => {
-    setAssignments((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, status: item.status === "completed" ? "pending" : "completed" }
-          : item,
-      ),
-    );
+  const onAddPressed = () => {
+    Alert.alert("Add assignment", "Open the Add Assignment tab below to create a new item.");
   };
 
   return (
@@ -113,7 +91,7 @@ const AssignmentsScreen: React.FC = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity style={styles.addButton} onPress={onAddPressed}>
           <Text style={styles.addButtonText}>+ Add Assignment</Text>
         </TouchableOpacity>
 
@@ -149,6 +127,7 @@ const AssignmentsScreen: React.FC = () => {
           ) : (
             filteredAssignments.map((assignment) => {
               const isCompleted = assignment.status === "completed";
+              const priorityLabel = formatPriorityLabel(assignment.priority);
               return (
                 <View key={assignment.id} style={styles.itemCard}>
                   <View style={styles.itemTopRow}>
@@ -157,11 +136,12 @@ const AssignmentsScreen: React.FC = () => {
                         {assignment.title}
                       </Text>
                       <Text style={styles.itemMeta}>
-                        {assignment.course} - Due {assignment.dueLabel}
+                        {courseNameMap.get(assignment.courseId) ?? "Unknown Course"} - Due{" "}
+                        {assignment.dueAt}
                       </Text>
                     </View>
                     <TouchableOpacity
-                      onPress={() => toggleCompleted(assignment.id)}
+                      onPress={() => toggleAssignmentCompletion(assignment.id)}
                       style={[
                         styles.statusButton,
                         isCompleted ? styles.statusButtonDone : styles.statusButtonOpen,
@@ -184,12 +164,12 @@ const AssignmentsScreen: React.FC = () => {
                     <View
                       style={[
                         styles.priorityPill,
-                        assignment.priority === "High" && styles.priorityHigh,
-                        assignment.priority === "Medium" && styles.priorityMedium,
-                        assignment.priority === "Low" && styles.priorityLow,
+                        priorityLabel === "High" && styles.priorityHigh,
+                        priorityLabel === "Medium" && styles.priorityMedium,
+                        priorityLabel === "Low" && styles.priorityLow,
                       ]}
                     >
-                      <Text style={styles.priorityText}>{assignment.priority}</Text>
+                      <Text style={styles.priorityText}>{priorityLabel}</Text>
                     </View>
                   </View>
                 </View>
