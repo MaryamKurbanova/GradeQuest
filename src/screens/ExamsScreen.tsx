@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
+import { useCelebration } from "../app/providers/CelebrationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 
 type ExamFilter = "all" | "upcoming" | "thisWeek" | "completed";
@@ -39,6 +40,7 @@ const getTodayKey = (): string => {
 
 const ExamsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
+  const { triggerCelebration } = useCelebration();
   const { exams, courses, toggleExamCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<ExamFilter>("all");
   const todayKey = useMemo(() => getTodayKey(), []);
@@ -72,6 +74,16 @@ const ExamsScreen: React.FC = () => {
 
   const onAddPressed = () => {
     navigate("examForm");
+  };
+
+  const onToggleExam = (examId: string, isCompleted: boolean, title: string) => {
+    toggleExamCompletion(examId);
+    if (!isCompleted) {
+      triggerCelebration({
+        kind: "exam",
+        title,
+      });
+    }
   };
 
   return (
@@ -138,7 +150,7 @@ const ExamsScreen: React.FC = () => {
                     </View>
 
                     <TouchableOpacity
-                      onPress={() => toggleExamCompletion(exam.id)}
+                      onPress={() => onToggleExam(exam.id, isCompleted, exam.title)}
                       style={[
                         styles.statusButton,
                         isCompleted ? styles.statusButtonDone : styles.statusButtonOpen,

@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
+import { useCelebration } from "../app/providers/CelebrationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import type { Priority } from "../types/entities";
 
@@ -43,6 +44,7 @@ const formatPriorityLabel = (priority: Priority): "Low" | "Medium" | "High" => {
 
 const AssignmentsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
+  const { triggerCelebration } = useCelebration();
   const { assignments, courses, toggleAssignmentCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<AssignmentFilter>("all");
 
@@ -73,6 +75,16 @@ const AssignmentsScreen: React.FC = () => {
 
   const onAddPressed = () => {
     navigate("assignmentForm");
+  };
+
+  const onToggleAssignment = (assignmentId: string, isCompleted: boolean, title: string) => {
+    toggleAssignmentCompletion(assignmentId);
+    if (!isCompleted) {
+      triggerCelebration({
+        kind: "assignment",
+        title,
+      });
+    }
   };
 
   return (
@@ -142,7 +154,9 @@ const AssignmentsScreen: React.FC = () => {
                       </Text>
                     </View>
                     <TouchableOpacity
-                      onPress={() => toggleAssignmentCompletion(assignment.id)}
+                      onPress={() =>
+                        onToggleAssignment(assignment.id, isCompleted, assignment.title)
+                      }
                       style={[
                         styles.statusButton,
                         isCompleted ? styles.statusButtonDone : styles.statusButtonOpen,
