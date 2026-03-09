@@ -11,6 +11,7 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useCelebration } from "../app/providers/CelebrationProvider";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
+import type { Course } from "../types/entities";
 
 type ExamFilter = "all" | "upcoming" | "thisWeek" | "completed";
 
@@ -39,6 +40,22 @@ const getTodayKey = (): string => {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 };
 
+const formatCourseIconLabel = (icon: Course["icon"]): string => {
+  if (icon === "book") {
+    return "BOOK";
+  }
+  if (icon === "calculator") {
+    return "MATH";
+  }
+  if (icon === "flask") {
+    return "LAB";
+  }
+  if (icon === "globe") {
+    return "WORLD";
+  }
+  return `${icon}`.slice(0, 5).toUpperCase();
+};
+
 const ExamsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { triggerCelebration } = useCelebration();
@@ -46,8 +63,8 @@ const ExamsScreen: React.FC = () => {
   const { exams, courses, toggleExamCompletion } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<ExamFilter>("all");
   const todayKey = useMemo(() => getTodayKey(), []);
-  const courseNameMap = useMemo(
-    () => new Map(courses.map((course) => [course.id, course.name])),
+  const courseMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course])),
     [courses],
   );
 
@@ -144,6 +161,10 @@ const ExamsScreen: React.FC = () => {
           ) : (
             filteredExams.map((exam) => {
               const isCompleted = exam.status === "completed";
+              const course = courseMap.get(exam.courseId);
+              const courseName = course?.name ?? "Unknown Course";
+              const courseColor = course?.colorHex ?? "#64748B";
+              const courseIconLabel = formatCourseIconLabel(course?.icon ?? "book");
               return (
                 <View key={exam.id} style={styles.itemCard}>
                   <View style={styles.itemTopRow}>
@@ -151,9 +172,14 @@ const ExamsScreen: React.FC = () => {
                       <Text style={[styles.itemTitle, isCompleted && styles.itemTitleCompleted]}>
                         {exam.title}
                       </Text>
-                      <Text style={styles.itemMeta}>
-                        {courseNameMap.get(exam.courseId) ?? "Unknown Course"} - {exam.examAt}
-                      </Text>
+                      <View style={styles.courseMetaRow}>
+                        <View style={[styles.courseBadge, { backgroundColor: courseColor }]}>
+                          <Text style={styles.courseBadgeText}>{courseIconLabel}</Text>
+                        </View>
+                        <Text style={styles.itemMeta}>
+                          {courseName} - {exam.examAt}
+                        </Text>
+                      </View>
                     </View>
 
                     <TouchableOpacity
@@ -324,6 +350,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#64748B",
     marginTop: 4,
+  },
+  courseMetaRow: {
+    marginTop: 4,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  courseBadge: {
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 6,
+  },
+  courseBadgeText: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#FFFFFF",
   },
   statusButton: {
     borderRadius: 10,

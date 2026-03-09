@@ -75,3 +75,14 @@ export const createCourse = (input: Pick<Course, "name" | "colorHex" | "icon">):
   courseStore = [newCourse, ...courseStore];
   return newCourse;
 };
+
+export const applyCourseStyleDefaults = (input: Pick<Course, "colorHex" | "icon">): Course[] => {
+  const timestamp = nowIso();
+  courseStore = courseStore.map((course) => ({
+    ...course,
+    colorHex: input.colorHex,
+    icon: input.icon,
+    updatedAt: timestamp,
+  }));
+  return listCourses();
+};

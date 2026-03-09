@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import {
   createAssignment as createAssignmentRecord,
@@ -7,6 +7,7 @@ import {
   toggleAssignmentCompletion as toggleAssignmentCompletionRecord,
 } from "../../db/repositories/assignments.repo";
 import {
+  applyCourseStyleDefaults as applyCourseStyleDefaultsRecord,
   findCourseByName,
   listCourses,
   replaceCourseStore,
@@ -43,6 +44,7 @@ type StudyDataContextValue = {
   courses: Course[];
   assignments: Assignment[];
   exams: Exam[];
+  applyCourseStyleDefaults: (input: { colorHex: string; icon: string }) => void;
   createAssignment: (input: CreateAssignmentInput) => Assignment;
   toggleAssignmentCompletion: (assignmentId: string) => void;
   createExam: (input: CreateExamInput) => Exam;
@@ -138,6 +140,14 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
     return created;
   };
 
+  const applyCourseStyleDefaults = useCallback((input: { colorHex: string; icon: string }) => {
+    applyCourseStyleDefaultsRecord({
+      colorHex: input.colorHex,
+      icon: input.icon,
+    });
+    setCourses(listCourses());
+  }, []);
+
   const toggleAssignmentCompletion = (assignmentId: string) => {
     toggleAssignmentCompletionRecord(assignmentId);
     setAssignments(listAssignments());
@@ -172,12 +182,13 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
       courses,
       assignments,
       exams,
+      applyCourseStyleDefaults,
       createAssignment,
       toggleAssignmentCompletion,
       createExam,
       toggleExamCompletion,
     }),
-    [isHydrated, courses, assignments, exams],
+    [isHydrated, courses, assignments, exams, applyCourseStyleDefaults],
   );
 
   return <StudyDataContext.Provider value={value}>{children}</StudyDataContext.Provider>;

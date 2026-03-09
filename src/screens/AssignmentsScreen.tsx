@@ -11,7 +11,7 @@ import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useCelebration } from "../app/providers/CelebrationProvider";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
-import type { Priority } from "../types/entities";
+import type { Course, Priority } from "../types/entities";
 
 type AssignmentFilter = "all" | "today" | "upcoming" | "completed";
 
@@ -43,6 +43,22 @@ const formatPriorityLabel = (priority: Priority): "Low" | "Medium" | "High" => {
   return "Low";
 };
 
+const formatCourseIconLabel = (icon: Course["icon"]): string => {
+  if (icon === "book") {
+    return "BOOK";
+  }
+  if (icon === "calculator") {
+    return "MATH";
+  }
+  if (icon === "flask") {
+    return "LAB";
+  }
+  if (icon === "globe") {
+    return "WORLD";
+  }
+  return `${icon}`.slice(0, 5).toUpperCase();
+};
+
 const AssignmentsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { triggerCelebration } = useCelebration();
@@ -51,8 +67,8 @@ const AssignmentsScreen: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<AssignmentFilter>("all");
 
   const todayKey = useMemo(() => getTodayKey(), []);
-  const courseNameMap = useMemo(
-    () => new Map(courses.map((course) => [course.id, course.name])),
+  const courseMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course])),
     [courses],
   );
 
@@ -148,6 +164,10 @@ const AssignmentsScreen: React.FC = () => {
             filteredAssignments.map((assignment) => {
               const isCompleted = assignment.status === "completed";
               const priorityLabel = formatPriorityLabel(assignment.priority);
+              const course = courseMap.get(assignment.courseId);
+              const courseName = course?.name ?? "Unknown Course";
+              const courseColor = course?.colorHex ?? "#64748B";
+              const courseIconLabel = formatCourseIconLabel(course?.icon ?? "book");
               return (
                 <View key={assignment.id} style={styles.itemCard}>
                   <View style={styles.itemTopRow}>
@@ -155,10 +175,14 @@ const AssignmentsScreen: React.FC = () => {
                       <Text style={[styles.itemTitle, isCompleted && styles.itemTitleCompleted]}>
                         {assignment.title}
                       </Text>
-                      <Text style={styles.itemMeta}>
-                        {courseNameMap.get(assignment.courseId) ?? "Unknown Course"} - Due{" "}
-                        {assignment.dueAt}
-                      </Text>
+                      <View style={styles.courseMetaRow}>
+                        <View style={[styles.courseBadge, { backgroundColor: courseColor }]}>
+                          <Text style={styles.courseBadgeText}>{courseIconLabel}</Text>
+                        </View>
+                        <Text style={styles.itemMeta}>
+                          {courseName} - Due {assignment.dueAt}
+                        </Text>
+                      </View>
                     </View>
                     <TouchableOpacity
                       onPress={() =>
@@ -337,6 +361,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#64748B",
     marginTop: 4,
+  },
+  courseMetaRow: {
+    marginTop: 4,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  courseBadge: {
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 6,
+  },
+  courseBadgeText: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#FFFFFF",
   },
   statusButton: {
     borderRadius: 10,

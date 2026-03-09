@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useStudyData } from "../app/providers/StudyDataProvider";
+import type { Course } from "../types/entities";
 import {
   addDays,
   extractDateKey,
@@ -23,11 +24,29 @@ type EventType = "assignment" | "exam";
 type CalendarEvent = {
   id: string;
   title: string;
-  course: string;
+  courseName: string;
+  courseColor: string;
+  courseIcon: string;
   timeLabel: string;
   type: EventType;
   dateKey: string;
   isCompleted: boolean;
+};
+
+const formatCourseIconLabel = (icon: Course["icon"]): string => {
+  if (icon === "book") {
+    return "BOOK";
+  }
+  if (icon === "calculator") {
+    return "MATH";
+  }
+  if (icon === "flask") {
+    return "LAB";
+  }
+  if (icon === "globe") {
+    return "WORLD";
+  }
+  return `${icon}`.slice(0, 5).toUpperCase();
 };
 
 const CalendarScreen: React.FC = () => {
@@ -49,8 +68,8 @@ const CalendarScreen: React.FC = () => {
   );
   const [selectedDateKey, setSelectedDateKey] = useState<string>(todayKey);
 
-  const courseNameMap = useMemo(
-    () => new Map(courses.map((course) => [course.id, course.name])),
+  const courseMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course])),
     [courses],
   );
 
@@ -58,7 +77,9 @@ const CalendarScreen: React.FC = () => {
     const assignmentEvents = assignments.map((assignment) => ({
       id: assignment.id,
       title: assignment.title,
-      course: courseNameMap.get(assignment.courseId) ?? "Unknown Course",
+      courseName: courseMap.get(assignment.courseId)?.name ?? "Unknown Course",
+      courseColor: courseMap.get(assignment.courseId)?.colorHex ?? "#64748B",
+      courseIcon: formatCourseIconLabel(courseMap.get(assignment.courseId)?.icon ?? "book"),
       timeLabel: formatShortTimeLabel(assignment.dueAt),
       type: "assignment" as const,
       dateKey: extractDateKey(assignment.dueAt),
@@ -68,7 +89,9 @@ const CalendarScreen: React.FC = () => {
     const examEvents = exams.map((exam) => ({
       id: exam.id,
       title: exam.title,
-      course: courseNameMap.get(exam.courseId) ?? "Unknown Course",
+      courseName: courseMap.get(exam.courseId)?.name ?? "Unknown Course",
+      courseColor: courseMap.get(exam.courseId)?.colorHex ?? "#64748B",
+      courseIcon: formatCourseIconLabel(courseMap.get(exam.courseId)?.icon ?? "book"),
       timeLabel: formatShortTimeLabel(exam.examAt),
       type: "exam" as const,
       dateKey: extractDateKey(exam.examAt),
@@ -76,7 +99,7 @@ const CalendarScreen: React.FC = () => {
     }));
 
     return [...assignmentEvents, ...examEvents].filter((event) => event.dateKey.length > 0);
-  }, [assignments, exams, courseNameMap]);
+  }, [assignments, exams, courseMap]);
 
   const selectedDayEvents = useMemo(
     () =>
@@ -158,10 +181,15 @@ const CalendarScreen: React.FC = () => {
                       </Text>
                     </View>
                   </View>
-                  <Text style={styles.itemMeta}>
-                    {event.course} • {event.timeLabel}
-                    {event.isCompleted ? " • Completed" : ""}
-                  </Text>
+                  <View style={styles.itemMeta}>
+                    <View style={[styles.courseBadge, { backgroundColor: event.courseColor }]}>
+                      <Text style={styles.courseBadgeText}>{event.courseIcon}</Text>
+                    </View>
+                    <Text style={styles.itemMetaText}>
+                      {event.courseName} • {event.timeLabel}
+                      {event.isCompleted ? " • Completed" : ""}
+                    </Text>
+                  </View>
                 </View>
               );
             })
@@ -304,8 +332,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemMeta: {
+    marginTop: 4,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  itemMetaText: {
     fontSize: 13,
     color: "#64748B",
+  },
+  courseBadge: {
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 6,
+  },
+  courseBadgeText: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#FFFFFF",
   },
   typePill: {
     borderRadius: 999,

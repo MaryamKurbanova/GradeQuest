@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { useAppNavigation } from "../app/navigation/NavigationContext";
+import { useStudyData } from "../app/providers/StudyDataProvider";
 import { useSubscription } from "../app/providers/SubscriptionProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
 import type {
@@ -121,6 +122,7 @@ const STREAK_ANIMATION_OPTIONS: StreakAnimationOption[] = [
 
 const ThemesScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
+  const { applyCourseStyleDefaults } = useStudyData();
   const { isPremium } = useSubscription();
   const {
     activeTheme,
@@ -213,9 +215,17 @@ const ThemesScreen: React.FC = () => {
     setCourseIconStyle("book");
     setDashboardBackgroundPreset("default");
     setStreakAnimationStyle("subtle");
+    applyCourseStyleDefaults({
+      colorHex: "#6366F1",
+      icon: "book",
+    });
   };
 
   const onSave = () => {
+    applyCourseStyleDefaults({
+      colorHex: courseAccentColor,
+      icon: courseIconStyle,
+    });
     Alert.alert("Saved", "Your personalization settings have been updated.");
   };
 
