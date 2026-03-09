@@ -18,7 +18,7 @@ type ResultState = "idle" | "success" | "secured" | "notPossible";
 const FREE_MONTHLY_LIMIT = FREE_TIER_LIMITS.gradeCalculatorMonthlyEntries;
 
 const GradeCalculatorScreen: React.FC = () => {
-  const { isPremium, startMockPremium } = useSubscription();
+  const { isPremium, isProcessing, purchasePremium } = useSubscription();
   const { remainingFreeUses, history, canUseCalculator, recordCalculation } = useCalculator();
   const [currentGrade, setCurrentGrade] = useState("");
   const [examWeight, setExamWeight] = useState("");
@@ -120,10 +120,15 @@ const GradeCalculatorScreen: React.FC = () => {
           </Text>
           {!isPremium ? (
             <TouchableOpacity
-              style={styles.upgradeButton}
-              onPress={() => startMockPremium("monthly")}
+              style={[styles.upgradeButton, isProcessing && styles.upgradeButtonDisabled]}
+              onPress={() => {
+                void purchasePremium("monthly");
+              }}
+              disabled={isProcessing}
             >
-              <Text style={styles.upgradeText}>Upgrade to Premium</Text>
+              <Text style={styles.upgradeText}>
+                {isProcessing ? "Processing..." : "Upgrade to Premium"}
+              </Text>
             </TouchableOpacity>
           ) : null}
         </View>
@@ -261,6 +266,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 7,
     borderRadius: 999,
+  },
+  upgradeButtonDisabled: {
+    opacity: 0.6,
   },
   upgradeText: {
     color: "#6D28D9",

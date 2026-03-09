@@ -75,7 +75,16 @@ const PREMIUM_FEATURES: PremiumFeature[] = [
 ];
 
 const PaywallScreen: React.FC = () => {
-  const { isPremium, plan, expiresAt, startMockPremium, clearPremium } = useSubscription();
+  const {
+    isPremium,
+    isProcessing,
+    plan,
+    expiresAt,
+    lastBillingMessage,
+    purchasePremium,
+    restorePurchases,
+    clearPremium,
+  } = useSubscription();
   const [selectedPlan, setSelectedPlan] = useState<PlanKey>("yearly");
 
   useEffect(() => {
@@ -94,24 +103,28 @@ const PaywallScreen: React.FC = () => {
     return `Start Monthly Premium • ${PREMIUM_PRICING.monthly.displayPriceLong}`;
   }, [isPremium, selectedPlan]);
 
-  const onStartPremium = () => {
+  const onStartPremium = async () => {
     if (isPremium) {
       Alert.alert("Premium active", "Your premium access is already active on this device.");
       return;
     }
 
-    startMockPremium(selectedPlan);
-    Alert.alert("Premium unlocked", `You started the ${selectedPlan} premium plan.`);
+    const result = await purchasePremium(selectedPlan);
+    if (result.success) {
+      Alert.alert("Premium unlocked", result.message);
+      return;
+    }
+    Alert.alert("Purchase failed", result.message);
   };
 
-  const onRestorePurchases = () => {
+  const onRestorePurchases = async () => {
     if (isPremium) {
       Alert.alert("Already restored", "Your premium entitlement is already active.");
       return;
     }
 
-    startMockPremium("yearly");
-    Alert.alert("Purchases restored", "Your premium subscription has been restored.");
+    const result = await restorePurchases();
+    Alert.alert(result.restored ? "Purchases restored" : "Nothing to restore", result.message);
   };
 
   const onManageSubscription = () => {
@@ -125,7 +138,13 @@ const PaywallScreen: React.FC = () => {
       `Plan: ${plan}\nExpires: ${expiresAt ? new Date(expiresAt).toLocaleDateString() : "N/A"}`,
       [
         { text: "Close", style: "cancel" },
-        { text: "Switch to Free (Mock)", style: "destructive", onPress: clearPremium },
+        {
+          text: "Switch to Free",
+          style: "destructive",
+          onPress: () => {
+            void clearPremium();
+          },
+        },
       ],
     );
   };
@@ -191,18 +210,36 @@ const PaywallScreen: React.FC = () => {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.primaryCta} onPress={onStartPremium}>
-          <Text style={styles.primaryCtaText}>{ctaText}</Text>
+        <TouchableOpacity
+          style={[styles.primaryCta, isProcessing && styles.primaryCtaDisabled]}
+          onPress={() => {
+            void onStartPremium();
+          }}
+          disabled={isProcessing}
+        >
+          <Text style={styles.primaryCtaText}>{isProcessing ? "Processing..." : ctaText}</Text>
         </TouchableOpacity>
 
         <View style={styles.secondaryActionsRow}>
-          <TouchableOpacity style={styles.secondaryAction} onPress={onRestorePurchases}>
+          <TouchableOpacity
+            style={[styles.secondaryAction, isProcessing && styles.secondaryActionDisabled]}
+            onPress={() => {
+              void onRestorePurchases();
+            }}
+            disabled={isProcessing}
+          >
             <Text style={styles.secondaryActionText}>Restore Purchases</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryAction} onPress={onManageSubscription}>
+          <TouchableOpacity
+            style={[styles.secondaryAction, isProcessing && styles.secondaryActionDisabled]}
+            onPress={onManageSubscription}
+            disabled={isProcessing}
+          >
             <Text style={styles.secondaryActionText}>Manage Subscription</Text>
           </TouchableOpacity>
         </View>
+
+        {lastBillingMessage ? <Text style={styles.messageText}>{lastBillingMessage}</Text> : null}
 
         <Text style={styles.legalText}>
           Subscription auto-renews unless canceled. Manage anytime in your device store settings.
@@ -363,6 +400,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
+  primaryCtaDisabled: {
+    opacity: 0.6,
+  },
   primaryCtaText: {
     color: "#FFFFFF",
     fontWeight: "700",
@@ -379,6 +419,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginHorizontal: 4,
   },
+  secondaryActionDisabled: {
+    opacity: 0.6,
+  },
   secondaryActionText: {
     color: "#0F172A",
     fontSize: 12,
@@ -390,6 +433,12 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     color: "#64748B",
     textAlign: "center",
+  },
+  messageText: {
+    marginTop: 10,
+    fontSize: 12,
+    textAlign: "center",
+    color: "#64748B",
   },
 });
 

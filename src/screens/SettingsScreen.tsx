@@ -40,7 +40,8 @@ const SettingsScreen: React.FC = () => {
     backupEnabled,
     setBackupEnabled,
   } = useAppSettings();
-  const { isPremium, startMockPremium, clearPremium } = useSubscription();
+  const { isPremium, isProcessing, restorePurchases, clearPremium, lastBillingMessage } =
+    useSubscription();
   const { schedule, isSyncing } = useNotificationSync();
   const {
     notificationsEnabled,
@@ -77,8 +78,10 @@ const SettingsScreen: React.FC = () => {
       Alert.alert("Already active", "Premium is already active.");
       return;
     }
-    startMockPremium("yearly");
-    Alert.alert("Restored", "Your premium subscription has been restored.");
+    void (async () => {
+      const result = await restorePurchases();
+      Alert.alert(result.restored ? "Restored" : "Nothing to restore", result.message);
+    })();
   };
 
   const handleViewPlans = () => {
@@ -90,9 +93,15 @@ const SettingsScreen: React.FC = () => {
       Alert.alert("No subscription", "You are currently on the free plan.");
       return;
     }
-    Alert.alert("Manage subscription", "This demo action switches back to free plan.", [
+    Alert.alert("Manage subscription", "Manage your local subscription state on this device.", [
       { text: "Keep Premium", style: "cancel" },
-      { text: "Switch to Free", style: "destructive", onPress: clearPremium },
+      {
+        text: "Switch to Free",
+        style: "destructive",
+        onPress: () => {
+          void clearPremium();
+        },
+      },
     ]);
   };
 
@@ -380,16 +389,27 @@ const SettingsScreen: React.FC = () => {
             Upgrade for unlimited calculator usage, advanced reminders, widgets, and analytics.
           </Text>
           <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.secondaryButton} onPress={handleRestorePurchases}>
+            <TouchableOpacity
+              style={[styles.secondaryButton, isProcessing && styles.actionButtonDisabled]}
+              onPress={handleRestorePurchases}
+              disabled={isProcessing}
+            >
               <Text style={styles.secondaryButtonText}>Restore purchases</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.primaryButton} onPress={handleViewPlans}>
+            <TouchableOpacity
+              style={[styles.primaryButton, isProcessing && styles.actionButtonDisabled]}
+              onPress={handleViewPlans}
+              disabled={isProcessing}
+            >
               <Text style={styles.primaryButtonText}>View plans</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.subtleButton} onPress={handleManageSubscription}>
             <Text style={styles.subtleButtonText}>Manage subscription</Text>
           </TouchableOpacity>
+          {lastBillingMessage ? (
+            <Text style={styles.helperText}>{lastBillingMessage}</Text>
+          ) : null}
         </View>
 
         <View style={styles.sectionCard}>
@@ -647,6 +667,9 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "700",
+  },
+  actionButtonDisabled: {
+    opacity: 0.6,
   },
   subtleButton: {
     marginTop: 8,

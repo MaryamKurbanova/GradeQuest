@@ -2,6 +2,7 @@ export const STORAGE_KEYS = {
   appSettings: "gradequest.app_settings.v1",
   theme: "gradequest.theme.v1",
   subscription: "gradequest.subscription.v1",
+  billingState: "gradequest.billing_state.v1",
   notifications: "gradequest.notifications.v1",
   reminderSchedule: "gradequest.reminder_schedule.v1",
   studyData: "gradequest.study_data.v1",
