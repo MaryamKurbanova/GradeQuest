@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -7,9 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useStudyData } from "../app/providers/StudyDataProvider";
+import {
+  addDays,
+  extractDateKey,
+  formatShortTimeLabel,
+  getStartOfWeek,
+  getTodayDateKey,
+  toDateKey,
+} from "../utils/date";
 
 type EventType = "assignment" | "exam";
-type DayKey = "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
 
 type CalendarEvent = {
   id: string;
@@ -17,65 +26,76 @@ type CalendarEvent = {
   course: string;
   timeLabel: string;
   type: EventType;
-  day: DayKey;
+  dateKey: string;
+  isCompleted: boolean;
 };
 
-const WEEK_DAYS: { key: DayKey; shortLabel: string; dateLabel: string }[] = [
-  { key: "sun", shortLabel: "Sun", dateLabel: "8" },
-  { key: "mon", shortLabel: "Mon", dateLabel: "9" },
-  { key: "tue", shortLabel: "Tue", dateLabel: "10" },
-  { key: "wed", shortLabel: "Wed", dateLabel: "11" },
-  { key: "thu", shortLabel: "Thu", dateLabel: "12" },
-  { key: "fri", shortLabel: "Fri", dateLabel: "13" },
-  { key: "sat", shortLabel: "Sat", dateLabel: "14" },
-];
-
-const EVENTS: CalendarEvent[] = [
-  {
-    id: "ev-1",
-    title: "Math worksheet",
-    course: "Algebra II",
-    timeLabel: "3:00 PM",
-    type: "assignment",
-    day: "sun",
-  },
-  {
-    id: "ev-2",
-    title: "Biology chapter review",
-    course: "Biology",
-    timeLabel: "6:00 PM",
-    type: "assignment",
-    day: "sun",
-  },
-  {
-    id: "ev-3",
-    title: "Calculus Quiz 3",
-    course: "Calculus",
-    timeLabel: "10:00 AM",
-    type: "exam",
-    day: "tue",
-  },
-  {
-    id: "ev-4",
-    title: "Chemistry Unit Test",
-    course: "Chemistry",
-    timeLabel: "1:30 PM",
-    type: "exam",
-    day: "thu",
-  },
-];
-
 const CalendarScreen: React.FC = () => {
-  const [selectedDay, setSelectedDay] = useState<DayKey>("sun");
+  const { assignments, exams, courses } = useStudyData();
+  const todayKey = getTodayDateKey();
 
-  const selectedDayEvents = useMemo(
-    () => EVENTS.filter((event) => event.day === selectedDay),
-    [selectedDay],
+  const weekDays = useMemo(
+    () =>
+      Array.from({ length: 7 }).map((_, index) => {
+        const date = addDays(getStartOfWeek(new Date()), index);
+        return {
+          key: toDateKey(date),
+          shortLabel: date.toLocaleDateString(undefined, { weekday: "short" }),
+          dateLabel: `${date.getDate()}`,
+        };
+      }),
+    [],
+  );
+  const [selectedDateKey, setSelectedDateKey] = useState<string>(todayKey);
+
+  const courseNameMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course.name])),
+    [courses],
   );
 
-  const selectedDayMeta = WEEK_DAYS.find((day) => day.key === selectedDay);
+  const events = useMemo<CalendarEvent[]>(() => {
+    const assignmentEvents = assignments.map((assignment) => ({
+      id: assignment.id,
+      title: assignment.title,
+      course: courseNameMap.get(assignment.courseId) ?? "Unknown Course",
+      timeLabel: formatShortTimeLabel(assignment.dueAt),
+      type: "assignment" as const,
+      dateKey: extractDateKey(assignment.dueAt),
+      isCompleted: assignment.status === "completed",
+    }));
+
+    const examEvents = exams.map((exam) => ({
+      id: exam.id,
+      title: exam.title,
+      course: courseNameMap.get(exam.courseId) ?? "Unknown Course",
+      timeLabel: formatShortTimeLabel(exam.examAt),
+      type: "exam" as const,
+      dateKey: extractDateKey(exam.examAt),
+      isCompleted: exam.status === "completed",
+    }));
+
+    return [...assignmentEvents, ...examEvents].filter((event) => event.dateKey.length > 0);
+  }, [assignments, exams, courseNameMap]);
+
+  const selectedDayEvents = useMemo(
+    () =>
+      events
+        .filter((event) => event.dateKey === selectedDateKey)
+        .sort((a, b) => a.timeLabel.localeCompare(b.timeLabel)),
+    [events, selectedDateKey],
+  );
+
+  const selectedDayMeta = weekDays.find((day) => day.key === selectedDateKey);
   const assignmentCount = selectedDayEvents.filter((event) => event.type === "assignment").length;
   const examCount = selectedDayEvents.filter((event) => event.type === "exam").length;
+
+  const onAddAssignment = () => {
+    Alert.alert("Add assignment", "Open the Add Assignment tab below.");
+  };
+
+  const onAddExam = () => {
+    Alert.alert("Add exam", "Open the Add Exam tab below.");
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -88,13 +108,13 @@ const CalendarScreen: React.FC = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.dayRow}
         >
-          {WEEK_DAYS.map((day) => {
-            const isSelected = day.key === selectedDay;
+          {weekDays.map((day) => {
+            const isSelected = day.key === selectedDateKey;
             return (
               <TouchableOpacity
                 key={day.key}
                 style={[styles.dayCard, isSelected && styles.dayCardSelected]}
-                onPress={() => setSelectedDay(day.key)}
+                onPress={() => setSelectedDateKey(day.key)}
               >
                 <Text style={[styles.dayShort, isSelected && styles.dayShortSelected]}>
                   {day.shortLabel}
@@ -139,6 +159,7 @@ const CalendarScreen: React.FC = () => {
                   </View>
                   <Text style={styles.itemMeta}>
                     {event.course} • {event.timeLabel}
+                    {event.isCompleted ? " • Completed" : ""}
                   </Text>
                 </View>
               );
@@ -147,10 +168,10 @@ const CalendarScreen: React.FC = () => {
         </View>
 
         <View style={styles.actionsRow}>
-          <TouchableOpacity style={styles.primaryAction}>
+          <TouchableOpacity style={styles.primaryAction} onPress={onAddAssignment}>
             <Text style={styles.primaryActionText}>+ Add Assignment</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryAction}>
+          <TouchableOpacity style={styles.secondaryAction} onPress={onAddExam}>
             <Text style={styles.secondaryActionText}>+ Add Exam</Text>
           </TouchableOpacity>
         </View>

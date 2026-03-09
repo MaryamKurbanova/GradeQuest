@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,38 +9,91 @@ import {
   View,
 } from "react-native";
 import { useAppSettings } from "../app/providers/AppSettingsProvider";
+import { useStudyData } from "../app/providers/StudyDataProvider";
+import {
+  extractDateKey,
+  formatShortDateLabel,
+  formatShortTimeLabel,
+  getTodayDateKey,
+  parseAppDateTime,
+  toDateKey,
+} from "../utils/date";
 
-type Assignment = {
-  id: string;
-  title: string;
-  course: string;
-  dueTime: string;
-  isOverdue?: boolean;
+const DAILY_STREAK_BONUS = 5;
+
+const calculateStreakDays = (completionDateValues: string[]): number => {
+  const uniqueDays = new Set(
+    completionDateValues
+      .map((value) => extractDateKey(value))
+      .filter((dayKey) => dayKey.length > 0),
+  );
+
+  if (uniqueDays.size === 0) {
+    return 0;
+  }
+
+  let cursor = new Date();
+  const todayKey = getTodayDateKey();
+  if (!uniqueDays.has(todayKey)) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  let streak = 0;
+  while (uniqueDays.has(toDateKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return streak;
 };
-
-type Exam = {
-  id: string;
-  title: string;
-  course: string;
-  examDate: string;
-};
-
-const TODAY_ASSIGNMENTS: Assignment[] = [
-  { id: "a1", title: "Math worksheet", course: "Algebra II", dueTime: "3:00 PM" },
-  { id: "a2", title: "Read chapter 5", course: "Biology", dueTime: "6:00 PM" },
-  { id: "a3", title: "Essay outline", course: "English", dueTime: "Yesterday", isOverdue: true },
-];
-
-const UPCOMING_EXAMS: Exam[] = [
-  { id: "e1", title: "Unit 4 Test", course: "Chemistry", examDate: "Mar 11" },
-  { id: "e2", title: "Midterm", course: "World History", examDate: "Mar 14" },
-];
 
 const DashboardScreen: React.FC = () => {
   const { displayName } = useAppSettings();
-  const points = 240;
-  const streakDays = 4;
-  const level = 3;
+  const { assignments, exams, courses } = useStudyData();
+
+  const todayKey = useMemo(() => getTodayDateKey(), []);
+  const courseNameMap = useMemo(
+    () => new Map(courses.map((course) => [course.id, course.name])),
+    [courses],
+  );
+
+  const pendingAssignments = assignments.filter((assignment) => assignment.status === "pending");
+  const todayAssignments = pendingAssignments
+    .filter((assignment) => {
+      const dueKey = extractDateKey(assignment.dueAt);
+      return dueKey.length > 0 && dueKey <= todayKey;
+    })
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt))
+    .slice(0, 5);
+
+  const upcomingExams = exams
+    .filter((exam) => exam.status === "upcoming" && extractDateKey(exam.examAt) >= todayKey)
+    .sort((a, b) => a.examAt.localeCompare(b.examAt))
+    .slice(0, 5);
+
+  const completedAssignmentsCount = assignments.filter(
+    (assignment) => assignment.status === "completed",
+  ).length;
+  const completedExamsCount = exams.filter((exam) => exam.status === "completed").length;
+  const completionDateValues = [
+    ...assignments
+      .filter((assignment) => assignment.status === "completed" && assignment.completedAt)
+      .map((assignment) => assignment.completedAt as string),
+    ...exams
+      .filter((exam) => exam.status === "completed" && exam.completedAt)
+      .map((exam) => exam.completedAt as string),
+  ];
+  const streakDays = calculateStreakDays(completionDateValues);
+  const points = completedAssignmentsCount * 10 + completedExamsCount * 30 + streakDays * DAILY_STREAK_BONUS;
+  const level = Math.floor(points / 100) + 1;
+
+  const onAddAssignment = () => {
+    Alert.alert("Add assignment", "Open the Add Assignment tab below.");
+  };
+
+  const onAddExam = () => {
+    Alert.alert("Add exam", "Open the Add Exam tab below.");
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -63,43 +117,63 @@ const DashboardScreen: React.FC = () => {
         </View>
 
         <View style={styles.actionsRow}>
-          <TouchableOpacity style={styles.primaryAction}>
+          <TouchableOpacity style={styles.primaryAction} onPress={onAddAssignment}>
             <Text style={styles.primaryActionText}>+ Add Assignment</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryAction}>
+          <TouchableOpacity style={styles.secondaryAction} onPress={onAddExam}>
             <Text style={styles.secondaryActionText}>+ Add Exam</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Today's assignments</Text>
-          {TODAY_ASSIGNMENTS.map((assignment) => (
-            <View key={assignment.id} style={styles.itemCard}>
-              <View style={styles.itemTopRow}>
-                <Text style={styles.itemTitle}>{assignment.title}</Text>
-                {assignment.isOverdue ? (
-                  <View style={styles.overduePill}>
-                    <Text style={styles.overdueText}>Overdue</Text>
-                  </View>
-                ) : null}
-              </View>
-              <Text style={styles.itemMeta}>
-                {assignment.course} - Due {assignment.dueTime}
-              </Text>
+          {todayAssignments.length === 0 ? (
+            <View style={styles.itemCard}>
+              <Text style={styles.itemTitle}>No assignments due today</Text>
+              <Text style={styles.itemMeta}>Great progress. Add a new assignment to stay ahead.</Text>
             </View>
-          ))}
+          ) : (
+            todayAssignments.map((assignment) => {
+              const dueDate = parseAppDateTime(assignment.dueAt);
+              const isOverdue = !!dueDate && dueDate.getTime() < Date.now();
+              return (
+                <View key={assignment.id} style={styles.itemCard}>
+                  <View style={styles.itemTopRow}>
+                    <Text style={styles.itemTitle}>{assignment.title}</Text>
+                    {isOverdue ? (
+                      <View style={styles.overduePill}>
+                        <Text style={styles.overdueText}>Overdue</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <Text style={styles.itemMeta}>
+                    {courseNameMap.get(assignment.courseId) ?? "Unknown Course"} - Due{" "}
+                    {formatShortDateLabel(assignment.dueAt)} {formatShortTimeLabel(assignment.dueAt)}
+                  </Text>
+                </View>
+              );
+            })
+          )}
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Upcoming exams</Text>
-          {UPCOMING_EXAMS.map((exam) => (
-            <View key={exam.id} style={styles.itemCard}>
-              <Text style={styles.itemTitle}>{exam.title}</Text>
-              <Text style={styles.itemMeta}>
-                {exam.course} - {exam.examDate}
-              </Text>
+          {upcomingExams.length === 0 ? (
+            <View style={styles.itemCard}>
+              <Text style={styles.itemTitle}>No upcoming exams</Text>
+              <Text style={styles.itemMeta}>Add exam dates to keep your revision on track.</Text>
             </View>
-          ))}
+          ) : (
+            upcomingExams.map((exam) => (
+              <View key={exam.id} style={styles.itemCard}>
+                <Text style={styles.itemTitle}>{exam.title}</Text>
+                <Text style={styles.itemMeta}>
+                  {courseNameMap.get(exam.courseId) ?? "Unknown Course"} -{" "}
+                  {formatShortDateLabel(exam.examAt)} {formatShortTimeLabel(exam.examAt)}
+                </Text>
+              </View>
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
