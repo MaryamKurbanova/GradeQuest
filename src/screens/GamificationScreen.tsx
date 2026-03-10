@@ -151,7 +151,7 @@ const GamificationScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -160,13 +160,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 16,
   },
   statsRow: {
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     marginTop: 3,
   },
   levelCard: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   levelMeta: {
     fontSize: 13,
-    color: "#475569",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "600",
   },
   progressTrack: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   progressHint: {
     marginTop: 8,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     fontWeight: "500",
   },
   section: {
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   sectionMeta: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   badgeCard: {
     backgroundColor: "#FFFFFF",
@@ -293,10 +293,10 @@ const styles = StyleSheet.create({
   },
   badgeDescription: {
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   premiumPill: {
-    backgroundColor: "#EDE9FE",
+    backgroundColor: DESIGN.colors.primarySoft,
     borderRadius: 999,
     paddingHorizontal: 7,
     paddingVertical: 3,
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   premiumPillText: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#6D28D9",
+    color: DESIGN.colors.primary,
   },
   badgeStatusPill: {
     borderRadius: 999,
@@ -312,20 +312,20 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   badgeUnlocked: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
   },
   badgeLocked: {
-    backgroundColor: "#F1F5F9",
+    backgroundColor: DESIGN.colors.surfaceSoft,
   },
   badgeStatusText: {
     fontSize: 11,
     fontWeight: "700",
   },
   badgeUnlockedText: {
-    color: "#166534",
+    color: DESIGN.colors.success,
   },
   badgeLockedText: {
-    color: "#475569",
+    color: DESIGN.colors.textSecondary,
   },
   rewardCard: {
     backgroundColor: "#FFFFFF",
@@ -353,12 +353,12 @@ const styles = StyleSheet.create({
   rewardTime: {
     marginTop: 4,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   rewardPoints: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#15803D",
+    color: DESIGN.colors.success,
   },
   ctaButton: {
     backgroundColor: DESIGN.colors.primary,

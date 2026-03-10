@@ -25,9 +25,9 @@ import {
 
 const DASHBOARD_BACKGROUND_COLORS = {
   default: DESIGN.colors.appBg,
-  aurora: DESIGN.colors.surfaceSoft,
-  sunset: "#FFF9F1",
-  midnight: "#EBEEF2",
+  aurora: "#08172A",
+  sunset: "#1B1230",
+  midnight: "#040812",
 } as const;
 
 const COURSE_ICON_LABELS = {
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 1.1,
     textTransform: "uppercase",
-    color: "#98A2B3",
+    color: DESIGN.colors.textMuted,
     fontWeight: "700",
   },
   heroTitle: {
@@ -264,10 +264,10 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   heroPill: {
-    backgroundColor: "#1F2937",
+    backgroundColor: "#111C32",
     borderRadius: DESIGN.radius.pill,
     borderWidth: 1,
-    borderColor: "#374151",
+    borderColor: DESIGN.colors.border,
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginRight: 8,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
   heroPillText: {
     fontSize: 11,
-    color: "#D1D5DB",
+    color: DESIGN.colors.textSecondary,
     fontWeight: "600",
   },
   heroPillTextAccent: {

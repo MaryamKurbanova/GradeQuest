@@ -132,7 +132,7 @@ const CourseFormScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -141,13 +141,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 18,
   },
   fieldBlock: {

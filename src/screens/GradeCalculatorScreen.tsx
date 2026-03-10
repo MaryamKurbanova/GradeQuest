@@ -221,7 +221,7 @@ const GradeCalculatorScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -230,13 +230,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 16,
   },
   limitCard: {
@@ -258,12 +258,12 @@ const styles = StyleSheet.create({
   limitText: {
     marginTop: 4,
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   upgradeButton: {
     marginTop: 10,
     alignSelf: "flex-start",
-    backgroundColor: "#EDE9FE",
+    backgroundColor: DESIGN.colors.primarySoft,
     paddingHorizontal: 10,
     paddingVertical: 7,
     borderRadius: 999,
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   upgradeText: {
-    color: "#6D28D9",
+    color: DESIGN.colors.primary,
     fontSize: 12,
     fontWeight: "700",
   },
@@ -328,10 +328,10 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   resultSuccess: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
   },
   resultSecured: {
-    backgroundColor: "#DBEAFE",
+    backgroundColor: DESIGN.colors.primarySoft,
   },
   resultNotPossible: {
     backgroundColor: "#FEE2E2",
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 4,
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     textAlign: "center",
   },
   historyCard: {
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   historyMeta: {
     marginTop: 4,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
 });
 

@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   navButtonActive: {
-    backgroundColor: "#1F2937",
+    backgroundColor: "#0E2742",
   },
   navIconWrap: {
     width: 24,
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#374151",
-    backgroundColor: "#1F2937",
+    borderColor: DESIGN.colors.border,
+    backgroundColor: "#111C32",
     marginBottom: 3,
   },
   navIconWrapActive: {
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   navIconText: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#98A2B3",
+    color: DESIGN.colors.textMuted,
   },
   navIconTextActive: {
     color: DESIGN.colors.textPrimary,
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#98A2B3",
+    color: DESIGN.colors.textMuted,
   },
   navButtonTextActive: {
     color: "#FFFFFF",

@@ -109,7 +109,7 @@ const COURSE_ICON_OPTIONS: CourseIconOption[] = [
 ];
 
 const DASHBOARD_BACKGROUND_OPTIONS: DashboardBackgroundOption[] = [
-  { id: "default", name: "Default", colors: ["#F5F7FB", DESIGN.colors.primarySoft], premium: false },
+  { id: "default", name: "Default", colors: [DESIGN.colors.appBg, DESIGN.colors.primarySoft], premium: false },
   { id: "aurora", name: "Aurora", colors: ["#E0F2FE", "#CCFBF1"], premium: true },
   { id: "sunset", name: "Sunset", colors: ["#FFEDD5", "#FCE7F3"], premium: true },
   { id: "midnight", name: "Midnight", colors: ["#1E293B", DESIGN.colors.textSecondary], premium: true },
@@ -437,7 +437,7 @@ const ThemesScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -446,13 +446,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 14,
   },
   activeThemeCard: {
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   },
   activeThemeLabel: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     fontWeight: "600",
   },
   activeThemeName: {
@@ -480,12 +480,12 @@ const styles = StyleSheet.create({
   activeThemeHint: {
     marginTop: 2,
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   activeThemeMeta: {
     marginTop: 6,
     fontSize: 12,
-    color: "#475569",
+    color: DESIGN.colors.textSecondary,
     lineHeight: 17,
   },
   premiumNotice: {
@@ -499,12 +499,12 @@ const styles = StyleSheet.create({
   premiumNoticeTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#312E81",
+    color: DESIGN.colors.primary,
     marginBottom: 4,
   },
   premiumNoticeText: {
     fontSize: 13,
-    color: "#4338CA",
+    color: DESIGN.colors.primary,
     lineHeight: 18,
   },
   upgradeButton: {
@@ -573,28 +573,28 @@ const styles = StyleSheet.create({
   },
   themeHint: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   pillPremium: {
-    backgroundColor: "#EDE9FE",
+    backgroundColor: DESIGN.colors.primarySoft,
     borderRadius: 999,
     paddingHorizontal: 7,
     paddingVertical: 3,
   },
   pillPremiumText: {
     fontSize: 10,
-    color: "#6D28D9",
+    color: DESIGN.colors.primary,
     fontWeight: "700",
   },
   pillFree: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
     borderRadius: 999,
     paddingHorizontal: 7,
     paddingVertical: 3,
   },
   pillFreeText: {
     fontSize: 10,
-    color: "#166534",
+    color: DESIGN.colors.success,
     fontWeight: "700",
   },
   colorRow: {
@@ -664,7 +664,7 @@ const styles = StyleSheet.create({
   animationChipHint: {
     marginTop: 3,
     fontSize: 11,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   actionsRow: {
     flexDirection: "row",

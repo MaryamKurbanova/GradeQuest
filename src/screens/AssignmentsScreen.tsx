@@ -172,7 +172,7 @@ const AssignmentsScreen: React.FC = () => {
               const priorityLabel = formatPriorityLabel(assignment.priority);
               const course = courseMap.get(assignment.courseId);
               const courseName = course?.name ?? "Unknown Course";
-              const courseColor = course?.colorHex ?? "#64748B";
+              const courseColor = course?.colorHex ?? DESIGN.colors.textMuted;
               const courseIconLabel = formatCourseIconLabel(course?.icon ?? "book");
               return (
                 <View key={assignment.id} style={styles.itemCard}>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 1.1,
     textTransform: "uppercase",
-    color: "#98A2B3",
+    color: DESIGN.colors.textMuted,
     fontWeight: "700",
   },
   heroTitle: {
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FEF3C7",
   },
   priorityLow: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
   },
   priorityText: {
     fontSize: 11,

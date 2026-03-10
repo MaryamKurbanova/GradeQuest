@@ -79,7 +79,7 @@ const CalendarScreen: React.FC = () => {
       id: assignment.id,
       title: assignment.title,
       courseName: courseMap.get(assignment.courseId)?.name ?? "Unknown Course",
-      courseColor: courseMap.get(assignment.courseId)?.colorHex ?? "#64748B",
+      courseColor: courseMap.get(assignment.courseId)?.colorHex ?? DESIGN.colors.textMuted,
       courseIcon: formatCourseIconLabel(courseMap.get(assignment.courseId)?.icon ?? "book"),
       timeLabel: formatShortTimeLabel(assignment.dueAt),
       type: "assignment" as const,
@@ -91,7 +91,7 @@ const CalendarScreen: React.FC = () => {
       id: exam.id,
       title: exam.title,
       courseName: courseMap.get(exam.courseId)?.name ?? "Unknown Course",
-      courseColor: courseMap.get(exam.courseId)?.colorHex ?? "#64748B",
+      courseColor: courseMap.get(exam.courseId)?.colorHex ?? DESIGN.colors.textMuted,
       courseIcon: formatCourseIconLabel(courseMap.get(exam.courseId)?.icon ?? "book"),
       timeLabel: formatShortTimeLabel(exam.examAt),
       type: "exam" as const,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 1.1,
     textTransform: "uppercase",
-    color: "#98A2B3",
+    color: DESIGN.colors.textMuted,
     fontWeight: "700",
   },
   heroTitle: {
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   dayShortSelected: {
-    color: "#D1D5DB",
+    color: DESIGN.colors.textSecondary,
   },
   dayDate: {
     marginTop: 4,

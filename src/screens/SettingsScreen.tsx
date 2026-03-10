@@ -438,7 +438,7 @@ const SettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -447,13 +447,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 14,
   },
   sectionCard: {
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     lineHeight: 17,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   warningText: {
     marginTop: 6,
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   },
   scheduleSummaryMeta: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     lineHeight: 17,
   },
   subsectionLabel: {
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
   },
   reminderUpgradeButton: {
     marginTop: 4,
-    backgroundColor: "#EDE9FE",
+    backgroundColor: DESIGN.colors.primarySoft,
     borderRadius: 10,
     alignSelf: "flex-start",
     paddingHorizontal: 10,
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
   reminderUpgradeButtonText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#6D28D9",
+    color: DESIGN.colors.primary,
   },
   linkRow: {
     borderWidth: 1,
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
   linkSubtitle: {
     marginTop: 2,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   linkAction: {
     fontSize: 12,
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
     backgroundColor: DESIGN.colors.border,
   },
   planPillPremium: {
-    backgroundColor: "#EDE9FE",
+    backgroundColor: DESIGN.colors.primarySoft,
   },
   planPillText: {
     fontSize: 11,
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
     color: DESIGN.colors.textSecondary,
   },
   planPillTextPremium: {
-    color: "#6D28D9",
+    color: DESIGN.colors.primary,
   },
   actionRow: {
     flexDirection: "row",
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
   resetButton: {
     marginTop: 10,
     borderWidth: 1,
-    borderColor: "#FCA5A5",
+    borderColor: DESIGN.colors.danger,
     borderRadius: 10,
     alignItems: "center",
     paddingVertical: 10,

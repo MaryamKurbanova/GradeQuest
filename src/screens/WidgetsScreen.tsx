@@ -156,7 +156,7 @@ const WidgetsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -165,13 +165,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 14,
   },
   lockedContainer: {
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   lockedText: {
     fontSize: 14,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 16,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   previewHint: {
     marginTop: 6,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   switchRow: {
     flexDirection: "row",
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 12,
     lineHeight: 17,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   quickActionButton: {
     marginTop: 10,
@@ -289,12 +289,12 @@ const styles = StyleSheet.create({
     color: DESIGN.colors.textPrimary,
   },
   quickActionTitleDisabled: {
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   quickActionDescription: {
     marginTop: 3,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
 });
 

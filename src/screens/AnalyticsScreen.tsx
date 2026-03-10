@@ -441,7 +441,7 @@ const AnalyticsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -450,13 +450,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 16,
   },
   lockedContainer: {
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
   },
   lockedText: {
     fontSize: 14,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 16,
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   statLabel: {
     marginTop: 3,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   section: {
     marginBottom: 16,
@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
   },
   barValue: {
     fontSize: 11,
-    color: "#475569",
+    color: DESIGN.colors.textSecondary,
     marginBottom: 6,
     fontWeight: "600",
   },
@@ -587,13 +587,13 @@ const styles = StyleSheet.create({
   },
   pointsBarFill: {
     width: "100%",
-    backgroundColor: "#16A34A",
+    backgroundColor: DESIGN.colors.success,
     borderRadius: 999,
   },
   barLabel: {
     marginTop: 8,
     fontSize: 11,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     fontWeight: "600",
   },
   insightCard: {
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
   },
   insightText: {
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     lineHeight: 19,
   },
 });

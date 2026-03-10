@@ -169,7 +169,7 @@ const ExamsScreen: React.FC = () => {
               const isCompleted = exam.status === "completed";
               const course = courseMap.get(exam.courseId);
               const courseName = course?.name ?? "Unknown Course";
-              const courseColor = course?.colorHex ?? "#64748B";
+              const courseColor = course?.colorHex ?? DESIGN.colors.textMuted;
               const courseIconLabel = formatCourseIconLabel(course?.icon ?? "book");
               return (
                 <View key={exam.id} style={styles.itemCard}>
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 1.1,
     textTransform: "uppercase",
-    color: "#98A2B3",
+    color: DESIGN.colors.textMuted,
     fontWeight: "700",
   },
   heroTitle: {

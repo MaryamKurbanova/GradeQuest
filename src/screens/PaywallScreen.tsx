@@ -253,7 +253,7 @@ const PaywallScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -262,23 +262,23 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#475569",
+    color: DESIGN.colors.textSecondary,
     marginBottom: 14,
   },
   activePlanCard: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
     borderRadius: 14,
     padding: 12,
     marginBottom: 12,
@@ -288,12 +288,12 @@ const styles = StyleSheet.create({
   activePlanTitle: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#166534",
+    color: DESIGN.colors.success,
   },
   activePlanText: {
     marginTop: 4,
     fontSize: 12,
-    color: "#166534",
+    color: DESIGN.colors.success,
   },
   planList: {
     marginBottom: 16,
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     color: DESIGN.colors.textPrimary,
   },
   planTitleSelected: {
-    color: "#312E81",
+    color: DESIGN.colors.primary,
   },
   planPrice: {
     fontSize: 22,
@@ -330,15 +330,15 @@ const styles = StyleSheet.create({
     color: DESIGN.colors.textPrimary,
   },
   planPriceSelected: {
-    color: "#312E81",
+    color: DESIGN.colors.primary,
   },
   planSubtitle: {
     marginTop: 3,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   planSubtitleSelected: {
-    color: "#4338CA",
+    color: DESIGN.colors.primary,
   },
   valueBadge: {
     backgroundColor: "#DDD6FE",
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   valueBadgeText: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#6D28D9",
+    color: DESIGN.colors.primary,
   },
   section: {
     marginBottom: 16,
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   },
   featureDescription: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     lineHeight: 17,
   },
   primaryCta: {
@@ -432,14 +432,14 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 11,
     lineHeight: 16,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     textAlign: "center",
   },
   messageText: {
     marginTop: 10,
     fontSize: 12,
     textAlign: "center",
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
 });
 

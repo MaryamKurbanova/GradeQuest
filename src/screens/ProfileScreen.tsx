@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     marginTop: 2,
-    color: "#98A2B3",
+    color: DESIGN.colors.textMuted,
     fontSize: 12,
   },
   premiumDot: {

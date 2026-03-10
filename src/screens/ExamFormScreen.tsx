@@ -224,7 +224,7 @@ const ExamFormScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F7FB",
+    backgroundColor: DESIGN.colors.appBg,
   },
   container: {
     paddingHorizontal: 20,
@@ -233,13 +233,13 @@ const styles = StyleSheet.create({
   },
   kicker: {
     fontSize: 16,
-    color: "#52607A",
+    color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#101828",
+    color: DESIGN.colors.textPrimary,
     marginBottom: 18,
   },
   fieldBlock: {
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     marginTop: 2,
   },
   input: {
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     borderColor: DESIGN.colors.border,
   },
   inputError: {
-    borderColor: "#EF4444",
+    borderColor: DESIGN.colors.danger,
   },
   errorText: {
     marginTop: 6,
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   noCourseText: {
     marginTop: 4,
     fontSize: 12,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   noCourseButton: {
     marginTop: 10,
