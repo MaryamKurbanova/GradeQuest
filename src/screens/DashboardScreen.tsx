@@ -105,6 +105,8 @@ const DashboardScreen: React.FC = () => {
         <Text style={styles.title}>Today at a glance</Text>
 
         <View style={styles.heroCard}>
+          <View style={styles.heroGlowTop} />
+          <View style={styles.heroGlowBottom} />
           <Text style={styles.heroKicker}>Daily focus</Text>
           <Text style={styles.heroTitle}>Build momentum one task at a time</Text>
           <View style={styles.heroPillsRow}>
@@ -239,11 +241,33 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   heroCard: {
+    position: "relative",
+    overflow: "hidden",
     backgroundColor: DESIGN.colors.surfaceDark,
     borderRadius: DESIGN.radius.lg,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 16,
     marginBottom: 14,
     ...DESIGN.shadow.card,
+  },
+  heroGlowTop: {
+    position: "absolute",
+    top: -30,
+    right: -20,
+    width: 130,
+    height: 130,
+    borderRadius: 999,
+    backgroundColor: "rgba(37, 99, 235, 0.24)",
+  },
+  heroGlowBottom: {
+    position: "absolute",
+    bottom: -36,
+    left: -28,
+    width: 120,
+    height: 120,
+    borderRadius: 999,
+    backgroundColor: "rgba(34, 211, 238, 0.16)",
   },
   heroKicker: {
     fontSize: 11,

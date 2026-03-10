@@ -33,6 +33,7 @@ const ProfileScreen: React.FC = () => {
         <Text style={styles.title}>{displayName || "Guest Student"}</Text>
 
         <View style={styles.heroCard}>
+          <View style={styles.heroGlowTop} />
           <View style={styles.avatarCircle}>
             <Text style={styles.avatarText}>{(displayName || "G").slice(0, 1).toUpperCase()}</Text>
           </View>
@@ -139,13 +140,26 @@ const styles = StyleSheet.create({
     display: "none",
   },
   heroCard: {
+    position: "relative",
+    overflow: "hidden",
     backgroundColor: DESIGN.colors.surfaceDark,
     borderRadius: DESIGN.radius.lg,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 14,
     marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
     ...DESIGN.shadow.card,
+  },
+  heroGlowTop: {
+    position: "absolute",
+    top: -26,
+    right: -18,
+    width: 96,
+    height: 96,
+    borderRadius: 999,
+    backgroundColor: "rgba(34, 211, 238, 0.2)",
   },
   avatarCircle: {
     width: 44,

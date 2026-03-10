@@ -94,6 +94,12 @@ const FirstLaunchSetupScreen: React.FC = () => {
         <Text style={styles.title}>Onboarding</Text>
         <Text style={styles.subtitle}>{steps[step].subtitle}</Text>
 
+        <View style={styles.heroCard}>
+          <View style={styles.heroGlow} />
+          <Text style={styles.heroKicker}>Setup assistant</Text>
+          <Text style={styles.heroTitle}>Let&apos;s personalize your study operating system</Text>
+        </View>
+
         <View style={styles.progressRow}>
           {steps.map((item) => {
             const isActive = item.key === step;
@@ -156,9 +162,13 @@ const FirstLaunchSetupScreen: React.FC = () => {
           <>
             <View style={styles.sectionCard}>
               <Text style={styles.sectionTitle}>What is your main focus?</Text>
-              <View style={styles.choiceRow}>
+              <View style={[styles.choiceRow, styles.choiceRowWrap]}>
                 <TouchableOpacity
-                  style={[styles.choiceChip, focusGoal === "consistency" && styles.choiceChipActive]}
+                  style={[
+                    styles.choiceChip,
+                    styles.choiceChipComfort,
+                    focusGoal === "consistency" && styles.choiceChipActive,
+                  ]}
                   onPress={() => setFocusGoal("consistency")}
                 >
                   <Text
@@ -171,7 +181,11 @@ const FirstLaunchSetupScreen: React.FC = () => {
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.choiceChip, focusGoal === "grades" && styles.choiceChipActive]}
+                  style={[
+                    styles.choiceChip,
+                    styles.choiceChipComfort,
+                    focusGoal === "grades" && styles.choiceChipActive,
+                  ]}
                   onPress={() => setFocusGoal("grades")}
                 >
                   <Text
@@ -184,7 +198,11 @@ const FirstLaunchSetupScreen: React.FC = () => {
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.choiceChip, focusGoal === "balance" && styles.choiceChipActive]}
+                  style={[
+                    styles.choiceChip,
+                    styles.choiceChipComfort,
+                    focusGoal === "balance" && styles.choiceChipActive,
+                  ]}
                   onPress={() => setFocusGoal("balance")}
                 >
                   <Text
@@ -323,6 +341,40 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 14,
   },
+  heroCard: {
+    position: "relative",
+    overflow: "hidden",
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderRadius: DESIGN.radius.lg,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
+    padding: 15,
+    marginBottom: 14,
+    ...DESIGN.shadow.card,
+  },
+  heroGlow: {
+    position: "absolute",
+    top: -24,
+    right: -16,
+    width: 110,
+    height: 110,
+    borderRadius: 999,
+    backgroundColor: "rgba(34, 211, 238, 0.22)",
+  },
+  heroKicker: {
+    fontSize: 11,
+    letterSpacing: 1.1,
+    textTransform: "uppercase",
+    color: DESIGN.colors.textMuted,
+    fontWeight: "700",
+  },
+  heroTitle: {
+    marginTop: 6,
+    color: "#FFFFFF",
+    fontSize: 19,
+    lineHeight: 25,
+    fontWeight: "700",
+  },
   progressRow: {
     flexDirection: "row",
     marginBottom: 14,
@@ -373,6 +425,9 @@ const styles = StyleSheet.create({
   choiceRow: {
     flexDirection: "row",
   },
+  choiceRowWrap: {
+    flexWrap: "wrap",
+  },
   choiceChip: {
     backgroundColor: DESIGN.colors.surface,
     borderWidth: 1,
@@ -381,6 +436,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     marginRight: 8,
+  },
+  choiceChipComfort: {
+    marginBottom: 8,
   },
   choiceChipActive: {
     backgroundColor: DESIGN.colors.textPrimary,
