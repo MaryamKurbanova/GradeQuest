@@ -108,3 +108,10 @@ export const toggleAssignmentCompletion = (assignmentId: string): Assignment | n
 
   return updated;
 };
+
+export const deleteAssignment = (assignmentId: string): boolean => {
+  const nextAssignments = assignmentStore.filter((assignment) => assignment.id !== assignmentId);
+  const wasDeleted = nextAssignments.length !== assignmentStore.length;
+  assignmentStore = nextAssignments;
+  return wasDeleted;
+};

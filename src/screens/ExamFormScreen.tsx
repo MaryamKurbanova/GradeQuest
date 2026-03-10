@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   noCourseCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: DESIGN.colors.border,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     width: "48.5%",
   },
   reminderRow: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: DESIGN.colors.border,
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   saveButtonDisabled: {
-    backgroundColor: "#A5B4FC",
+    opacity: 0.55,
   },
   saveText: {
     color: "#FFFFFF",

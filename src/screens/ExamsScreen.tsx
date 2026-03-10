@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -61,7 +62,7 @@ const ExamsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { triggerCelebration } = useCelebration();
   const { grantCompletionReward } = useGamification();
-  const { exams, courses, toggleExamCompletion } = useStudyData();
+  const { exams, courses, toggleExamCompletion, deleteExam } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<ExamFilter>("all");
   const todayKey = useMemo(() => getTodayKey(), []);
   const courseMap = useMemo(
@@ -109,6 +110,26 @@ const ExamsScreen: React.FC = () => {
         title,
       });
     }
+  };
+
+  const onDeleteExam = (examId: string, title: string) => {
+    Alert.alert("Delete exam?", `Delete "${title}" permanently?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          try {
+            deleteExam(examId);
+          } catch (error) {
+            Alert.alert(
+              "Unable to delete",
+              error instanceof Error ? error.message : "Please try again.",
+            );
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -212,6 +233,12 @@ const ExamsScreen: React.FC = () => {
                     <View style={styles.weightPill}>
                       <Text style={styles.weightText}>Weight {exam.weightPercent}%</Text>
                     </View>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => onDeleteExam(exam.id, exam.title)}
+                    >
+                      <Text style={styles.deleteButtonText}>Delete</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               );
@@ -420,6 +447,8 @@ const styles = StyleSheet.create({
   bottomRow: {
     marginTop: 10,
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   weightPill: {
     borderRadius: 999,
@@ -432,6 +461,18 @@ const styles = StyleSheet.create({
   weightText: {
     fontSize: 11,
     color: DESIGN.colors.textPrimary,
+    fontWeight: "700",
+  },
+  deleteButton: {
+    borderWidth: 1,
+    borderColor: DESIGN.colors.danger,
+    borderRadius: DESIGN.radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  deleteButtonText: {
+    color: DESIGN.colors.danger,
+    fontSize: 11,
     fontWeight: "700",
   },
 });

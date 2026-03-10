@@ -108,3 +108,10 @@ export const toggleExamCompletion = (examId: string): Exam | null => {
 
   return updated;
 };
+
+export const deleteExam = (examId: string): boolean => {
+  const nextExams = examStore.filter((exam) => exam.id !== examId);
+  const wasDeleted = nextExams.length !== examStore.length;
+  examStore = nextExams;
+  return wasDeleted;
+};

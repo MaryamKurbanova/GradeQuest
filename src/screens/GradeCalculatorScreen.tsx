@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   limitCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 14,
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     backgroundColor: DESIGN.colors.primarySoft,
   },
   resultNotPossible: {
-    backgroundColor: "#FEE2E2",
+    backgroundColor: "#3F1B24",
   },
   resultTitle: {
     fontSize: 15,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   emptyCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 14,
     padding: 16,
     alignItems: "center",
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   historyCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,

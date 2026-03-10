@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -64,7 +65,7 @@ const AssignmentsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { triggerCelebration } = useCelebration();
   const { grantCompletionReward } = useGamification();
-  const { assignments, courses, toggleAssignmentCompletion } = useStudyData();
+  const { assignments, courses, toggleAssignmentCompletion, deleteAssignment } = useStudyData();
   const [activeFilter, setActiveFilter] = useState<AssignmentFilter>("all");
 
   const todayKey = useMemo(() => getTodayKey(), []);
@@ -109,6 +110,26 @@ const AssignmentsScreen: React.FC = () => {
         title,
       });
     }
+  };
+
+  const onDeleteAssignment = (assignmentId: string, title: string) => {
+    Alert.alert("Delete assignment?", `Delete "${title}" permanently?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          try {
+            deleteAssignment(assignmentId);
+          } catch (error) {
+            Alert.alert(
+              "Unable to delete",
+              error instanceof Error ? error.message : "Please try again.",
+            );
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -223,6 +244,12 @@ const AssignmentsScreen: React.FC = () => {
                     >
                       <Text style={styles.priorityText}>{priorityLabel}</Text>
                     </View>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => onDeleteAssignment(assignment.id, assignment.title)}
+                    >
+                      <Text style={styles.deleteButtonText}>Delete</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               );
@@ -431,6 +458,8 @@ const styles = StyleSheet.create({
   bottomRow: {
     marginTop: 10,
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   priorityPill: {
     borderRadius: 999,
@@ -449,6 +478,18 @@ const styles = StyleSheet.create({
   priorityText: {
     fontSize: 11,
     color: DESIGN.colors.textSecondary,
+    fontWeight: "700",
+  },
+  deleteButton: {
+    borderWidth: 1,
+    borderColor: DESIGN.colors.danger,
+    borderRadius: DESIGN.radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  deleteButtonText: {
+    color: DESIGN.colors.danger,
+    fontSize: 11,
     fontWeight: "700",
   },
 });

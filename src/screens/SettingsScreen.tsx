@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   sectionCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 12,
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DESIGN.colors.surface,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: DESIGN.colors.surfaceSoft,
   },
   scheduleSummaryTitle: {
     fontSize: 12,

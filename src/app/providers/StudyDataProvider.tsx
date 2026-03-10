@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 
 import {
   createAssignment as createAssignmentRecord,
+  deleteAssignment as deleteAssignmentRecord,
   listAssignments,
   replaceAssignmentStore,
   toggleAssignmentCompletion as toggleAssignmentCompletionRecord,
@@ -17,6 +18,7 @@ import {
 } from "../../db/repositories/courses.repo";
 import {
   createExam as createExamRecord,
+  deleteExam as deleteExamRecord,
   listExams,
   replaceExamStore,
   toggleExamCompletion as toggleExamCompletionRecord,
@@ -61,8 +63,10 @@ type StudyDataContextValue = {
   deleteCourse: (courseId: string) => void;
   createAssignment: (input: CreateAssignmentInput) => Assignment;
   toggleAssignmentCompletion: (assignmentId: string) => void;
+  deleteAssignment: (assignmentId: string) => void;
   createExam: (input: CreateExamInput) => Exam;
   toggleExamCompletion: (examId: string) => void;
+  deleteExam: (examId: string) => void;
 };
 
 const StudyDataContext = createContext<StudyDataContextValue | undefined>(undefined);
@@ -240,6 +244,14 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
     setAssignments(listAssignments());
   };
 
+  const deleteAssignment = useCallback((assignmentId: string) => {
+    const deleted = deleteAssignmentRecord(assignmentId);
+    if (!deleted) {
+      throw new Error("Assignment not found.");
+    }
+    setAssignments(listAssignments());
+  }, []);
+
   const createExam = (input: CreateExamInput): Exam => {
     const course = findCourseByName(input.courseName);
     if (!course) {
@@ -263,6 +275,14 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
     setExams(listExams());
   };
 
+  const deleteExam = useCallback((examId: string) => {
+    const deleted = deleteExamRecord(examId);
+    if (!deleted) {
+      throw new Error("Exam not found.");
+    }
+    setExams(listExams());
+  }, []);
+
   const value = useMemo<StudyDataContextValue>(
     () => ({
       isHydrated,
@@ -275,8 +295,10 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
       deleteCourse,
       createAssignment,
       toggleAssignmentCompletion,
+      deleteAssignment,
       createExam,
       toggleExamCompletion,
+      deleteExam,
     }),
     [
       isHydrated,
@@ -287,6 +309,8 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
       createCourse,
       updateCourse,
       deleteCourse,
+      deleteAssignment,
+      deleteExam,
     ],
   );
 

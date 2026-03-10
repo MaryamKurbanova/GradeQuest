@@ -16,7 +16,6 @@ import { useNotifications } from "../app/providers/NotificationProvider";
 import { useTheme } from "../app/providers/ThemeProvider";
 import { DESIGN } from "../app/theme/design";
 
-type ThemeChoice = "light" | "dark";
 type FocusGoal = "consistency" | "grades" | "balance";
 type OnboardingStep = 0 | 1 | 2;
 
@@ -35,7 +34,6 @@ const FirstLaunchSetupScreen: React.FC = () => {
     requestPermission,
   } = useNotifications();
   const [displayName, setDisplayNameInput] = useState("");
-  const [themeChoice, setThemeChoice] = useState<ThemeChoice>("light");
   const [focusGoal, setFocusGoal] = useState<FocusGoal>("consistency");
   const [step, setStep] = useState<OnboardingStep>(0);
 
@@ -62,7 +60,7 @@ const FirstLaunchSetupScreen: React.FC = () => {
   };
 
   const completeOnboarding = () => {
-    setActiveTheme(themeChoice);
+    setActiveTheme("light");
     setGlobalDisplayName(displayName.trim() || "Guest Student");
     setHasCompletedOnboarding(true);
 
@@ -131,29 +129,10 @@ const FirstLaunchSetupScreen: React.FC = () => {
               <Text style={styles.helperText}>Leave blank to continue as Guest Student.</Text>
             </View>
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>Default theme</Text>
-              <View style={styles.choiceRow}>
-                <TouchableOpacity
-                  style={[styles.choiceChip, themeChoice === "light" && styles.choiceChipActive]}
-                  onPress={() => setThemeChoice("light")}
-                >
-                  <Text
-                    style={[styles.choiceChipText, themeChoice === "light" && styles.choiceChipTextActive]}
-                  >
-                    Light
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.choiceChip, themeChoice === "dark" && styles.choiceChipActive]}
-                  onPress={() => setThemeChoice("dark")}
-                >
-                  <Text
-                    style={[styles.choiceChipText, themeChoice === "dark" && styles.choiceChipTextActive]}
-                  >
-                    Dark
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={styles.sectionTitle}>Theme</Text>
+              <Text style={styles.helperText}>
+                Theme is optimized automatically for the premium Orbit style.
+              </Text>
             </View>
           </>
         ) : null}
@@ -441,7 +420,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   choiceChipActive: {
-    backgroundColor: DESIGN.colors.textPrimary,
+    backgroundColor: DESIGN.colors.primary,
   },
   choiceChipDisabled: {
     opacity: 0.55,
@@ -484,7 +463,7 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     flex: 1.3,
-    backgroundColor: DESIGN.colors.textPrimary,
+    backgroundColor: DESIGN.colors.primary,
     borderRadius: DESIGN.radius.md,
     alignItems: "center",
     paddingVertical: 12,
