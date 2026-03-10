@@ -104,6 +104,21 @@ const DashboardScreen: React.FC = () => {
         <Text style={styles.greeting}>Welcome back{displayName ? `, ${displayName}` : ""}</Text>
         <Text style={styles.title}>Today at a glance</Text>
 
+        <View style={styles.heroCard}>
+          <Text style={styles.heroKicker}>Daily focus</Text>
+          <Text style={styles.heroTitle}>Build momentum one task at a time</Text>
+          <View style={styles.heroPillsRow}>
+            <View style={styles.heroPill}>
+              <Text style={styles.heroPillText}>{pendingAssignments.length} pending tasks</Text>
+            </View>
+            <View style={[styles.heroPill, styles.heroPillAccent]}>
+              <Text style={[styles.heroPillText, styles.heroPillTextAccent]}>
+                {upcomingExams.length} upcoming exams
+              </Text>
+            </View>
+          </View>
+        </View>
+
         <View style={styles.statsRow}>
           <View style={[styles.statCard, streakCardStyle, { borderColor: courseAccentColor }]}>
             <Text style={styles.statNumber}>{streakDays}</Text>
@@ -223,6 +238,52 @@ const styles = StyleSheet.create({
     color: DESIGN.colors.textPrimary,
     marginBottom: 14,
   },
+  heroCard: {
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderRadius: DESIGN.radius.lg,
+    padding: 16,
+    marginBottom: 14,
+    ...DESIGN.shadow.card,
+  },
+  heroKicker: {
+    fontSize: 11,
+    letterSpacing: 1.1,
+    textTransform: "uppercase",
+    color: "#98A2B3",
+    fontWeight: "700",
+  },
+  heroTitle: {
+    marginTop: 6,
+    fontSize: 22,
+    lineHeight: 28,
+    color: "#FFFFFF",
+    fontWeight: "700",
+  },
+  heroPillsRow: {
+    flexDirection: "row",
+    marginTop: 12,
+  },
+  heroPill: {
+    backgroundColor: "#1F2937",
+    borderRadius: DESIGN.radius.pill,
+    borderWidth: 1,
+    borderColor: "#374151",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginRight: 8,
+  },
+  heroPillAccent: {
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+    borderColor: DESIGN.colors.accentLime,
+  },
+  heroPillText: {
+    fontSize: 11,
+    color: "#D1D5DB",
+    fontWeight: "600",
+  },
+  heroPillTextAccent: {
+    color: DESIGN.colors.textPrimary,
+  },
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -256,7 +317,7 @@ const styles = StyleSheet.create({
   },
   primaryAction: {
     flex: 1,
-    backgroundColor: DESIGN.colors.primary,
+    backgroundColor: DESIGN.colors.surfaceDark,
     borderRadius: DESIGN.radius.md,
     paddingVertical: 12,
     alignItems: "center",
@@ -268,17 +329,17 @@ const styles = StyleSheet.create({
   },
   secondaryAction: {
     flex: 1,
-    backgroundColor: DESIGN.colors.surface,
+    backgroundColor: DESIGN.colors.accentLimeSoft,
     borderRadius: DESIGN.radius.md,
     borderWidth: 1,
-    borderColor: DESIGN.colors.border,
+    borderColor: DESIGN.colors.accentLime,
     paddingVertical: 12,
     alignItems: "center",
     marginLeft: 6,
   },
   secondaryActionText: {
     color: DESIGN.colors.textPrimary,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   quickAccessButton: {
     backgroundColor: DESIGN.colors.surfaceSoft,

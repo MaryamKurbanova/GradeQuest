@@ -117,6 +117,11 @@ const ExamsScreen: React.FC = () => {
         <Text style={styles.kicker}>Exams</Text>
         <Text style={styles.title}>Track upcoming tests</Text>
 
+        <View style={styles.heroCard}>
+          <Text style={styles.heroKicker}>Exam readiness</Text>
+          <Text style={styles.heroTitle}>Keep revision structured and predictable</Text>
+        </View>
+
         <View style={styles.summaryRow}>
           <View style={styles.summaryCard}>
             <Text style={styles.summaryNumber}>{upcomingCount}</Text>
@@ -234,10 +239,31 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 25,
+    fontSize: DESIGN.typography.headline,
     fontWeight: "700",
     color: DESIGN.colors.textPrimary,
     marginBottom: 14,
+  },
+  heroCard: {
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderRadius: DESIGN.radius.lg,
+    padding: 15,
+    marginBottom: 12,
+    ...DESIGN.shadow.card,
+  },
+  heroKicker: {
+    fontSize: 11,
+    letterSpacing: 1.1,
+    textTransform: "uppercase",
+    color: "#98A2B3",
+    fontWeight: "700",
+  },
+  heroTitle: {
+    marginTop: 6,
+    fontSize: 20,
+    lineHeight: 26,
+    color: "#FFFFFF",
+    fontWeight: "700",
   },
   summaryRow: {
     flexDirection: "row",
@@ -245,8 +271,10 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     flex: 1,
-    backgroundColor: DESIGN.colors.surface,
+    backgroundColor: DESIGN.colors.surfaceSoft,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     paddingVertical: 12,
     alignItems: "center",
     marginRight: 8,
@@ -263,15 +291,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   addButton: {
-    backgroundColor: DESIGN.colors.primary,
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderRadius: DESIGN.radius.md,
     alignItems: "center",
     paddingVertical: 12,
     marginBottom: 12,
   },
   addButtonText: {
     color: "#FFFFFF",
-    fontWeight: "600",
+    fontWeight: "700",
   },
   filterRow: {
     paddingBottom: 6,
@@ -286,7 +314,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   filterChipActive: {
-    backgroundColor: DESIGN.colors.primary,
+    backgroundColor: DESIGN.colors.surfaceDark,
   },
   filterChipText: {
     fontSize: 13,
@@ -302,6 +330,8 @@ const styles = StyleSheet.create({
   emptyCard: {
     backgroundColor: DESIGN.colors.surface,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 16,
     alignItems: "center",
   },
@@ -313,12 +343,14 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 4,
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
     textAlign: "center",
   },
   itemCard: {
     backgroundColor: DESIGN.colors.surface,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 12,
     marginBottom: 9,
     ...DESIGN.shadow.card,
@@ -339,7 +371,7 @@ const styles = StyleSheet.create({
   },
   itemTitleCompleted: {
     textDecorationLine: "line-through",
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   itemMeta: {
     fontSize: 13,
@@ -368,20 +400,22 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   statusButtonOpen: {
-    backgroundColor: DESIGN.colors.primarySoft,
+    backgroundColor: DESIGN.colors.accentLimeSoft,
   },
   statusButtonDone: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: DESIGN.colors.surfaceSoft,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
   },
   statusButtonText: {
     fontSize: 12,
     fontWeight: "700",
   },
   statusButtonTextOpen: {
-    color: "#3730A3",
+    color: DESIGN.colors.textPrimary,
   },
   statusButtonTextDone: {
-    color: "#166534",
+    color: DESIGN.colors.textSecondary,
   },
   bottomRow: {
     marginTop: 10,
@@ -391,11 +425,13 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    backgroundColor: "#E0E7FF",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.accentLime,
   },
   weightText: {
     fontSize: 11,
-    color: "#3730A3",
+    color: DESIGN.colors.textPrimary,
     fontWeight: "700",
   },
 });

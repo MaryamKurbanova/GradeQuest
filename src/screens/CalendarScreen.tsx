@@ -128,6 +128,11 @@ const CalendarScreen: React.FC = () => {
         <Text style={styles.kicker}>Calendar</Text>
         <Text style={styles.title}>Plan your week</Text>
 
+        <View style={styles.heroCard}>
+          <Text style={styles.heroKicker}>Weekly planner</Text>
+          <Text style={styles.heroTitle}>Visualize workload before deadlines stack up</Text>
+        </View>
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -226,10 +231,31 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 25,
+    fontSize: DESIGN.typography.headline,
     fontWeight: "700",
     color: DESIGN.colors.textPrimary,
     marginBottom: 14,
+  },
+  heroCard: {
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderRadius: DESIGN.radius.lg,
+    padding: 15,
+    marginBottom: 12,
+    ...DESIGN.shadow.card,
+  },
+  heroKicker: {
+    fontSize: 11,
+    letterSpacing: 1.1,
+    textTransform: "uppercase",
+    color: "#98A2B3",
+    fontWeight: "700",
+  },
+  heroTitle: {
+    marginTop: 6,
+    fontSize: 20,
+    lineHeight: 26,
+    color: "#FFFFFF",
+    fontWeight: "700",
   },
   dayRow: {
     paddingBottom: 6,
@@ -245,7 +271,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   dayCardSelected: {
-    backgroundColor: DESIGN.colors.primary,
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderColor: DESIGN.colors.surfaceDark,
   },
   dayShort: {
     fontSize: 12,
@@ -253,7 +280,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   dayShortSelected: {
-    color: "#DBEAFE",
+    color: "#D1D5DB",
   },
   dayDate: {
     marginTop: 4,
@@ -266,8 +293,10 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     marginTop: 10,
-    backgroundColor: DESIGN.colors.surface,
+    backgroundColor: DESIGN.colors.surfaceSoft,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 14,
     ...DESIGN.shadow.card,
   },
@@ -293,6 +322,8 @@ const styles = StyleSheet.create({
   emptyCard: {
     backgroundColor: DESIGN.colors.surface,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 16,
     alignItems: "center",
   },
@@ -304,11 +335,13 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 4,
     fontSize: 13,
-    color: "#64748B",
+    color: DESIGN.colors.textMuted,
   },
   itemCard: {
     backgroundColor: DESIGN.colors.surface,
     borderRadius: DESIGN.radius.md,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
     padding: 12,
     marginBottom: 9,
     ...DESIGN.shadow.card,
@@ -352,20 +385,24 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   assignmentPill: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.accentLime,
   },
   examPill: {
-    backgroundColor: "#E0E7FF",
+    backgroundColor: DESIGN.colors.surfaceSoft,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.border,
   },
   typeText: {
     fontSize: 11,
     fontWeight: "700",
   },
   assignmentText: {
-    color: "#166534",
+    color: DESIGN.colors.textPrimary,
   },
   examText: {
-    color: "#3730A3",
+    color: DESIGN.colors.textSecondary,
   },
   actionsRow: {
     flexDirection: "row",
@@ -373,27 +410,29 @@ const styles = StyleSheet.create({
   },
   primaryAction: {
     flex: 1,
-    backgroundColor: DESIGN.colors.primary,
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderRadius: DESIGN.radius.md,
     paddingVertical: 12,
     alignItems: "center",
     marginRight: 6,
   },
   primaryActionText: {
     color: "#FFFFFF",
-    fontWeight: "600",
+    fontWeight: "700",
   },
   secondaryAction: {
     flex: 1,
-    backgroundColor: DESIGN.colors.border,
-    borderRadius: 12,
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+    borderColor: DESIGN.colors.accentLime,
+    borderWidth: 1,
+    borderRadius: DESIGN.radius.md,
     paddingVertical: 12,
     alignItems: "center",
     marginLeft: 6,
   },
   secondaryActionText: {
     color: DESIGN.colors.textPrimary,
-    fontWeight: "600",
+    fontWeight: "700",
   },
 });
 

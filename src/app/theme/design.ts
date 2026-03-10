@@ -1,8 +1,9 @@
 export const DESIGN = {
   colors: {
-    appBg: "#F4F5F7",
+    appBg: "#EEF1F4",
     surface: "#FFFFFF",
-    surfaceSoft: "#F8F9FB",
+    surfaceSoft: "#F6F8FB",
+    surfaceDark: "#111827",
     textPrimary: "#101828",
     textSecondary: "#344054",
     textMuted: "#667085",
@@ -12,6 +13,7 @@ export const DESIGN = {
     success: "#84CC16",
     danger: "#DC2626",
     accentLimeSoft: "#ECFCCB",
+    accentLime: "#A3E635",
   },
   radius: {
     sm: 12,
@@ -37,9 +39,9 @@ export const DESIGN = {
   shadow: {
     card: {
       shadowColor: "#0F172A",
-      shadowOpacity: 0.05,
-      shadowRadius: 18,
-      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.07,
+      shadowRadius: 22,
+      shadowOffset: { width: 0, height: 10 },
       elevation: 3,
     },
   },

@@ -32,16 +32,23 @@ const ProfileScreen: React.FC = () => {
         <Text style={styles.kicker}>Profile</Text>
         <Text style={styles.title}>{displayName || "Guest Student"}</Text>
 
-        <View style={styles.planCard}>
-          <Text style={styles.planTitle}>{isPremium ? "Premium Member" : "Free Plan"}</Text>
-          <Text style={styles.planText}>
-            {isPremium ? `Active plan: ${plan}` : "Upgrade to unlock advanced features."}
-          </Text>
+        <View style={styles.heroCard}>
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarText}>{(displayName || "G").slice(0, 1).toUpperCase()}</Text>
+          </View>
+          <View style={styles.heroTextWrap}>
+            <Text style={styles.heroName}>{displayName || "Guest Student"}</Text>
+            <Text style={styles.heroSubtitle}>
+              {isPremium ? `Premium active • ${plan}` : "Free plan • upgrade for advanced tools"}
+            </Text>
+          </View>
           {!isPremium ? (
             <TouchableOpacity style={styles.planButton} onPress={() => navigate("paywall")}>
-              <Text style={styles.planButtonText}>View Premium</Text>
+              <Text style={styles.planButtonText}>Upgrade</Text>
             </TouchableOpacity>
-          ) : null}
+          ) : (
+            <View style={styles.premiumDot} />
+          )}
         </View>
 
         <View style={styles.statsRow}>
@@ -129,34 +136,67 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   planCard: {
-    backgroundColor: DESIGN.colors.surface,
-    borderRadius: DESIGN.radius.md,
-    borderWidth: 1,
-    borderColor: DESIGN.colors.border,
+    display: "none",
+  },
+  heroCard: {
+    backgroundColor: DESIGN.colors.surfaceDark,
+    borderRadius: DESIGN.radius.lg,
     padding: 14,
     marginBottom: 12,
+    flexDirection: "row",
+    alignItems: "center",
     ...DESIGN.shadow.card,
   },
-  planTitle: {
+  avatarCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: DESIGN.radius.pill,
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
+  avatarText: {
+    color: DESIGN.colors.textPrimary,
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  heroTextWrap: {
+    flex: 1,
+  },
+  heroName: {
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
-    color: DESIGN.colors.textPrimary,
+  },
+  heroSubtitle: {
+    marginTop: 2,
+    color: "#98A2B3",
+    fontSize: 12,
+  },
+  premiumDot: {
+    width: 10,
+    height: 10,
+    borderRadius: DESIGN.radius.pill,
+    backgroundColor: DESIGN.colors.accentLime,
+  },
+  planTitle: {
+    display: "none",
   },
   planText: {
-    marginTop: 4,
-    fontSize: 13,
-    color: DESIGN.colors.textMuted,
+    display: "none",
   },
   planButton: {
-    marginTop: 10,
-    alignSelf: "flex-start",
-    backgroundColor: DESIGN.colors.textPrimary,
+    alignSelf: "center",
+    backgroundColor: DESIGN.colors.accentLimeSoft,
+    borderWidth: 1,
+    borderColor: DESIGN.colors.accentLime,
     borderRadius: DESIGN.radius.pill,
     paddingHorizontal: 12,
     paddingVertical: 7,
   },
   planButtonText: {
-    color: "#FFFFFF",
+    color: DESIGN.colors.textPrimary,
     fontSize: 12,
     fontWeight: "700",
   },

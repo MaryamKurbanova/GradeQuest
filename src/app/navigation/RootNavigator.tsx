@@ -157,19 +157,23 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: DESIGN.spacing.lg,
-    paddingTop: DESIGN.spacing.xs,
-    paddingBottom: DESIGN.spacing.md,
+    paddingTop: DESIGN.spacing.sm,
+    paddingBottom: DESIGN.spacing.lg,
     backgroundColor: DESIGN.colors.appBg,
   },
   appTitle: {
-    fontSize: 24,
+    fontSize: 12,
     fontWeight: "700",
-    color: DESIGN.colors.textPrimary,
+    color: DESIGN.colors.textMuted,
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
   },
   screenTitle: {
-    marginTop: 3,
-    fontSize: 13,
-    color: DESIGN.colors.textMuted,
+    marginTop: 6,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: "700",
+    color: DESIGN.colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -180,10 +184,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginHorizontal: DESIGN.spacing.lg,
     marginBottom: DESIGN.spacing.md,
-    borderWidth: 1,
-    borderColor: DESIGN.colors.border,
+    borderWidth: 0,
     borderRadius: DESIGN.radius.lg,
-    backgroundColor: DESIGN.colors.surface,
+    backgroundColor: DESIGN.colors.surfaceDark,
     paddingVertical: 8,
     paddingHorizontal: 8,
     ...DESIGN.shadow.card,
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   navButtonActive: {
-    backgroundColor: DESIGN.colors.surfaceSoft,
+    backgroundColor: "#1F2937",
   },
   navIconWrap: {
     width: 24,
@@ -205,18 +208,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: DESIGN.colors.border,
-    backgroundColor: DESIGN.colors.surface,
+    borderColor: "#374151",
+    backgroundColor: "#1F2937",
     marginBottom: 3,
   },
   navIconWrapActive: {
-    borderColor: DESIGN.colors.success,
+    borderColor: DESIGN.colors.accentLime,
     backgroundColor: DESIGN.colors.accentLimeSoft,
   },
   navIconText: {
     fontSize: 10,
     fontWeight: "700",
-    color: DESIGN.colors.textMuted,
+    color: "#98A2B3",
   },
   navIconTextActive: {
     color: DESIGN.colors.textPrimary,
@@ -224,10 +227,10 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 10,
     fontWeight: "600",
-    color: DESIGN.colors.textSecondary,
+    color: "#98A2B3",
   },
   navButtonTextActive: {
-    color: DESIGN.colors.primary,
+    color: "#FFFFFF",
     fontWeight: "700",
   },
 });
