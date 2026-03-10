@@ -29,7 +29,6 @@ const FirstLaunchSetupScreen: React.FC = () => {
   const {
     notificationsEnabled,
     setNotificationsEnabled,
-    reminderStyle,
     setReminderStyle,
     requestPermission,
   } = useNotifications();
@@ -61,6 +60,7 @@ const FirstLaunchSetupScreen: React.FC = () => {
 
   const completeOnboarding = () => {
     setActiveTheme("light");
+    setReminderStyle("standard");
     setGlobalDisplayName(displayName.trim() || "Guest Student");
     setHasCompletedOnboarding(true);
 
@@ -225,47 +225,10 @@ const FirstLaunchSetupScreen: React.FC = () => {
               </Text>
             </View>
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>Reminder style</Text>
-              <View style={styles.choiceRow}>
-                <TouchableOpacity
-                  style={[
-                    styles.choiceChip,
-                    reminderStyle === "standard" && styles.choiceChipActive,
-                    !notificationsEnabled && styles.choiceChipDisabled,
-                  ]}
-                  onPress={() => setReminderStyle("standard")}
-                  disabled={!notificationsEnabled}
-                >
-                  <Text
-                    style={[
-                      styles.choiceChipText,
-                      reminderStyle === "standard" && styles.choiceChipTextActive,
-                    ]}
-                  >
-                    Standard
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.choiceChip,
-                    reminderStyle === "focused" && styles.choiceChipActive,
-                    !notificationsEnabled && styles.choiceChipDisabled,
-                  ]}
-                  onPress={() => setReminderStyle("focused")}
-                  disabled={!notificationsEnabled}
-                >
-                  <Text
-                    style={[
-                      styles.choiceChipText,
-                      reminderStyle === "focused" && styles.choiceChipTextActive,
-                    ]}
-                  >
-                    Focused
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={styles.sectionTitle}>Reminder mode</Text>
               <Text style={styles.helperText}>
-                Focused adds stronger nudges to protect streaks and study momentum.
+                Smart mode is auto-tuned for you during onboarding. You can customize details later in
+                Settings.
               </Text>
             </View>
           </>
