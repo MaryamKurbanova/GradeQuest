@@ -10,56 +10,7 @@ type CreateAssignmentInput = {
 
 const nowIso = () => new Date().toISOString();
 
-let assignmentStore: Assignment[] = [
-  {
-    id: "assignment-1",
-    courseId: "course-algebra-ii",
-    title: "Solve quadratic practice set",
-    notes: null,
-    dueAt: "2026-03-08 17:00",
-    priority: "high",
-    status: "pending",
-    completedAt: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-  {
-    id: "assignment-2",
-    courseId: "course-biology",
-    title: "Read chapter 6 and notes",
-    notes: null,
-    dueAt: "2026-03-08 20:00",
-    priority: "medium",
-    status: "pending",
-    completedAt: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-  {
-    id: "assignment-3",
-    courseId: "course-english",
-    title: "Outline essay introduction",
-    notes: null,
-    dueAt: "2026-03-09 16:00",
-    priority: "medium",
-    status: "pending",
-    completedAt: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-  {
-    id: "assignment-4",
-    courseId: "course-world-history",
-    title: "Flashcards review",
-    notes: null,
-    dueAt: "2026-03-08 12:00",
-    priority: "low",
-    status: "completed",
-    completedAt: nowIso(),
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-];
+let assignmentStore: Assignment[] = [];
 
 export const listAssignments = (): Assignment[] => {
   return [...assignmentStore].sort((a, b) => a.dueAt.localeCompare(b.dueAt));

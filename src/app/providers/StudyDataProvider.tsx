@@ -77,6 +77,14 @@ type PersistedStudyData = {
   exams: Exam[];
 };
 
+const LEGACY_SAMPLE_ASSIGNMENT_IDS = new Set([
+  "assignment-1",
+  "assignment-2",
+  "assignment-3",
+  "assignment-4",
+]);
+const LEGACY_SAMPLE_EXAM_IDS = new Set(["exam-1", "exam-2", "exam-3", "exam-4"]);
+
 const combineDateTime = (datePart: string, timePart: string): string => {
   return `${datePart.trim()} ${timePart.trim()}`.trim();
 };
@@ -107,9 +115,11 @@ export const StudyDataProvider: React.FC<React.PropsWithChildren> = ({ children 
           ? persisted.courses
           : listCourses();
       const nextAssignments = Array.isArray(persisted.assignments)
-        ? persisted.assignments
+        ? persisted.assignments.filter((assignment) => !LEGACY_SAMPLE_ASSIGNMENT_IDS.has(assignment.id))
         : [];
-      const nextExams = Array.isArray(persisted.exams) ? persisted.exams : [];
+      const nextExams = Array.isArray(persisted.exams)
+        ? persisted.exams.filter((exam) => !LEGACY_SAMPLE_EXAM_IDS.has(exam.id))
+        : [];
 
       replaceCourseStore(nextCourses);
       replaceAssignmentStore(nextAssignments);

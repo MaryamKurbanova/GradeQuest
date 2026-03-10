@@ -10,56 +10,7 @@ type CreateExamInput = {
 
 const nowIso = () => new Date().toISOString();
 
-let examStore: Exam[] = [
-  {
-    id: "exam-1",
-    courseId: "course-algebra-ii",
-    title: "Calculus Quiz 3",
-    examAt: "2026-03-10 10:00",
-    weightPercent: 15,
-    notes: null,
-    status: "upcoming",
-    completedAt: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-  {
-    id: "exam-2",
-    courseId: "course-chemistry",
-    title: "Chemistry Unit Test",
-    examAt: "2026-03-12 13:30",
-    weightPercent: 25,
-    notes: null,
-    status: "upcoming",
-    completedAt: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-  {
-    id: "exam-3",
-    courseId: "course-world-history",
-    title: "History Midterm",
-    examAt: "2026-03-16 09:00",
-    weightPercent: 30,
-    notes: null,
-    status: "upcoming",
-    completedAt: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-  {
-    id: "exam-4",
-    courseId: "course-biology",
-    title: "Biology Pop Quiz",
-    examAt: "2026-03-07 14:00",
-    weightPercent: 10,
-    notes: null,
-    status: "completed",
-    completedAt: nowIso(),
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  },
-];
+let examStore: Exam[] = [];
 
 export const listExams = (): Exam[] => {
   return [...examStore].sort((a, b) => a.examAt.localeCompare(b.examAt));

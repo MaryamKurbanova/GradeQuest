@@ -8,34 +8,37 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import { useAppNavigation } from "../app/navigation/NavigationContext";
 import { useCelebration } from "../app/providers/CelebrationProvider";
 import { useGamification } from "../app/providers/GamificationProvider";
 import { useStudyData } from "../app/providers/StudyDataProvider";
 import { DESIGN } from "../app/theme/design";
-import type { Course, Priority } from "../types/entities";
+import type { Assignment, Exam } from "../types/entities";
 
-type AssignmentFilter = "all" | "today" | "upcoming" | "completed";
+type TaskFilter = "all" | "open" | "completed";
+type TaskKind = "assignment" | "exam";
 
-const FILTERS: { key: AssignmentFilter; label: string }[] = [
+type TaskItem = {
+  key: string;
+  id: string;
+  kind: TaskKind;
+  title: string;
+  scheduledAt: string;
+  courseName: string;
+  courseColor: string;
+  status: "open" | "completed";
+  priorityLabel?: "Low" | "Medium" | "High";
+  weightPercent?: number;
+};
+
+const FILTERS: { key: TaskFilter; label: string }[] = [
   { key: "all", label: "All" },
-  { key: "today", label: "Today" },
-  { key: "upcoming", label: "Upcoming" },
+  { key: "open", label: "Open" },
   { key: "completed", label: "Completed" },
 ];
 
-const pad = (value: number) => `${value}`.padStart(2, "0");
-
-const getTodayKey = (): string => {
-  const now = new Date();
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-};
-
-const getDateKeyFromDateTime = (dateTime: string): string => {
-  return dateTime.split(" ")[0] ?? "";
-};
-
-const formatPriorityLabel = (priority: Priority): "Low" | "Medium" | "High" => {
+const formatPriorityLabel = (priority: Assignment["priority"]): "Low" | "Medium" | "High" => {
   if (priority === "high") {
     return "High";
   }
@@ -45,82 +48,99 @@ const formatPriorityLabel = (priority: Priority): "Low" | "Medium" | "High" => {
   return "Low";
 };
 
-const formatCourseIconLabel = (icon: Course["icon"]): string => {
-  if (icon === "book") {
-    return "BOOK";
-  }
-  if (icon === "calculator") {
-    return "MATH";
-  }
-  if (icon === "flask") {
-    return "LAB";
-  }
-  if (icon === "globe") {
-    return "WORLD";
-  }
-  return `${icon}`.slice(0, 5).toUpperCase();
-};
-
 const AssignmentsScreen: React.FC = () => {
   const { navigate } = useAppNavigation();
   const { triggerCelebration } = useCelebration();
   const { grantCompletionReward } = useGamification();
-  const { assignments, courses, toggleAssignmentCompletion, deleteAssignment } = useStudyData();
-  const [activeFilter, setActiveFilter] = useState<AssignmentFilter>("all");
+  const {
+    assignments,
+    exams,
+    courses,
+    toggleAssignmentCompletion,
+    deleteAssignment,
+    toggleExamCompletion,
+    deleteExam,
+  } = useStudyData();
+  const [activeFilter, setActiveFilter] = useState<TaskFilter>("all");
 
-  const todayKey = useMemo(() => getTodayKey(), []);
-  const courseMap = useMemo(
-    () => new Map(courses.map((course) => [course.id, course])),
-    [courses],
-  );
+  const courseMap = useMemo(() => new Map(courses.map((course) => [course.id, course])), [courses]);
 
-  const filteredAssignments = useMemo(() => {
+  const allTasks = useMemo<TaskItem[]>(() => {
+    const assignmentTasks: TaskItem[] = assignments.map((assignment) => {
+      const course = courseMap.get(assignment.courseId);
+      return {
+        key: `assignment:${assignment.id}`,
+        id: assignment.id,
+        kind: "assignment",
+        title: assignment.title,
+        scheduledAt: assignment.dueAt,
+        courseName: course?.name ?? "Unknown Course",
+        courseColor: course?.colorHex ?? DESIGN.colors.textMuted,
+        status: assignment.status === "completed" ? "completed" : "open",
+        priorityLabel: formatPriorityLabel(assignment.priority),
+      };
+    });
+
+    const examTasks: TaskItem[] = exams.map((exam) => {
+      const course = courseMap.get(exam.courseId);
+      return {
+        key: `exam:${exam.id}`,
+        id: exam.id,
+        kind: "exam",
+        title: exam.title,
+        scheduledAt: exam.examAt,
+        courseName: course?.name ?? "Unknown Course",
+        courseColor: course?.colorHex ?? DESIGN.colors.textMuted,
+        status: exam.status === "completed" ? "completed" : "open",
+        weightPercent: exam.weightPercent,
+      };
+    });
+
+    return [...assignmentTasks, ...examTasks].sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt));
+  }, [assignments, exams, courseMap]);
+
+  const filteredTasks = useMemo(() => {
     if (activeFilter === "all") {
-      return assignments;
+      return allTasks;
     }
-    if (activeFilter === "completed") {
-      return assignments.filter((item) => item.status === "completed");
+    return allTasks.filter((task) => task.status === activeFilter);
+  }, [activeFilter, allTasks]);
+
+  const openCount = allTasks.filter((task) => task.status === "open").length;
+  const completedCount = allTasks.length - openCount;
+
+  const handleToggleTask = (task: TaskItem) => {
+    const willComplete = task.status !== "completed";
+    if (task.kind === "assignment") {
+      toggleAssignmentCompletion(task.id);
+      if (willComplete) {
+        grantCompletionReward({ kind: "assignment", sourceId: task.id, title: task.title });
+        triggerCelebration({ kind: "assignment", title: task.title });
+      }
+      return;
     }
-    return assignments.filter(
-      (item) =>
-        item.status !== "completed" &&
-        (activeFilter === "today"
-          ? getDateKeyFromDateTime(item.dueAt) === todayKey
-          : getDateKeyFromDateTime(item.dueAt) > todayKey),
-    );
-  }, [activeFilter, assignments, todayKey]);
 
-  const pendingCount = assignments.filter((item) => item.status === "pending").length;
-  const completedCount = assignments.length - pendingCount;
-
-  const onAddPressed = () => {
-    navigate("assignmentForm");
-  };
-
-  const onToggleAssignment = (assignmentId: string, isCompleted: boolean, title: string) => {
-    toggleAssignmentCompletion(assignmentId);
-    if (!isCompleted) {
-      grantCompletionReward({
-        kind: "assignment",
-        sourceId: assignmentId,
-        title,
-      });
-      triggerCelebration({
-        kind: "assignment",
-        title,
-      });
+    toggleExamCompletion(task.id);
+    if (willComplete) {
+      grantCompletionReward({ kind: "exam", sourceId: task.id, title: task.title });
+      triggerCelebration({ kind: "exam", title: task.title });
     }
   };
 
-  const onDeleteAssignment = (assignmentId: string, title: string) => {
-    Alert.alert("Delete assignment?", `Delete "${title}" permanently?`, [
+  const handleDeleteTask = (task: TaskItem) => {
+    const label = task.kind === "exam" ? "exam" : "task";
+    Alert.alert(`Delete ${label}?`, `Delete "${task.title}" permanently?`, [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
         style: "destructive",
         onPress: () => {
           try {
-            deleteAssignment(assignmentId);
+            if (task.kind === "assignment") {
+              deleteAssignment(task.id);
+            } else {
+              deleteExam(task.id);
+            }
           } catch (error) {
             Alert.alert(
               "Unable to delete",
@@ -132,37 +152,39 @@ const AssignmentsScreen: React.FC = () => {
     ]);
   };
 
+  const onManageTask = (task: TaskItem) => {
+    Alert.alert(task.title, "Choose an action", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: task.status === "completed" ? "Mark as open" : "Mark as done",
+        onPress: () => handleToggleTask(task),
+      },
+      { text: "Delete", style: "destructive", onPress: () => handleDeleteTask(task) },
+    ]);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <Text style={styles.kicker}>Assignments</Text>
-        <Text style={styles.title}>Stay on top of your work</Text>
+        <Text style={styles.kicker}>Tasks</Text>
+        <Text style={styles.title}>Everything in one place</Text>
+        <Text style={styles.meta}>
+          {openCount} open • {completedCount} completed
+        </Text>
 
-        <View style={styles.heroCard}>
-          <Text style={styles.heroKicker}>Task command center</Text>
-          <Text style={styles.heroTitle}>Focus on what moves your grade forward</Text>
+        <View style={styles.addRow}>
+          <TouchableOpacity style={styles.addButton} onPress={() => navigate("assignmentForm")}>
+            <Text style={styles.addButtonText}>+ Assignment</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.addButton, styles.addButtonLast]}
+            onPress={() => navigate("examForm")}
+          >
+            <Text style={styles.addButtonText}>+ Exam</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.summaryRow}>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryNumber}>{pendingCount}</Text>
-            <Text style={styles.summaryLabel}>Pending</Text>
-          </View>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryNumber}>{completedCount}</Text>
-            <Text style={styles.summaryLabel}>Completed</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.addButton} onPress={onAddPressed}>
-          <Text style={styles.addButtonText}>+ Add Assignment</Text>
-        </TouchableOpacity>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterRow}
-        >
+        <View style={styles.filterRow}>
           {FILTERS.map((filter) => {
             const isActive = filter.key === activeFilter;
             return (
@@ -177,85 +199,36 @@ const AssignmentsScreen: React.FC = () => {
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
-
-        <View style={styles.listContainer}>
-          {filteredAssignments.length === 0 ? (
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyTitle}>Nothing here yet</Text>
-              <Text style={styles.emptyText}>
-                Try switching filters or add a new assignment.
-              </Text>
-            </View>
-          ) : (
-            filteredAssignments.map((assignment) => {
-              const isCompleted = assignment.status === "completed";
-              const priorityLabel = formatPriorityLabel(assignment.priority);
-              const course = courseMap.get(assignment.courseId);
-              const courseName = course?.name ?? "Unknown Course";
-              const courseColor = course?.colorHex ?? DESIGN.colors.textMuted;
-              const courseIconLabel = formatCourseIconLabel(course?.icon ?? "book");
-              return (
-                <View key={assignment.id} style={styles.itemCard}>
-                  <View style={styles.itemTopRow}>
-                    <View style={styles.titleWrap}>
-                      <Text style={[styles.itemTitle, isCompleted && styles.itemTitleCompleted]}>
-                        {assignment.title}
-                      </Text>
-                      <View style={styles.courseMetaRow}>
-                        <View style={[styles.courseBadge, { backgroundColor: courseColor }]}>
-                          <Text style={styles.courseBadgeText}>{courseIconLabel}</Text>
-                        </View>
-                        <Text style={styles.itemMeta}>
-                          {courseName} • Due {assignment.dueAt}
-                        </Text>
-                      </View>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() =>
-                        onToggleAssignment(assignment.id, isCompleted, assignment.title)
-                      }
-                      style={[
-                        styles.statusButton,
-                        isCompleted ? styles.statusButtonDone : styles.statusButtonOpen,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.statusButtonText,
-                          isCompleted
-                            ? styles.statusButtonTextDone
-                            : styles.statusButtonTextOpen,
-                        ]}
-                      >
-                        {isCompleted ? "Done" : "Mark done"}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  <View style={styles.bottomRow}>
-                    <View
-                      style={[
-                        styles.priorityPill,
-                        priorityLabel === "High" && styles.priorityHigh,
-                        priorityLabel === "Medium" && styles.priorityMedium,
-                        priorityLabel === "Low" && styles.priorityLow,
-                      ]}
-                    >
-                      <Text style={styles.priorityText}>{priorityLabel}</Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.deleteButton}
-                      onPress={() => onDeleteAssignment(assignment.id, assignment.title)}
-                    >
-                      <Text style={styles.deleteButtonText}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              );
-            })
-          )}
         </View>
+
+        {filteredTasks.length === 0 ? (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>No tasks yet</Text>
+            <Text style={styles.emptyText}>Add an assignment or exam to get started.</Text>
+          </View>
+        ) : (
+          filteredTasks.map((task) => (
+            <View key={task.key} style={styles.itemCard}>
+              <View style={styles.itemLeft}>
+                <View style={[styles.colorDot, { backgroundColor: task.courseColor }]} />
+                <View style={styles.itemTextWrap}>
+                  <Text style={[styles.itemTitle, task.status === "completed" && styles.itemTitleCompleted]}>
+                    {task.title}
+                  </Text>
+                  <Text style={styles.itemMeta}>
+                    {task.kind === "exam" ? "Exam" : "Assignment"} • {task.courseName} •{" "}
+                    {task.scheduledAt}
+                    {task.priorityLabel ? ` • ${task.priorityLabel}` : ""}
+                    {typeof task.weightPercent === "number" ? ` • ${task.weightPercent}%` : ""}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.manageButton} onPress={() => onManageTask(task)}>
+                <Text style={styles.manageButtonText}>{task.status === "completed" ? "Done" : "Manage"}</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -272,79 +245,50 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
   kicker: {
-    fontSize: 14,
+    fontSize: 13,
     color: DESIGN.colors.textMuted,
     marginBottom: 4,
   },
   title: {
-    fontSize: DESIGN.typography.headline,
+    fontSize: 28,
     fontWeight: "700",
     color: DESIGN.colors.textPrimary,
+  },
+  meta: {
+    marginTop: 5,
+    fontSize: 13,
+    color: DESIGN.colors.textMuted,
     marginBottom: 14,
   },
-  heroCard: {
-    backgroundColor: DESIGN.colors.surfaceDark,
-    borderRadius: DESIGN.radius.lg,
-    padding: 15,
-    marginBottom: 12,
-    ...DESIGN.shadow.card,
-  },
-  heroKicker: {
-    fontSize: 11,
-    letterSpacing: 1.1,
-    textTransform: "uppercase",
-    color: DESIGN.colors.textMuted,
-    fontWeight: "700",
-  },
-  heroTitle: {
-    marginTop: 6,
-    fontSize: 20,
-    lineHeight: 26,
-    color: "#FFFFFF",
-    fontWeight: "700",
-  },
-  summaryRow: {
+  addRow: {
     flexDirection: "row",
     marginBottom: 12,
   },
-  summaryCard: {
+  addButton: {
     flex: 1,
-    backgroundColor: DESIGN.colors.surfaceSoft,
-    borderRadius: DESIGN.radius.md,
+    backgroundColor: DESIGN.colors.surface,
     borderWidth: 1,
     borderColor: DESIGN.colors.border,
-    paddingVertical: 12,
+    borderRadius: DESIGN.radius.md,
+    paddingVertical: 10,
     alignItems: "center",
     marginRight: 8,
-    ...DESIGN.shadow.card,
   },
-  summaryNumber: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: DESIGN.colors.textPrimary,
-  },
-  summaryLabel: {
-    fontSize: 12,
-    color: DESIGN.colors.textMuted,
-    marginTop: 2,
-  },
-  addButton: {
-    backgroundColor: DESIGN.colors.surfaceDark,
-    borderRadius: DESIGN.radius.md,
-    alignItems: "center",
-    paddingVertical: 12,
-    marginBottom: 12,
+  addButtonLast: {
+    marginRight: 0,
   },
   addButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "700",
+    color: DESIGN.colors.textPrimary,
+    fontWeight: "600",
+    fontSize: 13,
   },
   filterRow: {
-    paddingBottom: 6,
+    flexDirection: "row",
+    marginBottom: 10,
   },
   filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderRadius: DESIGN.radius.pill,
     backgroundColor: DESIGN.colors.surface,
     borderWidth: 1,
@@ -352,18 +296,17 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   filterChipActive: {
-    backgroundColor: DESIGN.colors.surfaceDark,
+    backgroundColor: DESIGN.colors.primarySoft,
+    borderColor: DESIGN.colors.primary,
   },
   filterChipText: {
-    fontSize: 13,
+    fontSize: 12,
     color: DESIGN.colors.textSecondary,
     fontWeight: "600",
   },
   filterChipTextActive: {
-    color: "#FFFFFF",
-  },
-  listContainer: {
-    marginTop: 8,
+    color: DESIGN.colors.textPrimary,
+    fontWeight: "700",
   },
   emptyCard: {
     backgroundColor: DESIGN.colors.surface,
@@ -391,16 +334,24 @@ const styles = StyleSheet.create({
     borderColor: DESIGN.colors.border,
     padding: 12,
     marginBottom: 9,
-    ...DESIGN.shadow.card,
-  },
-  itemTopRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  titleWrap: {
+  itemLeft: {
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
     marginRight: 10,
+  },
+  colorDot: {
+    width: 8,
+    height: 8,
+    borderRadius: DESIGN.radius.pill,
+    marginRight: 9,
+  },
+  itemTextWrap: {
+    flex: 1,
   },
   itemTitle: {
     fontSize: 15,
@@ -412,84 +363,21 @@ const styles = StyleSheet.create({
     color: DESIGN.colors.textMuted,
   },
   itemMeta: {
-    fontSize: 13,
+    fontSize: 12,
     color: DESIGN.colors.textMuted,
-    marginTop: 4,
+    marginTop: 3,
   },
-  courseMetaRow: {
-    marginTop: 4,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  courseBadge: {
-    borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginRight: 6,
-  },
-  courseBadgeText: {
-    fontSize: 10,
-    fontWeight: "800",
-    color: "#FFFFFF",
-  },
-  statusButton: {
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-  },
-  statusButtonOpen: {
-    backgroundColor: DESIGN.colors.accentLimeSoft,
-  },
-  statusButtonDone: {
-    backgroundColor: DESIGN.colors.surfaceSoft,
+  manageButton: {
     borderWidth: 1,
     borderColor: DESIGN.colors.border,
-  },
-  statusButtonText: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  statusButtonTextOpen: {
-    color: DESIGN.colors.textPrimary,
-  },
-  statusButtonTextDone: {
-    color: DESIGN.colors.textSecondary,
-  },
-  bottomRow: {
-    marginTop: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  priorityPill: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  priorityHigh: {
-    backgroundColor: "#FEE2E2",
-  },
-  priorityMedium: {
-    backgroundColor: "#FEF3C7",
-  },
-  priorityLow: {
-    backgroundColor: DESIGN.colors.accentLimeSoft,
-  },
-  priorityText: {
-    fontSize: 11,
-    color: DESIGN.colors.textSecondary,
-    fontWeight: "700",
-  },
-  deleteButton: {
-    borderWidth: 1,
-    borderColor: DESIGN.colors.danger,
+    backgroundColor: DESIGN.colors.surfaceSoft,
     borderRadius: DESIGN.radius.pill,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 6,
   },
-  deleteButtonText: {
-    color: DESIGN.colors.danger,
+  manageButtonText: {
     fontSize: 11,
+    color: DESIGN.colors.textSecondary,
     fontWeight: "700",
   },
 });

@@ -2,7 +2,7 @@ import type { RouteItem, RouteKey } from "../navigation/types";
 
 export const APP_ROUTES: RouteItem[] = [
   { key: "dashboard", label: "Dashboard" },
-  { key: "assignments", label: "Assignments" },
+  { key: "assignments", label: "Tasks" },
   { key: "assignmentForm", label: "Add Assignment" },
   { key: "exams", label: "Exams" },
   { key: "examForm", label: "Add Exam" },
@@ -24,7 +24,6 @@ export const PRIMARY_NAV_ROUTES: RouteItem[] = [
   { key: "dashboard", label: "Dashboard" },
   { key: "calendar", label: "Calendar" },
   { key: "assignments", label: "Tasks" },
-  { key: "exams", label: "Exams" },
   { key: "profile", label: "Profile" },
 ];
 
